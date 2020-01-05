@@ -378,10 +378,9 @@ Seq_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 
     if (PyObject_CheckBuffer(arg)) {
         if (PyObject_GetBuffer(arg, &data, PyBUF_FORMAT) < 0) return NULL;
-        if (strcmp(data.format, "B") != 0) {
+        if (strcmp(data.format, "c") != 0) {
             PyBuffer_Release(&data);
-            PyErr_SetString(PyExc_ValueError,
-                            "buffers should contain unsigned char");
+            PyErr_SetString(PyExc_ValueError, "buffers should contain char");
             return NULL;
         }
     }
