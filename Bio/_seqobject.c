@@ -100,13 +100,102 @@ Seq_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
     SeqObject *object;
     PyObject *data = Py_None;
+    PyObject *id = NULL;
+    PyObject *name = NULL;
+    PyObject *description = NULL;
+    PyObject *annotations = NULL;
+    PyObject *features = NULL;
+    PyObject *dbxrefs = NULL;
+    PyObject *letter_annotations = NULL;
+
     char* character = NULL;
 
-    static char *kwlist[] = {"data", "character", NULL};
+    static char *kwlist[] = {"data", "id", "name", "description", "annotations",
+                             "features", "dbxrefs", "letter_annotations",
+                             "character", NULL};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "|Os", kwlist,
-                                     &data, &character))
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "|OOOOOOOOs", kwlist,
+                                     &data, &id, &name, &description,
+                                     &annotations, &features, &dbxrefs,
+                                     &letter_annotations, &character))
         return NULL;
+
+    if (id) {
+        if (PyUnicode_Check(id)) {
+            if (PyUnicode_CompareWithASCIIString(id, "") == 0) id = NULL;
+        }
+        else if (id != Py_None) {
+            PyErr_Format(PyExc_TypeError,
+                "attribute id requires a string or None (received type %s)",
+                Py_TYPE(id)->tp_name);
+            return NULL;
+        }
+    }
+
+    if (name) {
+        if (PyUnicode_Check(name)) {
+            if (PyUnicode_CompareWithASCIIString(name, "") == 0) name = NULL;
+        }
+        else if (name != Py_None) {
+            PyErr_Format(PyExc_TypeError,
+                "attribute name requires a string or None (received type %s)",
+                Py_TYPE(name)->tp_name);
+            return NULL;
+        }
+    }
+
+    if (description) {
+        if (PyUnicode_Check(description)) {
+            if (PyUnicode_CompareWithASCIIString(description, "") == 0)
+                description = NULL;
+        }
+        else if (description != Py_None) {
+            PyErr_Format(PyExc_TypeError,
+                "attribute description requires a string or None (received type %s)",
+                Py_TYPE(description)->tp_name);
+            return NULL;
+        }
+    }
+
+    if (annotations == Py_None) annotations = NULL;
+    else if (annotations) {
+        if (!PyDict_Check(annotations)) {
+            PyErr_Format(PyExc_TypeError,
+                "attribute annotations requires a dictionary (received type %s)",
+                Py_TYPE(annotations)->tp_name);
+            return NULL;
+        }
+    }
+
+    if (features == Py_None) features = NULL;
+    else if (features) {
+        if (!PyList_Check(features)) {
+            PyErr_Format(PyExc_TypeError,
+                "attribute features requires a list (received type %s)",
+                Py_TYPE(features)->tp_name);
+            return NULL;
+        }
+    }
+
+    if (dbxrefs == Py_None) dbxrefs = NULL;
+    else if (dbxrefs) {
+        if (!PyList_Check(dbxrefs)) {
+            PyErr_Format(PyExc_TypeError,
+                "attribute dbxrefs requires a list (received type %s)",
+                Py_TYPE(dbxrefs)->tp_name);
+            return NULL;
+        }
+    }
+
+    if (letter_annotations == Py_None) letter_annotations = NULL;
+    else if (letter_annotations) {
+        if (!PyDict_Check(letter_annotations)) {
+            PyErr_Format(PyExc_TypeError,
+                "attribute letter_annotations requires a dictionary (received type %s)",
+                Py_TYPE(letter_annotations)->tp_name);
+            return NULL;
+        }
+    }
 
     if (PyLong_Check(data)) {
         Py_ssize_t length = PyLong_AsSsize_t(data);
@@ -187,13 +276,22 @@ Seq_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
         return NULL;
     }
 
+    Py_XINCREF(id);
+    Py_XINCREF(name);
+    Py_XINCREF(description);
+    Py_XINCREF(annotations);
+    Py_XINCREF(features);
+    Py_XINCREF(dbxrefs);
+    Py_XINCREF(letter_annotations);
+
     object->data = data;
-    object->id = NULL;
-    object->description = NULL;
-    object->annotations = NULL;
-    object->features = NULL;
-    object->dbxrefs = NULL;
-    object->letter_annotations = NULL;
+    object->id = id;
+    object->name = name;
+    object->description = description;
+    object->annotations = annotations;
+    object->features = features;
+    object->dbxrefs = dbxrefs;
+    object->letter_annotations = letter_annotations;
 
     return object;
 }
@@ -218,165 +316,6 @@ Seq_str(SeqObject* self)
     if (PyObject_IsInstance(data, (PyObject*)&UndefinedSeqDataType))
         return PyObject_Str(data);
     return PyUnicode_FromEncodedObject(data, NULL, NULL);
-}
-
-static PyObject *
-Seq_getattro(SeqObject *self, PyObject *name)
-{
-    if (PyUnicode_CompareWithASCIIString(name, "id") == 0) {
-        if (!self->id) return PyUnicode_New(0, 127);
-        Py_INCREF(self->id);
-        return self->id;
-    }
-    if (PyUnicode_CompareWithASCIIString(name, "name") == 0) {
-        if (!self->name) return PyUnicode_New(0, 127);
-        Py_INCREF(self->name);
-        return self->name;
-    }
-    if (PyUnicode_CompareWithASCIIString(name, "description") == 0) {
-        if (!self->description) {
-            self->description = PyUnicode_New(0, 127);
-            if (!self->description) return NULL;
-        }
-        Py_INCREF(self->description);
-        return self->description;
-    }
-    if (PyUnicode_CompareWithASCIIString(name, "annotations") == 0) {
-        if (!self->annotations) {
-            self->annotations = PyDict_New();
-            if (!self->annotations) return NULL;
-        }
-        Py_INCREF(self->annotations);
-        return self->annotations;
-    }
-    if (PyUnicode_CompareWithASCIIString(name, "dbxrefs") == 0) {
-        if (!self->dbxrefs) {
-            self->dbxrefs = PyList_New(0);
-            if (!self->dbxrefs) return NULL;
-        }
-        Py_INCREF(self->dbxrefs);
-        return self->dbxrefs;
-    }
-    if (PyUnicode_CompareWithASCIIString(name, "features") == 0) {
-        if (!self->features) {
-            self->features = PyList_New(0);
-            if (!self->features) return NULL;
-        }
-        Py_INCREF(self->features);
-        return self->features;
-    }
-    if (PyUnicode_CompareWithASCIIString(name, "letter_annotations") == 0) {
-        if (self->letter_annotations) {
-            Py_INCREF(self->letter_annotations);
-            return self->letter_annotations;
-        }
-        /* Let Bio.Seq.Seq create the restricted dictionary if needed. */
-    }
-    return PyObject_GenericGetAttr((PyObject*)self, name);
-}
-
-static int
-Seq_setattro(SeqObject *self, PyObject *name, PyObject *value)
-{
-    if (PyUnicode_CompareWithASCIIString(name, "id") == 0) {
-        if (value) {
-            if (value != Py_None && !PyUnicode_Check(value)) {
-                PyErr_Format(PyExc_TypeError,
-                    "attribute id requires a string (received type %s)",
-                    Py_TYPE(value)->tp_name);
-                return -1;
-            }
-            Py_INCREF(value);
-        }
-        Py_XDECREF(self->id);
-        self->id = value;
-        return 0;
-    }
-    if (PyUnicode_CompareWithASCIIString(name, "name") == 0) {
-        if (value) {
-            if (value != Py_None && !PyUnicode_Check(value)) {
-                PyErr_Format(PyExc_TypeError,
-                    "attribute name requires a string (received type %s)",
-                    Py_TYPE(value)->tp_name);
-                return -1;
-            }
-            Py_INCREF(value);
-        }
-        Py_XDECREF(self->name);
-        self->name = value;
-        return 0;
-    }
-    if (PyUnicode_CompareWithASCIIString(name, "description") == 0) {
-        if (value) {
-            if (value != Py_None && !PyUnicode_Check(value)) {
-                PyErr_Format(PyExc_TypeError,
-                    "attribute description requires a string (received type %s)",
-                    Py_TYPE(value)->tp_name);
-                return -1;
-            }
-            Py_INCREF(value);
-        }
-        Py_XDECREF(self->description);
-        self->description = value;
-        return 0;
-    }
-    if (PyUnicode_CompareWithASCIIString(name, "annotations") == 0) {
-        if (value) {
-            if (!PyDict_Check(value)) {
-                PyErr_Format(PyExc_TypeError,
-                    "attribute annotations requires a dictionary (received type %s)",
-                    Py_TYPE(value)->tp_name);
-                return -1;
-            }
-            Py_INCREF(value);
-        }
-        Py_XDECREF(self->annotations);
-        self->annotations = value;
-        return 0;
-    }
-    if (PyUnicode_CompareWithASCIIString(name, "features") == 0) {
-        if (value) {
-            if (!PyList_Check(value)) {
-                PyErr_Format(PyExc_TypeError,
-                    "attribute features requires a list (received type %s)",
-                    Py_TYPE(value)->tp_name);
-                return -1;
-            }
-            Py_INCREF(value);
-        }
-        Py_XDECREF(self->features);
-        self->features = value;
-        return 0;
-    }
-    if (PyUnicode_CompareWithASCIIString(name, "dbxrefs") == 0) {
-        if (value) {
-            if (!PyList_Check(value)) {
-                PyErr_Format(PyExc_TypeError,
-                    "attribute dbxrefs requires a list (received type %s)",
-                    Py_TYPE(value)->tp_name);
-                return -1;
-            }
-            Py_INCREF(value);
-        }
-        Py_XDECREF(self->dbxrefs);
-        self->dbxrefs = value;
-        return 0;
-    }
-    if (PyUnicode_CompareWithASCIIString(name, "letter_annotations") == 0) {
-        if (value) {
-            if (!PyDict_Check(value)) {
-                PyErr_Format(PyExc_TypeError,
-                    "attribute letter_annotations requires a dictionary (received type %s)",
-                    Py_TYPE(value)->tp_name);
-                return -1;
-            }
-            Py_INCREF(value);
-        }
-        Py_XDECREF(self->letter_annotations);
-        self->letter_annotations = value;
-        return 0;
-    }
-    return PyObject_GenericSetAttr((PyObject*)self, name, value);
 }
 
 static Py_ssize_t
@@ -783,9 +722,10 @@ PyDoc_STRVAR(Seq_reduce_doc,
 static PyObject *
 Seq_reduce(SeqObject *self, PyObject *Py_UNUSED(ignored))
 {
-    PyObject* id = self->id ? self->id : Py_None;
-    PyObject* name = self->name ? self->name : Py_None;
-    PyObject* description = self->description ? self->description : Py_None;
+    PyObject* object;
+    PyObject* id = self->id ? self->id : PyUnicode_New(0, 127);
+    PyObject* name = self->name ? self->name : PyUnicode_New(0, 127);
+    PyObject* description = self->description ? self->description : PyUnicode_New(0, 127);
     PyObject* annotations = self->annotations ? self->annotations : Py_None;
     PyObject* features = self->features ? self->features : Py_None;
     PyObject* dbxrefs = self->dbxrefs ? self->dbxrefs : Py_None;
@@ -795,17 +735,24 @@ Seq_reduce(SeqObject *self, PyObject *Py_UNUSED(ignored))
         case -1: return NULL;
         case 1: {
             UndefinedSeqDataObject *data = (UndefinedSeqDataObject*)self->data;
-            return Py_BuildValue("O(nsOOOOOOO)",
-                                 Py_TYPE(self), data->length, &data->character,
-                                 id, name, description, annotations, features,
-                                 dbxrefs, letter_annotations);
+            object = Py_BuildValue("O(nsOOOOOOO)",
+                                   Py_TYPE(self), data->length, &data->character,
+                                   id, name, description, annotations, features,
+                                   dbxrefs, letter_annotations);
+            break;
         }
-        case 0: break;
+        case 0:
+            object = Py_BuildValue("O(OOOOOOOO)",
+                                   Py_TYPE(self), self->data, id, name, description,
+                                   annotations, features, dbxrefs, letter_annotations);
+            break;
     }
 
-    return Py_BuildValue("O(OOOOOOOO)",
-                         Py_TYPE(self), self->data, id, name, description,
-                         annotations, features, dbxrefs, letter_annotations);
+    if (!self->id) Py_DECREF(id);
+    if (!self->name) Py_DECREF(name);
+    if (!self->description) Py_DECREF(description);
+
+    return object;
 }
 
 PyDoc_STRVAR(Seq_reverse_doc,
@@ -1399,6 +1346,224 @@ static PyMethodDef Seq_methods[] = {
     {NULL}  /* Sentinel */
 };
 
+static PyObject *
+Seq_id_get(SeqObject *self, void *closure)
+{
+    if (!self->id) return PyUnicode_New(0, 127);
+    Py_INCREF(self->id);
+    return self->id;
+}
+
+static int
+Seq_id_set(SeqObject *self, PyObject *value, void *closure)
+{
+    if (value) {
+        if (PyUnicode_Check(value)) {
+            if (PyUnicode_CompareWithASCIIString(value, "") == 0) value = NULL;
+            else Py_INCREF(value);
+        }
+        else if (value == Py_None) {
+            Py_INCREF(value);
+        }
+        else {
+            PyErr_Format(PyExc_TypeError,
+                "attribute id requires a string or None (received type %s)",
+                Py_TYPE(value)->tp_name);
+            return -1;
+        }
+    }
+    Py_XDECREF(self->id);
+    self->id = value;
+    return 0;
+}
+
+static PyObject *
+Seq_name_get(SeqObject *self, void *closure)
+{
+    if (!self->name) return PyUnicode_New(0, 127);
+    Py_INCREF(self->name);
+    return self->name;
+}
+
+static int
+Seq_name_set(SeqObject *self, PyObject *value, void *closure)
+{
+    if (value) {
+        if (PyUnicode_Check(value)) {
+            if (PyUnicode_CompareWithASCIIString(value, "") == 0) value = NULL;
+            else Py_INCREF(value);
+        }
+        else if (value == Py_None) {
+            Py_INCREF(value);
+        }
+        else {
+            PyErr_Format(PyExc_TypeError,
+                "attribute name requires a string or None (received type %s)",
+                Py_TYPE(value)->tp_name);
+            return -1;
+        }
+    }
+    Py_XDECREF(self->name);
+    self->name = value;
+    return 0;
+}
+
+static PyObject *
+Seq_description_get(SeqObject *self, void *closure)
+{
+    if (!self->description) return PyUnicode_New(0, 127);
+    Py_INCREF(self->description);
+    return self->description;
+}
+
+static int
+Seq_description_set(SeqObject *self, PyObject *value, void *closure)
+{
+    if (value) {
+        if (PyUnicode_Check(value)) {
+            if (PyUnicode_CompareWithASCIIString(value, "") == 0) value = NULL;
+            else Py_INCREF(value);
+        }
+        else if (value == Py_None) {
+            Py_INCREF(value);
+        }
+        else {
+            PyErr_Format(PyExc_TypeError,
+                "attribute description requires a string or None (received type %s)",
+                Py_TYPE(value)->tp_name);
+            return -1;
+        }
+    }
+    Py_XDECREF(self->description);
+    self->description = value;
+    return 0;
+}
+
+static PyObject *
+Seq_annotations_get(SeqObject *self, void *closure)
+{
+    if (!self->annotations) {
+        self->annotations = PyDict_New();
+        if (!self->annotations) return NULL;
+    }
+    Py_INCREF(self->annotations);
+    return self->annotations;
+}
+
+static int
+Seq_annotations_set(SeqObject *self, PyObject *value, void *closure)
+{
+    if (value) {
+        if (!PyDict_Check(value)) {
+            PyErr_Format(PyExc_TypeError,
+                "attribute annotations requires a dictionary (received type %s)",
+                Py_TYPE(value)->tp_name);
+            return -1;
+        }
+        Py_INCREF(value);
+    }
+    Py_XDECREF(self->annotations);
+    self->annotations = value;
+    return 0;
+}
+
+static PyObject *
+Seq_features_get(SeqObject *self, void *closure)
+{
+    if (!self->features) {
+        self->features = PyList_New(0);
+        if (!self->features) return NULL;
+    }
+    Py_INCREF(self->features);
+    return self->features;
+}
+
+static int
+Seq_features_set(SeqObject *self, PyObject *value, void *closure)
+{
+    if (value) {
+        if (!PyList_Check(value)) {
+            PyErr_Format(PyExc_TypeError,
+                "attribute features requires a list (received type %s)",
+                Py_TYPE(value)->tp_name);
+            return -1;
+        }
+        Py_INCREF(value);
+    }
+    Py_XDECREF(self->features);
+    self->features = value;
+    return 0;
+}
+
+static PyObject *
+Seq_letter_annotations_get(SeqObject *self, void *closure)
+{
+    if (!self->letter_annotations) {
+        /* Let Bio.Seq.Seq create the restricted dictionary if needed. */
+        PyErr_SetString(PyExc_AttributeError,
+                        "Seq object has no attribute 'letter_annotations'");
+        return NULL;
+    }
+    Py_INCREF(self->letter_annotations);
+    return self->letter_annotations;
+}
+
+static int
+Seq_letter_annotations_set(SeqObject *self, PyObject *value, void *closure)
+{
+    if (value) {
+        if (!PyDict_Check(value)) {
+            PyErr_Format(PyExc_TypeError,
+                "attribute letter_annotations requires a dictionary (received type %s)",
+                Py_TYPE(value)->tp_name);
+            return -1;
+        }
+        Py_INCREF(value);
+    }
+    Py_XDECREF(self->letter_annotations);
+    self->letter_annotations = value;
+    return 0;
+}
+
+static PyObject *
+Seq_dbxrefs_get(SeqObject *self, void *closure)
+{
+    if (!self->dbxrefs) {
+        self->dbxrefs = PyList_New(0);
+        if (!self->dbxrefs) return NULL;
+    }
+    Py_INCREF(self->dbxrefs);
+    return self->dbxrefs;
+}
+
+static int
+Seq_dbxrefs_set(SeqObject *self, PyObject *value, void *closure)
+{
+    if (value) {
+        if (!PyList_Check(value)) {
+            PyErr_Format(PyExc_TypeError,
+                "attribute dbxrefs requires a list (received type %s)",
+                Py_TYPE(value)->tp_name);
+            return -1;
+        }
+        Py_INCREF(value);
+    }
+    Py_XDECREF(self->dbxrefs);
+    self->dbxrefs = value;
+    return 0;
+}
+
+static PyGetSetDef Seq_getset[] = {
+    {"id", (getter)Seq_id_get, (setter)Seq_id_set, "", NULL},
+    {"name", (getter)Seq_name_get, (setter)Seq_name_set, "", NULL},
+    {"description", (getter)Seq_description_get, (setter)Seq_description_set, "", NULL},
+    {"annotations", (getter)Seq_annotations_get, (setter)Seq_annotations_set, "", NULL},
+    {"features", (getter)Seq_features_get, (setter)Seq_features_set, "", NULL},
+    {"dbxrefs", (getter)Seq_dbxrefs_get, (setter)Seq_dbxrefs_set, "", NULL},
+    {"letter_annotations", (getter)Seq_letter_annotations_get, (setter)Seq_letter_annotations_set, "", NULL},
+    {NULL}  /* Sentinel */
+};
+
 PyDoc_STRVAR(Seq_doc, "Seq() -> Seq");
 
 static PyTypeObject SeqType = {
@@ -1418,8 +1583,8 @@ static PyTypeObject SeqType = {
     0,                                          /* tp_hash */
     0,                                          /* tp_call */
     (reprfunc)Seq_str,                          /* tp_str */
-    (getattrofunc)Seq_getattro,                 /* tp_getattro */
-    (setattrofunc)Seq_setattro,                 /* tp_setattro */
+    0,                                          /* tp_getattro */
+    0,                                          /* tp_setattro */
     &Seq_as_buffer,                             /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE |
         Py_TPFLAGS_BYTES_SUBCLASS,              /* tp_flags */
@@ -1432,7 +1597,7 @@ static PyTypeObject SeqType = {
     0,                                          /* tp_iternext */
     Seq_methods,                                /* tp_methods */
     0,                                          /* tp_members */
-    0,                                          /* tp_getset */
+    Seq_getset,                                 /* tp_getset */
     0,                                          /* tp_base */
     0,                                          /* tp_dict */
     0,                                          /* tp_descr_get */

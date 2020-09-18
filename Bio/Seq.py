@@ -79,7 +79,7 @@ class Seq(_seqobject.Seq):
 
     __slots__ = ()
 
-    def __new__(cls, data=None, id="", name=None, description=None,
+    def __new__(cls, data=None, id="", name="", description="",
                 annotations=None, features=None, dbxrefs=None,
                 letter_annotations=None):
         """Create a Seq object.
@@ -105,24 +105,9 @@ class Seq(_seqobject.Seq):
             data = bytes(data, "ASCII")
         elif data is not None:
             data = bytes(data)
-        return super().__new__(cls, data)
-
-    def __init__(self, data=None, id="", name=None, description=None,
-                annotations=None, features=None, dbxrefs=None,
-                letter_annotations=None):
-        self.id = id
-        if name is not None:
-            self.name = name
-        if description is not None:
-            self.description = description
-        if annotations is not None:
-            self.annotations = annotations
-        if features is not None:
-            self.features = features
-        if dbxrefs is not None:
-            self.dbxrefs = dbxrefs
         if letter_annotations is not None:
-            self.letter_annotations.update(letter_annotations)
+            letter_annotations = TrackDict(len(data), letter_annotations)
+        return super().__new__(cls, data, id=id, name=name, description=description, annotations=annotations, features=features, dbxrefs=dbxrefs, letter_annotations=letter_annotations)
 
     def __repr__(self):
         """Return (truncated) representation of the sequence."""
@@ -295,8 +280,8 @@ class Seq(_seqobject.Seq):
             sequence.id = self.id
             sequence.name = self.name
             sequence.description = self.description
-            sequence.features = self.features[:]
             sequence.annotations = self.annotations.copy()
+            sequence.features = self.features[:]
             sequence.dbxrefs = self.dbxrefs[:]
             return sequence
 
@@ -1222,16 +1207,11 @@ class UnknownSeq(Seq):
          - character - single letter string, default "?". Typically "N"
            for nucleotides, "X" for proteins, and "?" otherwise.
         """
-        self = super(Seq, cls).__new__(cls, data=length, character=character)
+        if letter_annotations is not None:
+            letter_annotations = TrackDict(length, letter_annotations)
+        self = super(Seq, cls).__new__(cls, data=length, id=id, name=name, description=description, annotations=annotations, features=features, dbxrefs=dbxrefs, letter_annotations=letter_annotations, character=character)
         self._character = character
         return self
-
-    def __init__(self, length, character="?",
-                     id=None, name=None, description=None, annotations=None,
-                     features=None, dbxrefs=None, letter_annotations=None):
-        super().__init__(None, id=id, name=name, description=description,
-                         annotations=annotations, features=features,
-                         dbxrefs=dbxrefs, letter_annotations=letter_annotations)
 
     def __repr__(self):
         """Return (truncated) representation of the sequence for debugging."""
@@ -1662,8 +1642,10 @@ class MutableSeq(Seq):
             self.annotations = annotations
         if features is not None:
             self.features = features
+        if dbxrefs is not None:
+            self.dbxrefs = dbxrefs
         if letter_annotations is not None:
-            self.letter_annotations.update(letter_annotations)
+            self.letter_annotations = TrackDict(len(data), letter_annotations)
         return self
 
     def __repr__(self):

@@ -29,7 +29,7 @@ class QualityIOTestBaseClass(SeqIOTestBaseClass):
         This will check the mapping between Solexa and PHRED scores.
         It knows to ignore UnknownSeq objects for string matching (i.e. QUAL files).
         """
-        super().compare_record(old, new, msg=None)
+        super().compare_record(old, new, msg=msg)
         if fmt in ["fastq-solexa", "fastq-illumina"]:
             truncate = 62
         elif fmt in ["fastq", "fastq-sanger"]:
