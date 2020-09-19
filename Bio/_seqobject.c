@@ -8,22 +8,8 @@ typedef struct {
     Py_ssize_t length;
 } UndefinedSeqDataObject;
 
-static void
-UndefinedSeqDataObject_dealloc(UndefinedSeqDataObject *op)
-{
-    Py_TYPE(op)->tp_free(op);
-}
-
-static PyObject*
-UndefinedSeqDataObject_str(UndefinedSeqDataObject* self)
-{
-    PyObject* text = PyUnicode_New(self->length, 127);
-    memset(PyUnicode_DATA(text), self->character, self->length);
-    return text;
-}
-
 static int
-UndefinedSeqDataObject_bf_getbuffer(UndefinedSeqDataObject *self, Py_buffer *view, int flags)
+UndefinedSeqData_bf_getbuffer(UndefinedSeqDataObject *self, Py_buffer *view, int flags)
 {
    static Py_ssize_t stride = 0;
    if ((flags & PyBUF_STRIDES) != PyBUF_STRIDES) {
@@ -53,9 +39,19 @@ UndefinedSeqDataObject_bf_getbuffer(UndefinedSeqDataObject *self, Py_buffer *vie
    return 0;
 }
 
+static PyBufferProcs UndefinedSeqData_as_buffer = {
+    (getbufferproc)UndefinedSeqData_bf_getbuffer,
+    NULL,
+};
 
-static PyBufferProcs UndefinedSeqDataObject_as_buffer = {
-    (getbufferproc)UndefinedSeqDataObject_bf_getbuffer,
+static Py_ssize_t
+UndefinedSeqData_mapping_length(UndefinedSeqDataObject* self)
+{
+    return self->length;
+}
+
+static PyMappingMethods UndefinedSeqData_as_mapping = {
+    (lenfunc)UndefinedSeqData_mapping_length,
     NULL,
 };
 
@@ -64,7 +60,7 @@ static PyTypeObject UndefinedSeqDataType = {
     "UndefinedSeqDataType",                     /* tp_name */
     sizeof(UndefinedSeqDataObject),             /* tp_basicsize */
     0,                                          /* tp_itemsize */
-    (destructor)UndefinedSeqDataObject_dealloc, /* tp_dealloc */
+    0,                                          /* tp_dealloc */
     0,                                          /* tp_print */
     0,                                          /* tp_getattr */
     0,                                          /* tp_setattr */
@@ -72,13 +68,13 @@ static PyTypeObject UndefinedSeqDataType = {
     0,                                          /* tp_repr */
     0,                                          /* tp_as_number */
     0,                                          /* tp_as_sequence */
-    0,                                          /* tp_as_mapping */
+    &UndefinedSeqData_as_mapping,               /* tp_as_mapping */
     0,                                          /* tp_hash */
     0,                                          /* tp_call */
-    (reprfunc)UndefinedSeqDataObject_str,       /* tp_str */
+    0,                                          /* tp_str */
     0,                                          /* tp_getattro */
     0,                                          /* tp_setattro */
-    &UndefinedSeqDataObject_as_buffer,          /* tp_as_buffer */
+    &UndefinedSeqData_as_buffer,                /* tp_as_buffer */
 };
 
 static PyTypeObject SeqType;
@@ -312,20 +308,13 @@ Seq_dealloc(SeqObject *op)
 static PyObject*
 Seq_str(SeqObject* self)
 {
-    PyObject* data = self->data;
-    if (PyObject_IsInstance(data, (PyObject*)&UndefinedSeqDataType))
-        return PyObject_Str(data);
-    return PyUnicode_FromEncodedObject(data, NULL, NULL);
+    return PyUnicode_FromEncodedObject(self->data, NULL, NULL);
 }
 
 static Py_ssize_t
 Seq_mapping_length(SeqObject* self)
 {
-    PyObject* data = self->data;
-    if (PyObject_IsInstance(data, (PyObject*)&UndefinedSeqDataType)) {
-        return ((UndefinedSeqDataObject*)data)->length;
-    }
-    return PyObject_Size(data);
+    return PyObject_Size(self->data);
 }
 
 static PyObject*
