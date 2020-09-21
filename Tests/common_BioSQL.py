@@ -469,10 +469,6 @@ class SeqInterfaceTest(unittest.TestCase):
             self.assertIsInstance(feature, SeqFeature)
         # shouldn't cause any errors!
         self.assertIsInstance(str(test_record), str)
-        # Confirm can delete annotations etc to test these properties
-        del test_record.annotations
-        del test_record.dbxrefs
-        del test_record.features
 
     def test_seq(self):
         """Make sure Seqs from BioSQL implement the right interface."""
