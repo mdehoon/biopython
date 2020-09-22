@@ -1197,9 +1197,9 @@ class UnknownSeq(Seq):
     Seq('ACGT????')
     """
 
-    def __new__(cls, length, character="?",
-                     id=None, name=None, description=None, annotations=None,
-                     features=None, dbxrefs=None, letter_annotations=None):
+    def __new__(cls, data=None, id="", name="", description="",
+                annotations=None, features=None, dbxrefs=None,
+                letter_annotations=None, character="?"):
         """Create a new UnknownSeq object.
 
         Arguments:
@@ -1207,9 +1207,17 @@ class UnknownSeq(Seq):
          - character - single letter string, default "?". Typically "N"
            for nucleotides, "X" for proteins, and "?" otherwise.
         """
+        if isinstance(data, int):  # FIXME
+            length = data
+            data = _seqobject.UndefinedSeqData(length, character)
+        else:
+            length = len(data)
+            character = data.character
+
         if letter_annotations is not None:
             letter_annotations = TrackDict(length, letter_annotations)
-        self = super(Seq, cls).__new__(cls, data=length, id=id, name=name, description=description, annotations=annotations, features=features, dbxrefs=dbxrefs, letter_annotations=letter_annotations, character=character)
+
+        self = super(Seq, cls).__new__(cls, data=data, id=id, name=name, description=description, annotations=annotations, features=features, dbxrefs=dbxrefs, letter_annotations=letter_annotations)
         self._character = character
         return self
 

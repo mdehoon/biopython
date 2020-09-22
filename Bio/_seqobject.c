@@ -1,6 +1,7 @@
 #define PY_SSIZE_T_CLEAN
 
 #include "Python.h"
+#include "structmember.h"
 
 typedef struct {
     PyObject_HEAD
@@ -55,6 +56,57 @@ static PyMappingMethods UndefinedSeqData_as_mapping = {
     NULL,
 };
 
+static struct PyMemberDef UndefinedSeqData_members[] = {
+    {"character", T_CHAR, offsetof(UndefinedSeqDataObject, character),
+     READONLY, NULL},
+    {NULL},
+};
+
+static PyObject *
+UndefinedSeqData_reduce(UndefinedSeqDataObject *self, PyObject *Py_UNUSED(ignored))
+{
+    return Py_BuildValue("O(ns#)", Py_TYPE(self), self->length, &self->character, 1);
+}
+
+static PyMethodDef UndefinedSeqData_methods[] = {
+    {"__reduce__", (PyCFunction)UndefinedSeqData_reduce, METH_NOARGS, NULL},
+    {NULL}  /* Sentinel */
+};
+
+static UndefinedSeqDataObject *
+UndefinedSeqData_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+    UndefinedSeqDataObject *object;
+    char* character = NULL;
+    Py_ssize_t length;
+
+    static char *kwlist[] = {"length", "character", NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "n|z", kwlist,
+                                     &length, &character))
+        return NULL;
+
+    if (length < 0) {
+        PyErr_SetString(PyExc_ValueError, "length should be non-negative");
+        return NULL;
+    }
+
+    if (character && strlen(character) != 1) {
+        PyErr_SetString(PyExc_ValueError,
+            "character should be a string of length 1");
+        return NULL;
+    }
+
+    object = (UndefinedSeqDataObject *)type->tp_alloc(type, 0);
+    if (!object) return NULL;
+
+    object->length = length;
+    if (character) object->character = *character;
+    else object->character = '?';
+
+    return object;
+}
+
 static PyTypeObject UndefinedSeqDataType = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "UndefinedSeqDataType",                     /* tp_name */
@@ -75,6 +127,25 @@ static PyTypeObject UndefinedSeqDataType = {
     0,                                          /* tp_getattro */
     0,                                          /* tp_setattro */
     &UndefinedSeqData_as_buffer,                /* tp_as_buffer */
+    Py_TPFLAGS_DEFAULT,                         /* tp_flags */
+    0,                                          /* tp_doc */
+    0,                                          /* tp_traverse */
+    0,                                          /* tp_clear */
+    0,                                          /* tp_richcompare */
+    0,                                          /* tp_weaklistoffset */
+    0,                                          /* tp_iter */
+    0,                                          /* tp_iternext */
+    UndefinedSeqData_methods,                   /* tp_methods */
+    UndefinedSeqData_members,                   /* tp_members */
+    0,                                          /* tp_getset */
+    0,                                          /* tp_base */
+    0,                                          /* tp_dict */
+    0,                                          /* tp_descr_get */
+    0,                                          /* tp_descr_set */
+    0,                                          /* tp_dictoffset */
+    0,                                          /* tp_init */
+    0,                                          /* tp_alloc */
+    (newfunc)UndefinedSeqData_new,              /* tp_new */
 };
 
 static PyTypeObject SeqType;
@@ -230,6 +301,9 @@ Seq_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
             Py_INCREF(data);
         }
         else if (PyByteArray_Check(data)) {
+            Py_INCREF(data);
+        }
+        else if (PyObject_IsInstance(data, (PyObject*)&UndefinedSeqDataType)) {
             Py_INCREF(data);
         }
         else if (PyObject_IsInstance(data, (PyObject*)&SeqType)) {
@@ -720,22 +794,9 @@ Seq_reduce(SeqObject *self, PyObject *Py_UNUSED(ignored))
     PyObject* dbxrefs = self->dbxrefs ? self->dbxrefs : Py_None;
     PyObject* letter_annotations = self->letter_annotations ? self->letter_annotations : Py_None;
 
-    switch (PyObject_IsInstance(self->data, (PyObject*)&UndefinedSeqDataType)) {
-        case -1: return NULL;
-        case 1: {
-            UndefinedSeqDataObject *data = (UndefinedSeqDataObject*)self->data;
-            object = Py_BuildValue("O(nsOOOOOOO)",
-                                   Py_TYPE(self), data->length, &data->character,
-                                   id, name, description, annotations, features,
-                                   dbxrefs, letter_annotations);
-            break;
-        }
-        case 0:
-            object = Py_BuildValue("O(OOOOOOOO)",
-                                   Py_TYPE(self), self->data, id, name, description,
-                                   annotations, features, dbxrefs, letter_annotations);
-            break;
-    }
+    object = Py_BuildValue("O(OOOOOOOO)",
+                           Py_TYPE(self), self->data, id, name, description,
+                           annotations, features, dbxrefs, letter_annotations);
 
     if (!self->id) Py_DECREF(id);
     if (!self->name) Py_DECREF(name);
@@ -1575,8 +1636,7 @@ static PyTypeObject SeqType = {
     0,                                          /* tp_getattro */
     0,                                          /* tp_setattro */
     &Seq_as_buffer,                             /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE |
-        Py_TPFLAGS_BYTES_SUBCLASS,              /* tp_flags */
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,   /* tp_flags */
     Seq_doc,                                    /* tp_doc */
     0,                                          /* tp_traverse */
     0,                                          /* tp_clear */
@@ -1623,10 +1683,18 @@ PyInit__seqobject(void)
     if (module == NULL) return NULL;
 
     Py_INCREF(&SeqType);
-    if (PyModule_AddObject(module, "Seq", (PyObject*) &SeqType) == 0)
-        return module;
+    if (PyModule_AddObject(module, "Seq", (PyObject*) &SeqType) < 0) {
+        Py_DECREF(module);
+        Py_DECREF(&SeqType);
+        return NULL;
+    }
 
-    Py_DECREF(module);
-    Py_DECREF(&SeqType);
-    return NULL;
+    Py_INCREF(&UndefinedSeqDataType);
+    if (PyModule_AddObject(module, "UndefinedSeqData", (PyObject*) &UndefinedSeqDataType) < 0) {
+        Py_DECREF(module);
+        Py_DECREF(&UndefinedSeqDataType);
+        return NULL;
+    }
+
+    return module;
 }
