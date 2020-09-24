@@ -3,13 +3,13 @@
 # This code is part of the Biopython distribution and governed by its
 # license.  Please see the LICENSE file that should have been included
 # as part of this package.
-"""Unittests for Bio.Align.Applications interface for DIALIGN2-2."""
+"""Unittests for biopython.Align.Applications interface for DIALIGN2-2."""
 
 import sys
 import os
 import unittest
-from Bio import MissingExternalDependencyError
-from Bio.Align.Applications import DialignCommandline
+from biopython import MissingExternalDependencyError
+from biopython.Align.Applications import DialignCommandline
 
 # Try to avoid problems when the OS is in another language
 os.environ["LANG"] = "C"
@@ -40,7 +40,7 @@ else:
 
 if not dialign_exe:
     raise MissingExternalDependencyError(
-        "Install DIALIGN2-2 if you want to use the Bio.Align.Applications wrapper."
+        "Install DIALIGN2-2 if you want to use the biopython.Align.Applications wrapper."
     )
 
 

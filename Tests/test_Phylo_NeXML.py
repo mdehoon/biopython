@@ -10,7 +10,7 @@ import os
 from io import BytesIO
 import unittest
 
-from Bio import Phylo
+from biopython import Phylo
 
 # Example NeXML files
 nexml_files = (

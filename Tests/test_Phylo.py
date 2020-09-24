@@ -3,7 +3,7 @@
 # license. Please see the LICENSE file that should have been included
 # as part of this package.
 
-"""Unit tests for the Bio.Phylo module."""
+"""Unit tests for the biopython.Phylo module."""
 
 import os
 import unittest
@@ -11,8 +11,8 @@ import tempfile
 
 from io import StringIO
 
-from Bio import Phylo
-from Bio.Phylo import PhyloXML
+from biopython import Phylo
+from biopython.Phylo import PhyloXML
 
 
 # Example Newick and Nexus files

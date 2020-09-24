@@ -3,14 +3,14 @@
 # choice of the "Biopython License Agreement" or the "BSD 3-Clause License".
 # Please see the LICENSE file that should have been included as part of this
 # package.
-"""Unit tests for the Bio.PDB.Dice Module."""
+"""Unit tests for the biopython.PDB.Dice Module."""
 
 import unittest
 import tempfile
 import os
 
-from Bio.PDB import Dice
-from Bio.PDB import PDBParser
+from biopython.PDB import Dice
+from biopython.PDB import PDBParser
 
 
 class DiceTests(unittest.TestCase):

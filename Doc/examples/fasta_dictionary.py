@@ -22,7 +22,7 @@ See also Bio.SeqIO.index_db() and the examples in the main tutorial.
 """
 
 
-from Bio import SeqIO
+from biopython import SeqIO
 
 
 def get_accession_num(seq_record):

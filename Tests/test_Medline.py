@@ -9,7 +9,7 @@
 
 import unittest
 
-from Bio import Medline
+from biopython import Medline
 
 
 class TestMedline(unittest.TestCase):

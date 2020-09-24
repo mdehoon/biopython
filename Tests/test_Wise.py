@@ -10,7 +10,7 @@ import unittest
 
 from io import StringIO
 
-from Bio import Wise
+from biopython import Wise
 
 if "requires_wise" in sys.modules:
     del sys.modules["requires_wise"]

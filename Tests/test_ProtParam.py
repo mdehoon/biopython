@@ -5,12 +5,12 @@
 # This code is part of the Biopython distribution and governed by its
 # license.  Please see the LICENSE file that should have been included
 # as part of this package.
-"""Tests for Bio.SeqUtils.ProtParam and related code."""
+"""Tests for biopython.SeqUtils.ProtParam and related code."""
 
 import unittest
-from Bio.Seq import Seq
-from Bio.SeqUtils import ProtParam, ProtParamData
-from Bio.SeqUtils import molecular_weight
+from biopython.Seq import Seq
+from biopython.SeqUtils import ProtParam, ProtParamData
+from biopython.SeqUtils import molecular_weight
 
 
 class ProtParamTest(unittest.TestCase):
@@ -46,7 +46,7 @@ class ProtParamTest(unittest.TestCase):
         self.assertAlmostEqual(self.analysis.molecular_weight(), 17092.61, 2)
 
     def test_get_molecular_weight_identical(self):
-        """Confirm protein molecular weight agrees with calculation from Bio.SeqUtils."""
+        """Confirm protein molecular weight agrees with calculation from biopython.SeqUtils."""
         # This test is somehow useless, since ProteinAnalysis.molecular_weight
         # is internally calling SeqUtils.molecular_weight.
         mw_1 = self.analysis.molecular_weight()
@@ -54,7 +54,7 @@ class ProtParamTest(unittest.TestCase):
         self.assertAlmostEqual(mw_1, mw_2)
 
     def test_get_monoisotopic_molecular_weight_identical(self):
-        """Confirm protein molecular weight agrees with calculation from Bio.SeqUtils."""
+        """Confirm protein molecular weight agrees with calculation from biopython.SeqUtils."""
         # This test is somehow useless, since ProteinAnalysis.molecular_weight
         # is internally calling SeqUtils.molecular_weight.
         self.analysis = ProtParam.ProteinAnalysis(self.seq_text, monoisotopic=True)

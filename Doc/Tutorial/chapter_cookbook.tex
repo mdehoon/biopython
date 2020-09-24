@@ -19,7 +19,7 @@ to the wiki, or elsewhere within the tutorial.
 \label{sec:cookbook-sequences}
 
 This section shows some more examples of sequence input/output, using the
-\verb|Bio.SeqIO| module described in Chapter~\ref{chapter:seqio}.
+\verb|biopython.SeqIO| module described in Chapter~\ref{chapter:seqio}.
 
 \subsection{Filtering a sequence file}
 
@@ -35,7 +35,7 @@ Try something like this:
 %not a doctest to avoid temp files being left behind, also no >>>
 %makes it easier to copy and paste the example to a script file.
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 input_file = "big_file.sff"
 id_file = "short_list.txt"
@@ -63,7 +63,7 @@ example shows how to do this with FASTQ files -- it is more complicated:
 %not a doctest to avoid temp files being left behind, also no >>>
 %makes it easier to copy and paste the example to a script file.
 \begin{minted}{python}
-from Bio.SeqIO.QualityIO import FastqGeneralIterator
+from biopython.SeqIO.QualityIO import FastqGeneralIterator
 
 input_file = "big_file.fastq"
 id_file = "short_list.txt"
@@ -102,11 +102,11 @@ Biopython unit tests under the GenBank folder, or you can get it from our
 website, \href{https://raw.githubusercontent.com/biopython/biopython/master/Tests/GenBank/NC_005816.gb}
 {\texttt{NC\_005816.gb}}.
 This file contains one and only one record, so we can read it in as a
-\verb|SeqRecord| using the \verb|Bio.SeqIO.read()| function:
+\verb|SeqRecord| using the \verb|biopython.SeqIO.read()| function:
 
 %doctest ../Tests/GenBank
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> original_rec = SeqIO.read("NC_005816.gb", "genbank")
 \end{minted}
 
@@ -122,7 +122,7 @@ use the built in Python \verb|random| module for this, in particular the functio
 >>> random.shuffle(nuc_list)  # acts in situ!
 \end{minted}
 
-Now, in order to use \verb|Bio.SeqIO| to output the shuffled sequence, we need
+Now, in order to use \verb|biopython.SeqIO| to output the shuffled sequence, we need
 to construct a new \verb|SeqRecord| with a new \verb|Seq| object using this
 shuffled list.  In order to do this, we need to turn the list of nucleotides
 (single letter strings) into a long string -- the standard Python way to do
@@ -130,7 +130,7 @@ this is with the string object's join method.
 
 %cont-doctest
 \begin{minted}{pycon}
->>> from Bio.Seq import Seq
+>>> from biopython.Seq import Seq
 >>> shuffled_rec = Seq("".join(nuc_list),
 ...                    id="Shuffled", description="Based on %s" % original_rec.id)
 ...
@@ -146,9 +146,9 @@ Section~\ref{sec:Bio.SeqIO-and-StringIO}):
 
 \begin{minted}{python}
 import random
-from Bio.Seq import Seq
-from Bio.SeqRecord import SeqRecord
-from Bio import SeqIO
+from biopython.Seq import Seq
+from biopython.SeqRecord import SeqRecord
+from biopython import SeqIO
 
 original_rec = SeqIO.read("NC_005816.gb", "genbank")
 
@@ -169,9 +169,9 @@ and a generator expression instead of the for loop:
 
 \begin{minted}{python}
 import random
-from Bio.Seq import Seq
-from Bio.SeqRecord import SeqRecord
-from Bio import SeqIO
+from biopython.Seq import Seq
+from biopython.SeqRecord import SeqRecord
+from biopython import SeqIO
 
 def make_shuffle_record(record, new_id):
     nuc_list = list(record)
@@ -199,7 +199,7 @@ Back in Section~\ref{sec:translation} we saw how to use the \verb|Seq|
 object's \verb|translate method|, and the optional \verb|cds| argument
 which enables correct translation of alternative start codons.
 
-We can combine this with \verb|Bio.SeqIO| as
+We can combine this with \verb|biopython.SeqIO| as
 shown in the reverse complement example in Section~\ref{sec:SeqIO-reverse-complement}.
 The key point is that for each nucleotide \verb|SeqRecord|, we need to create
 a protein \verb|SeqRecord| - and take care of naming it.
@@ -209,7 +209,7 @@ for your sequences, and the appropriate genetic code.  In this example we just
 use the default table and add a prefix to the identifier:
 
 \begin{minted}{python}
-from Bio.SeqRecord import SeqRecord
+from biopython.SeqRecord import SeqRecord
 
 
 def make_protein_record(nuc_record):
@@ -226,7 +226,7 @@ records ready for output.  An elegant way and memory efficient way to do this
 is with a generator expression:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 proteins = (
     make_protein_record(nuc_rec)
@@ -250,18 +250,18 @@ all upper case), and you can do this easily using the \verb|upper()| method
 of the \verb|SeqRecord| object (added in Biopython 1.55):
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 records = (rec.upper() for rec in SeqIO.parse("mixed.fas", "fasta"))
 count = SeqIO.write(records, "upper.fas", "fasta")
 print("Converted %i records to upper case" % count)
 \end{minted}
 
-How does this work? The first line is just importing the \verb|Bio.SeqIO|
+How does this work? The first line is just importing the \verb|biopython.SeqIO|
 module. The second line is the interesting bit -- this is a Python
 generator expression which gives an upper case version of each record
 parsed from the input file (\texttt{mixed.fas}). In the third line we give
-this generator expression to the \verb|Bio.SeqIO.write()| function and it
+this generator expression to the \verb|biopython.SeqIO.write()| function and it
 saves the new upper cases records to our output file (\texttt{upper.fas}).
 
 The reason we use a generator expression (rather than a list or list
@@ -274,13 +274,13 @@ millions of entries.
 
 Suppose you wanted to sort a sequence file by length (e.g. a set of
 contigs from an assembly), and you are working with a file format like
-FASTA or FASTQ which \verb|Bio.SeqIO| can read, write (and index).
+FASTA or FASTQ which \verb|biopython.SeqIO| can read, write (and index).
 
 If the file is small enough, you can load it all into memory at once
 as a list of \verb|SeqRecord| objects, sort the list, and save it:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 records = list(SeqIO.parse("ls_orchid.fasta", "fasta"))
 records.sort(key=lambda r: len(r))
@@ -293,7 +293,7 @@ longest records first, you could flip the comparison or use the
 reverse argument:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 records = list(SeqIO.parse("ls_orchid.fasta", "fasta"))
 records.sort(key=lambda r: -len(r))
@@ -304,10 +304,10 @@ Now that's pretty straight forward - but what happens if you have a
 very large file and you can't load it all into memory like this?
 For example, you might have some next-generation sequencing reads
 to sort by length. This can be solved using the
-\verb|Bio.SeqIO.index()| function.
+\verb|biopython.SeqIO.index()| function.
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 # Get the lengths and ids, and sort on length
 len_and_ids = sorted(
@@ -320,22 +320,22 @@ records = (record_index[id] for id in ids)
 SeqIO.write(records, "sorted.fasta", "fasta")
 \end{minted}
 
-First we scan through the file once using \verb|Bio.SeqIO.parse()|,
+First we scan through the file once using \verb|biopython.SeqIO.parse()|,
 recording the record identifiers and their lengths in a list of tuples.
 We then sort this list to get them in length order, and discard the lengths.
-Using this sorted list of identifiers \verb|Bio.SeqIO.index()| allows us to
-retrieve the records one by one, and we pass them to \verb|Bio.SeqIO.write()|
+Using this sorted list of identifiers \verb|biopython.SeqIO.index()| allows us to
+retrieve the records one by one, and we pass them to \verb|biopython.SeqIO.write()|
 for output.
 
-These examples all use \verb|Bio.SeqIO| to parse the records into
-\verb|SeqRecord| objects which are output using \verb|Bio.SeqIO.write()|.
-What if you want to sort a file format which \verb|Bio.SeqIO.write()| doesn't
+These examples all use \verb|biopython.SeqIO| to parse the records into
+\verb|SeqRecord| objects which are output using \verb|biopython.SeqIO.write()|.
+What if you want to sort a file format which \verb|biopython.SeqIO.write()| doesn't
 support, like the plain text SwissProt format? Here is an alternative
-solution using the \verb|get_raw()| method added to \verb|Bio.SeqIO.index()|
+solution using the \verb|get_raw()| method added to \verb|biopython.SeqIO.index()|
 in Biopython 1.54 (see Section~\ref{sec:seqio-index-getraw}).
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 # Get the lengths and ids, and sort on length
 len_and_ids = sorted(
@@ -359,8 +359,8 @@ format, we can speed this up one step further by using the low-level FASTA
 parser to get the record identifiers and lengths:
 
 \begin{minted}{python}
-from Bio.SeqIO.FastaIO import SimpleFastaParser
-from Bio import SeqIO
+from biopython.SeqIO.FastaIO import SimpleFastaParser
+from biopython import SeqIO
 
 # Get the lengths and ids, and sort on length
 with open("ls_orchid.fasta") as in_handle:
@@ -405,7 +405,7 @@ Roche 454 GS FLX single end data from virus infected California sea lions
 First, let's count the reads:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 count = 0
 for rec in SeqIO.parse("SRR020192.fastq", "fastq"):
@@ -416,7 +416,7 @@ print("%i reads" % count)
 \noindent Now let's do a simple filtering for a minimum PHRED quality of 20:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 good_reads = (
     rec
@@ -448,17 +448,17 @@ sequence we want to look for in some FASTQ formatted read data.  As in the examp
 above, we'll use the \texttt{SRR020192.fastq} file downloaded from the ENA
 (\url{ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR020/SRR020192/SRR020192.fastq.gz}).
 
-By using the main \verb|Bio.SeqIO| interface, the same approach would work with
+By using the main \verb|biopython.SeqIO| interface, the same approach would work with
 any other supported file format (e.g. FASTA files). However, for large FASTQ
 files it would be faster the low-level \verb|FastqGeneralIterator| parser here
 (see the earlier example, and Section~\ref{sec:low-level-fasta-fastq}).
 
-This code uses \verb|Bio.SeqIO| with a generator expression (to avoid loading
+This code uses \verb|biopython.SeqIO| with a generator expression (to avoid loading
 all the sequences into memory at once), and the \verb|Seq| object's
 \verb|startswith| method to see if the read starts with the primer sequence:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 primer_reads = (
     rec
@@ -478,7 +478,7 @@ but with the primer sequence removed?  That's just a small change as we can slic
 letters (the length of our primer):
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 trimmed_primer_reads = (
     rec[11:]
@@ -499,7 +499,7 @@ If we want to still use a generator expression, it is probably clearest to
 define our own trim function:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 
 def trim_primer(record, primer):
@@ -523,7 +523,7 @@ You could alternatively use a generator function rather than a generator
 expression.
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 
 def trim_primers(records, primer):
@@ -561,7 +561,7 @@ This time however, we will look for the sequence \emph{anywhere} in the reads,
 not just at the very beginning:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 
 def trim_adaptors(records, adaptor):
@@ -599,7 +599,7 @@ found in the middle rather than near the start). So, let's add a minimum
 length requirement as well:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 
 def trim_adaptors(records, adaptor, min_len):
@@ -638,7 +638,7 @@ quality scores), but that will be much slower.
 \label{sec:SeqIO-fastq-conversion}
 
 Back in Section~\ref{sec:SeqIO-conversion} we showed how to use
-\verb|Bio.SeqIO| to convert between two file formats. Here we'll go into a
+\verb|biopython.SeqIO| to convert between two file formats. Here we'll go into a
 little more detail regarding FASTQ files which are used in second generation
 DNA sequencing. Please refer to Cock \textit{et al.} (2009) \cite{cock2010}
 for a longer description. FASTQ files store both the DNA sequence (as a string)
@@ -669,7 +669,7 @@ distinguish...
 \item The original Sanger FASTQ format uses PHRED qualities encoded with an
 ASCII offset of 33. The NCBI are using this format in their Short Read
 Archive. We call this the \texttt{fastq} (or \texttt{fastq-sanger}) format
-in \verb|Bio.SeqIO|.
+in \verb|biopython.SeqIO|.
 \item Solexa (later bought by Illumina) introduced their own version using
 Solexa qualities encoded with an ASCII offset of 64. We call this the
 \texttt{fastq-solexa} format.
@@ -688,12 +688,12 @@ Given Solexa/Illumina have now moved to using PHRED scores in version 1.3 of
 their pipeline, the Solexa quality scores will gradually fall out of use.
 If you equate the error estimates ($P_e$) these two equations allow conversion
 between the two scoring systems - and Biopython includes functions to do this
-in the \verb|Bio.SeqIO.QualityIO| module, which are called if you use
-\verb|Bio.SeqIO| to convert an old Solexa/Illumina file into a standard Sanger
+in the \verb|biopython.SeqIO.QualityIO| module, which are called if you use
+\verb|biopython.SeqIO| to convert an old Solexa/Illumina file into a standard Sanger
 FASTQ file:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 SeqIO.convert("solexa.fastq", "fastq-solexa", "standard.fastq", "fastq")
 \end{minted}
@@ -703,13 +703,13 @@ is the ASCII offset because although encoded differently the scores are all
 PHRED qualities:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 SeqIO.convert("illumina.fastq", "fastq-illumina", "standard.fastq", "fastq")
 \end{minted}
 
-Note that using \verb|Bio.SeqIO.convert()| like this is \emph{much} faster
-than combining \verb|Bio.SeqIO.parse()| and \verb|Bio.SeqIO.write()|
+Note that using \verb|biopython.SeqIO.convert()| like this is \emph{much} faster
+than combining \verb|biopython.SeqIO.parse()| and \verb|biopython.SeqIO.write()|
 because optimised code is used for converting between FASTQ variants
 (and also for FASTQ to FASTA conversion).
 
@@ -722,10 +722,10 @@ deliberate design choice by Illumina, meaning applications expecting the old
 very different from the original FASTQ standard as used by Sanger,
 the NCBI, and elsewhere (format name \texttt{fastq} or \texttt{fastq-sanger}).
 
-For more details, see the built in help (also \href{http://www.biopython.org/docs/\bpversion/api/Bio.SeqIO.QualityIO.html}{online}):
+For more details, see the built in help (also \href{http://www.biopython.org/docs/\bpversion/api/biopython.SeqIO.QualityIO.html}{online}):
 
 \begin{minted}{pycon}
->>> from Bio.SeqIO import QualityIO
+>>> from biopython.SeqIO import QualityIO
 >>> help(QualityIO)
 ...
 \end{minted}
@@ -741,7 +741,7 @@ the qualities. Therefore a single FASTQ file can be converted to or from
 Going from FASTQ to FASTA is easy:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 SeqIO.convert("example.fastq", "fastq", "example.fasta", "fasta")
 \end{minted}
@@ -749,22 +749,22 @@ SeqIO.convert("example.fastq", "fastq", "example.fasta", "fasta")
 Going from FASTQ to QUAL is also easy:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 SeqIO.convert("example.fastq", "fastq", "example.qual", "qual")
 \end{minted}
 
-However, the reverse is a little more tricky. You can use \verb|Bio.SeqIO.parse()|
+However, the reverse is a little more tricky. You can use \verb|biopython.SeqIO.parse()|
 to iterate over the records in a \emph{single} file, but in this case we have
 two input files. There are several strategies possible, but assuming that the
 two files are really paired the most memory efficient way is to loop over both
 together. The code is a little fiddly, so we provide a function called
-\verb|PairedFastaQualIterator| in the \verb|Bio.SeqIO.QualityIO| module to do
+\verb|PairedFastaQualIterator| in the \verb|biopython.SeqIO.QualityIO| module to do
 this. This takes two handles (the FASTA file and the QUAL file) and returns
 a \verb|SeqRecord| iterator:
 
 \begin{minted}{python}
-from Bio.SeqIO.QualityIO import PairedFastaQualIterator
+from biopython.SeqIO.QualityIO import PairedFastaQualIterator
 
 for record in PairedFastaQualIterator(open("example.fasta"), open("example.qual")):
     print(record)
@@ -772,12 +772,12 @@ for record in PairedFastaQualIterator(open("example.fasta"), open("example.qual"
 
 This function will check that the FASTA and QUAL files are consistent (e.g.
 the records are in the same order, and have the same sequence length).
-You can combine this with the \verb|Bio.SeqIO.write()| function to convert a
+You can combine this with the \verb|biopython.SeqIO.write()| function to convert a
 pair of FASTA and QUAL files into a single FASTQ files:
 
 \begin{minted}{python}
-from Bio import SeqIO
-from Bio.SeqIO.QualityIO import PairedFastaQualIterator
+from biopython import SeqIO
+from biopython.SeqIO.QualityIO import PairedFastaQualIterator
 
 with open("example.fasta") as f_handle, open("example.qual") as q_handle:
     records = PairedFastaQualIterator(f_handle, q_handle)
@@ -794,7 +794,7 @@ This is why the examples above (filtering and trimming) iterate over the file
 looking at just one \verb|SeqRecord| at a time.
 
 However, sometimes you can't use a big loop or an iterator - you may need
-random access to the reads. Here the \verb|Bio.SeqIO.index()| function
+random access to the reads. Here the \verb|biopython.SeqIO.index()| function
 may prove very helpful, as it allows you to access any read in the FASTQ file
 by its name (see Section~\ref{sec:SeqIO-index}).
 
@@ -803,7 +803,7 @@ Again we'll use the \texttt{SRR020192.fastq} file from the ENA
 although this is actually quite a small FASTQ file with less than $50,000$ reads:
 
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> fq_dict = SeqIO.index("SRR020192.fastq", "fastq")
 >>> len(fq_dict)
 41892
@@ -816,12 +816,12 @@ Seq('GTCCCAGTATTCGGATTTGTCTGCCAAAACAATGAAATTGACACAGTTTACAAC...CCG')
 When testing this on a FASTQ file with seven million reads,
 indexing took about a minute, but record access was almost instant.
 
-The sister function \verb|Bio.SeqIO.index_db()| lets you save the index
+The sister function \verb|biopython.SeqIO.index_db()| lets you save the index
 to an SQLite3 database file for near instantaneous reuse - see
 Section~\ref{sec:SeqIO-index} for more details.
 
 The example in Section~\ref{sec:SeqIO-sort} show how you can use the
-\verb|Bio.SeqIO.index()| function to sort a large FASTA file -- this
+\verb|biopython.SeqIO.index()| function to sort a large FASTA file -- this
 could also be used on FASTQ files.
 
 \subsection{Converting SFF files}
@@ -834,10 +834,10 @@ flow information.
 
 A common task is to convert from SFF to a pair of FASTA and QUAL files,
 or to a single FASTQ file. These operations are trivial using the
-\verb|Bio.SeqIO.convert()| function (see Section~\ref{sec:SeqIO-conversion}):
+\verb|biopython.SeqIO.convert()| function (see Section~\ref{sec:SeqIO-conversion}):
 
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> SeqIO.convert("E3MFGYR02_random_10_reads.sff", "sff", "reads.fasta", "fasta")
 10
 >>> SeqIO.convert("E3MFGYR02_random_10_reads.sff", "sff", "reads.qual", "qual")
@@ -853,7 +853,7 @@ case. If you want the \emph{trimmed} reads (using the clipping information
 recorded within the SFF file) use this:
 
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> SeqIO.convert("E3MFGYR02_random_10_reads.sff", "sff-trim", "trimmed.fasta", "fasta")
 10
 >>> SeqIO.convert("E3MFGYR02_random_10_reads.sff", "sff-trim", "trimmed.qual", "qual")
@@ -880,7 +880,7 @@ the trimming points deliberately mimics what the Roche tools do.
 For more information on the Biopython SFF support, consult the built in help:
 
 \begin{minted}{pycon}
->>> from Bio.SeqIO import SffIO
+>>> from biopython.SeqIO import SffIO
 >>> help(SffIO)
 ...
 \end{minted}
@@ -905,7 +905,7 @@ NCBI codon table 11 (see Section~\ref{sec:translation} about translation).
 
 %doctest ../Tests/GenBank
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> record = SeqIO.read("NC_005816.fna", "fasta")
 >>> table = 11
 >>> min_pro_len = 100
@@ -953,7 +953,7 @@ parent sequence by multiplying by three, then adjusting for the frame and
 strand:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 record = SeqIO.read("NC_005816.gb", "genbank")
 table = 11
@@ -1034,7 +1034,7 @@ find whole books about this topic!
 \label{sec:sequence-parsing-plus-pylab}
 
 This section shows some more examples of sequence parsing, using the
-\verb|Bio.SeqIO| module described in Chapter~\ref{chapter:seqio},
+\verb|biopython.SeqIO| module described in Chapter~\ref{chapter:seqio},
 plus the Python library matplotlib's \verb|pylab| plotting interface
 (see \href{https://matplotlib.org}{the matplotlib website
 for a tutorial}).  Note that to follow these examples you will need
@@ -1049,12 +1049,12 @@ project.  In this example we'll reuse our orchid FASTA file
 \href{https://raw.githubusercontent.com/biopython/biopython/master/Doc/examples/ls_orchid.fasta}{ls\_orchid.fasta}
 which has only 94 sequences.
 
-First of all, we will use \verb|Bio.SeqIO| to parse the FASTA file and compile a list
+First of all, we will use \verb|biopython.SeqIO| to parse the FASTA file and compile a list
 of all the sequence lengths.  You could do this with a for loop, but I find a list
 comprehension more pleasing:
 
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> sizes = [len(rec) for rec in SeqIO.parse("ls_orchid.fasta", "fasta")]
 >>> len(sizes), min(sizes), max(sizes)
 (94, 572, 789)
@@ -1066,7 +1066,7 @@ Now that we have the lengths of all the genes (as a list of integers), we can us
 matplotlib histogram function to display it.
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 sizes = [len(rec) for rec in SeqIO.parse("ls_orchid.fasta", "fasta")]
 
@@ -1122,12 +1122,12 @@ investigate any outliers which could have been recently acquired by horizontal g
 transfer.  Again, for this example we'll reuse our orchid FASTA file
 \href{https://raw.githubusercontent.com/biopython/biopython/master/Doc/examples/ls_orchid.fasta}{ls\_orchid.fasta}.
 
-First of all, we will use \verb|Bio.SeqIO| to parse the FASTA file and compile a list
+First of all, we will use \verb|biopython.SeqIO| to parse the FASTA file and compile a list
 of all the GC percentages.  Again, you could do this with a for loop, but I prefer this:
 
 \begin{minted}{python}
-from Bio import SeqIO
-from Bio.SeqUtils import GC
+from biopython import SeqIO
+from biopython.SeqUtils import GC
 
 gc_values = sorted(GC(rec) for rec in SeqIO.parse("ls_orchid.fasta", "fasta"))
 \end{minted}
@@ -1205,7 +1205,7 @@ To start off, we'll need two sequences.  For the sake of argument, we'll just ta
 the first two from our orchid FASTA file \href{https://raw.githubusercontent.com/biopython/biopython/master/Doc/examples/ls_orchid.fasta}{ls\_orchid.fasta}:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 with open("ls_orchid.fasta") as in_handle:
     record_iterator = SeqIO.parse(in_handle, "fasta")
@@ -1366,7 +1366,7 @@ bit of code to only plot the first fifty reads.
 
 \begin{minted}{python}
 import pylab
-from Bio import SeqIO
+from biopython import SeqIO
 
 for subfigure in [1, 2]:
     filename = "SRR001666_%i.fastq" % subfigure
@@ -1382,7 +1382,7 @@ pylab.savefig("SRR001666.png")
 print("Done")
 \end{minted}
 
-You should note that we are using the \verb|Bio.SeqIO| format name \texttt{fastq}
+You should note that we are using the \verb|biopython.SeqIO| format name \texttt{fastq}
 here because the NCBI has saved these reads using the standard Sanger FASTQ format
 with PHRED scores. However, as you might guess from the read lengths, this data was
 from an Illumina Genome Analyzer and was probably originally in one of the two
@@ -1416,10 +1416,10 @@ This section can been seen as a follow on to Chapter~\ref{chapter:align}.
 
 Once you have an alignment, you are very likely going to want to find out information about it. Instead of trying to have all of the functions that can generate information about an alignment in the alignment object itself, we've tried to separate out the functionality into separate classes, which act on the alignment.
 
-Getting ready to calculate summary information about an object is quick to do. Let's say we've got an alignment object called \verb|alignment|, for example read in using \verb|Bio.AlignIO.read(...)| as described in Chapter~\ref{chapter:align}. All we need to do to get an object that will calculate summary information is:
+Getting ready to calculate summary information about an object is quick to do. Let's say we've got an alignment object called \verb|alignment|, for example read in using \verb|biopython.AlignIO.read(...)| as described in Chapter~\ref{chapter:align}. All we need to do to get an object that will calculate summary information is:
 
 \begin{minted}{python}
-from Bio.Align import AlignInfo
+from biopython.Align import AlignInfo
 
 summary_align = AlignInfo.SummaryInfo(alignment)
 \end{minted}
@@ -1627,7 +1627,7 @@ example, we'll first read a protein sequence alignment from the Clustalw file
 
 %doctest ../Tests/Clustalw
 \begin{minted}{pycon}
->>> from Bio import AlignIO
+>>> from biopython import AlignIO
 >>> filename = "protein.aln"
 >>> alignment = AlignIO.read(filename, "clustal")
 \end{minted}
@@ -1712,7 +1712,7 @@ R  -4.2 -8.3 -4.7  -2.3  2.5
 This matrix can be used as the substitution matrix when performing alignments. For example,
 %cont-doctest
 \begin{minted}{pycon}
->>> from Bio.Align import PairwiseAligner
+>>> from biopython.Align import PairwiseAligner
 >>> aligner = PairwiseAligner()
 >>> aligner.substitution_matrix = m
 >>> aligner.gap_score = -3.0
@@ -1738,7 +1738,7 @@ shared database schema for storing sequence data. In theory, you could load a
 GenBank file into the database with BioPerl, then using Biopython extract this
 from the database as a record object with features - and get more or less the same
 thing as if you had loaded the GenBank file directly as a SeqRecord using
-\verb|Bio.SeqIO| (Chapter~\ref{chapter:seqio}).
+\verb|biopython.SeqIO| (Chapter~\ref{chapter:seqio}).
 
 Biopython's BioSQL module is currently documented at
 \url{http://biopython.org/wiki/BioSQL} which is part of our wiki pages.

@@ -3,7 +3,7 @@
 # This code is part of the Biopython distribution and governed by its
 # license.  Please see the LICENSE file that should have been included
 # as part of this package.
-"""Testing code for Bio.Entrez parsers."""
+"""Testing code for biopython.Entrez parsers."""
 
 import unittest
 import sys
@@ -11,11 +11,11 @@ import os
 
 from io import BytesIO, StringIO
 
-from Bio import Entrez
+from biopython import Entrez
 
 
 class GeneralTests(unittest.TestCase):
-    """General tests for Bio.Entrez."""
+    """General tests for biopython.Entrez."""
 
     def test_closed_handle(self):
         """Test parsing closed handle fails gracefully."""
@@ -71,7 +71,7 @@ class EInfoTest(unittest.TestCase):
     def test_list(self):
         """Test parsing database list returned by EInfo."""
         # To create the XML file, use
-        # >>> Bio.Entrez.einfo()
+        # >>> biopython.Entrez.einfo()
         with open("Entrez/einfo1.xml", "rb") as handle:
             record = Entrez.read(handle)
         self.assertEqual(
@@ -120,7 +120,7 @@ class EInfoTest(unittest.TestCase):
     def test_pubmed1(self):
         """Test parsing database info returned by EInfo."""
         # To create the XML file, use
-        # >>> Bio.Entrez.einfo(db="pubmed")
+        # >>> biopython.Entrez.einfo(db="pubmed")
         with open("Entrez/einfo2.xml", "rb") as handle:
             record = Entrez.read(handle)
         self.assertEqual(record["DbInfo"]["DbName"], "pubmed")
@@ -157,10 +157,10 @@ class EInfoTest(unittest.TestCase):
     def test_pubmed2(self):
         """Test validating the XML against the DTD."""
         # To create the XML file, use
-        # >>> Bio.Entrez.einfo(db="pubmed")
-        # Starting some time in 2010, the results returned by Bio.Entrez
+        # >>> biopython.Entrez.einfo(db="pubmed")
+        # Starting some time in 2010, the results returned by biopython.Entrez
         # included some tags that are not part of the corresponding DTD.
-        from Bio.Entrez import Parser
+        from biopython.Entrez import Parser
 
         with open("Entrez/einfo3.xml", "rb") as handle:
             self.assertRaises(Parser.ValidationError, Entrez.read, handle)
@@ -168,8 +168,8 @@ class EInfoTest(unittest.TestCase):
     def test_pubmed3(self):
         """Test non-validating parser on XML with an inconsistent DTD."""
         # To create the XML file, use
-        # >>> Bio.Entrez.einfo(db="pubmed")
-        # Starting some time in 2010, the results returned by Bio.Entrez
+        # >>> biopython.Entrez.einfo(db="pubmed")
+        # Starting some time in 2010, the results returned by biopython.Entrez
         # included some tags that are not part of the corresponding DTD.
         with open("Entrez/einfo3.xml", "rb") as handle:
             record = Entrez.read(handle, validate=False)
@@ -1217,9 +1217,9 @@ class EInfoTest(unittest.TestCase):
     def test_corrupted(self):
         """Test if corrupted XML is handled correctly."""
         # To create the XML file, use
-        # >>> Bio.Entrez.einfo()
+        # >>> biopython.Entrez.einfo()
         # and manually delete the last couple of lines
-        from Bio.Entrez import Parser
+        from biopython.Entrez import Parser
 
         with open("Entrez/einfo4.xml", "rb") as handle:
             self.assertRaises(Parser.CorruptedXMLError, Entrez.read, handle)
@@ -1231,7 +1231,7 @@ class ESearchTest(unittest.TestCase):
     def test_pubmed1(self):
         """Test parsing XML returned by ESearch from PubMed (first test)."""
         # To create the XML file, use
-        # >>> Bio.Entrez.esearch(db="pubmed", term="biopython")
+        # >>> biopython.Entrez.esearch(db="pubmed", term="biopython")
         with open("Entrez/esearch1.xml", "rb") as handle:
             record = Entrez.read(handle)
         self.assertEqual(record["Count"], "5")
@@ -1260,7 +1260,7 @@ class ESearchTest(unittest.TestCase):
         # the last 60 days and retrieve the first 100 IDs and translations
         # using the history parameter.
         # To create the XML file, use
-        # >>> Bio.Entrez.esearch(db="pubmed", term="cancer", reldate=60,
+        # >>> biopython.Entrez.esearch(db="pubmed", term="cancer", reldate=60,
         #                        datetype="edat", retmax=100, usehistory="y")
         with open("Entrez/esearch2.xml", "rb") as handle:
             record = Entrez.read(handle)
@@ -1436,7 +1436,7 @@ class ESearchTest(unittest.TestCase):
         # Search in PubMed for the journal PNAS Volume 97, and retrieve
         # 6 IDs starting at ID 7.
         # To create the XML file, use
-        # >>> Bio.Entrez.esearch(db="pubmed", term="PNAS[ta] AND 97[vi]",
+        # >>> biopython.Entrez.esearch(db="pubmed", term="PNAS[ta] AND 97[vi]",
         #                        retstart=6, retmax=6)
         with open("Entrez/esearch3.xml", "rb") as handle:
             record = Entrez.read(handle)
@@ -1479,7 +1479,7 @@ class ESearchTest(unittest.TestCase):
         """Test parsing XML returned by ESearch from the Journals database."""
         # Search in Journals for the term obstetrics.
         # To create the XML file, use
-        # >>> Bio.Entrez.esearch(db="journals", term="obstetrics")
+        # >>> biopython.Entrez.esearch(db="journals", term="obstetrics")
         with open("Entrez/esearch4.xml", "rb") as handle:
             record = Entrez.read(handle)
         self.assertEqual(record["Count"], "177")
@@ -1523,7 +1523,7 @@ class ESearchTest(unittest.TestCase):
         """Test parsing XML returned by ESearch from PubMed Central."""
         # Search in PubMed Central for stem cells in free fulltext articles.
         # To create the XML file, use
-        # >>> Bio.Entrez.esearch(db="pmc",
+        # >>> biopython.Entrez.esearch(db="pmc",
         #                        term="stem cells AND free fulltext[filter]")
         with open("Entrez/esearch5.xml", "rb") as handle:
             record = Entrez.read(handle)
@@ -1635,7 +1635,7 @@ class ESearchTest(unittest.TestCase):
         """Test parsing XML returned by ESearch from the Nucleotide database."""
         # Search in Nucleotide for a property of the sequence,
         # To create the XML file, use
-        # >>> Bio.Entrez.esearch(db="nucleotide", term="biomol trna[prop]")
+        # >>> biopython.Entrez.esearch(db="nucleotide", term="biomol trna[prop]")
         with open("Entrez/esearch6.xml", "rb") as handle:
             record = Entrez.read(handle)
         self.assertEqual(record["Count"], "699")
@@ -1669,7 +1669,7 @@ class ESearchTest(unittest.TestCase):
         """Test parsing XML returned by ESearch from the Protein database."""
         # Search in Protein for a molecular weight
         # To create the XML file, use
-        # >>> Bio.Entrez.esearch(db="protein", term="200020[molecular weight]")
+        # >>> biopython.Entrez.esearch(db="protein", term="200020[molecular weight]")
         with open("Entrez/esearch7.xml", "rb") as handle:
             record = Entrez.read(handle)
         self.assertEqual(record["Count"], "3")
@@ -1695,7 +1695,7 @@ class ESearchTest(unittest.TestCase):
     def test_notfound(self):
         """Test parsing XML returned by ESearch when no items were found."""
         # To create the XML file, use
-        # >>> Bio.Entrez.esearch(db="protein", term="abcXYZ")
+        # >>> biopython.Entrez.esearch(db="protein", term="abcXYZ")
         with open("Entrez/esearch8.xml", "rb") as handle:
             record = Entrez.read(handle)
         self.assertEqual(record["Count"], "0")
@@ -1728,7 +1728,7 @@ class EPostTest(unittest.TestCase):
     def test_epost(self):
         """Test parsing XML returned by EPost."""
         # To create the XML file, use
-        # >>> Bio.Entrez.epost(db="pubmed", id="11237011")
+        # >>> biopython.Entrez.epost(db="pubmed", id="11237011")
         with open("Entrez/epost1.xml", "rb") as handle:
             record = Entrez.read(handle)
         self.assertEqual(record["QueryKey"], "1")
@@ -1740,14 +1740,14 @@ class EPostTest(unittest.TestCase):
     def test_wrong(self):
         """Test parsing XML returned by EPost with incorrect arguments."""
         # To create the XML file, use
-        # >>> Bio.Entrez.epost(db="nothing")
+        # >>> biopython.Entrez.epost(db="nothing")
         with open("Entrez/epost2.xml", "rb") as handle:
             self.assertRaises(RuntimeError, Entrez.read, handle)
 
     def test_invalid(self):
         """Test parsing XML returned by EPost with invalid id (overflow tag)."""
         # To create the XML file, use
-        # >>> Bio.Entrez.epost(db="pubmed", id=99999999999999999999999999999999)
+        # >>> biopython.Entrez.epost(db="pubmed", id=99999999999999999999999999999999)
         with open("Entrez/epost3.xml", "rb") as handle:
             record = Entrez.read(handle)
         self.assertEqual(record["InvalidIdList"], ["-1"])
@@ -1770,7 +1770,7 @@ class ESummaryTest(unittest.TestCase):
         # In PubMed display records for PMIDs 11850928 and 11482001 in
         # xml retrieval mode
         # To create the XML file, use
-        # >>> Bio.Entrez.esummary(db="pubmed", id=["11850928","11482001"],
+        # >>> biopython.Entrez.esummary(db="pubmed", id=["11850928","11482001"],
         #                         retmode="xml")
         with open("Entrez/esummary1.xml", "rb") as handle:
             record = Entrez.read(handle)
@@ -1856,7 +1856,7 @@ class ESummaryTest(unittest.TestCase):
         """Test parsing XML returned by ESummary from the Journals database."""
         # In Journals display records for journal IDs 27731,439,735,905
         # To create the XML file, use
-        # >>> Bio.Entrez.esummary(db="journals", id="27731,439,735,905")
+        # >>> biopython.Entrez.esummary(db="journals", id="27731,439,735,905")
         with open("Entrez/esummary2.xml", "rb") as handle:
             record = Entrez.read(handle)
         self.assertEqual(record[0]["Id"], "27731")
@@ -1947,7 +1947,7 @@ class ESummaryTest(unittest.TestCase):
         """Test parsing XML returned by ESummary from the Protein database."""
         # In Protein display records for GIs 28800982 and 28628843 in xml retrieval mode
         # To create the XML file, use
-        # >>> Bio.Entrez.esummary(db="protein", id="28800982,28628843", retmode="xml")
+        # >>> biopython.Entrez.esummary(db="protein", id="28800982,28628843", retmode="xml")
         with open("Entrez/esummary3.xml", "rb") as handle:
             record = Entrez.read(handle)
         self.assertEqual(record[0]["Id"], "28800982")
@@ -1987,7 +1987,7 @@ class ESummaryTest(unittest.TestCase):
         # In Nucleotide display records for GIs 28864546 and 28800981
         # in xml retrieval mode
         # To create the XML file, use
-        # >>> Bio.Entrez.esummary(db="nucleotide", id="28864546,28800981",
+        # >>> biopython.Entrez.esummary(db="nucleotide", id="28864546,28800981",
         #                         retmode="xml")
         with open("Entrez/esummary4.xml", "rb") as handle:
             record = Entrez.read(handle)
@@ -2029,7 +2029,7 @@ class ESummaryTest(unittest.TestCase):
         # In Nucleotide display records for GIs 28864546 and 28800981
         # in xml retrieval mode
         # To create the XML file, use
-        # >>> Bio.Entrez.esummary(db="structure", id=["19923","12120"],
+        # >>> biopython.Entrez.esummary(db="structure", id=["19923","12120"],
         #                         retmode="xml")
         with open("Entrez/esummary5.xml", "rb") as handle:
             record = Entrez.read(handle)
@@ -2082,7 +2082,7 @@ class ESummaryTest(unittest.TestCase):
         # In Taxonomy display records for TAXIDs 9913 and 30521 in
         # xml retrieval mode
         # To create the XML file, use
-        # >>> Bio.Entrez.esummary(db="taxonomy", id=["9913","30521"],
+        # >>> biopython.Entrez.esummary(db="taxonomy", id=["9913","30521"],
         #                         retmode="xml")
         with open("Entrez/esummary6.xml", "rb") as handle:
             record = Entrez.read(handle)
@@ -2121,7 +2121,7 @@ class ESummaryTest(unittest.TestCase):
         # In UniSTS display records for IDs 254085 and 254086 in xml
         # retrieval mode
         # To create the XML file, use
-        # >>> Bio.Entrez.esummary(db="unists", id=["254085","254086"],
+        # >>> biopython.Entrez.esummary(db="unists", id=["254085","254086"],
         #                         retmode="xml")
         with open("Entrez/esummary7.xml", "rb") as handle:
             record = Entrez.read(handle)
@@ -2150,7 +2150,7 @@ class ESummaryTest(unittest.TestCase):
     def test_wrong(self):
         """Test parsing XML returned by ESummary with incorrect arguments."""
         # To create the XML file, use
-        # >>> Bio.Entrez.esummary()
+        # >>> biopython.Entrez.esummary()
         with open("Entrez/esummary8.xml", "rb") as handle:
             self.assertRaises(RuntimeError, Entrez.read, handle)
 
@@ -2315,7 +2315,7 @@ class ELinkTest(unittest.TestCase):
         """Test parsing pubmed links returned by ELink (first test)."""
         # Retrieve IDs from PubMed for PMID 9298984 to the PubMed database
         # To create the XML file, use
-        # >>> Bio.Entrez.elink(dbfrom="pubmed", id="9298984", cmd="neighbor")
+        # >>> biopython.Entrez.elink(dbfrom="pubmed", id="9298984", cmd="neighbor")
         with open("Entrez/elink1.xml", "rb") as handle:
             record = Entrez.read(handle)
         self.assertEqual(len(record), 1)
@@ -2523,7 +2523,7 @@ class ELinkTest(unittest.TestCase):
         """Test parsing Nucleotide to Protein links returned by ELink."""
         # Retrieve IDs from Nucleotide for GI  48819, 7140345 to Protein
         # To create the XML file, use
-        # >>> Bio.Entrez.elink(dbfrom="nucleotide", db="protein",
+        # >>> biopython.Entrez.elink(dbfrom="nucleotide", db="protein",
         #                      id="48819,7140345")
         with open("Entrez/elink2.xml", "rb") as handle:
             record = Entrez.read(handle)
@@ -2562,7 +2562,7 @@ class ELinkTest(unittest.TestCase):
         # Retrieve PubMed related articles for PMIDs 11812492 11774222
         # with a publication date from 1995 to the present
         # To create the XML file, use
-        # >>> Bio.Entrez.elink(dbfrom="pubmed", id="11812492,11774222",
+        # >>> biopython.Entrez.elink(dbfrom="pubmed", id="11812492,11774222",
         #                      db="pubmed", mindate="1995", datetype="pdat")
         with open("Entrez/elink3.xml", "rb") as handle:
             record = Entrez.read(handle)
@@ -2940,7 +2940,7 @@ class ELinkTest(unittest.TestCase):
         """Test parsing medline indexed articles returned by ELink."""
         # Retrieve MEDLINE indexed only related articles for PMID 12242737
         # To create the XML file, use
-        # >>> Bio.Entrez.elink(dbfrom="pubmed", id="12242737", db="pubmed",
+        # >>> biopython.Entrez.elink(dbfrom="pubmed", id="12242737", db="pubmed",
         #                      term="medline[sb]")
         with open("Entrez/elink4.xml", "rb") as handle:
             record = Entrez.read(handle)
@@ -3172,7 +3172,7 @@ class ELinkTest(unittest.TestCase):
         # Create a hyperlink to the first link available for PMID 10611131
         # in PubMed
         # To create the XML file, use
-        # >>> Bio.Entrez.elink(dbfrom="pubmed", id="10611131", cmd="prlinks")
+        # >>> biopython.Entrez.elink(dbfrom="pubmed", id="10611131", cmd="prlinks")
 
         with open("Entrez/elink5.xml", "rb") as handle:
             record = Entrez.read(handle)
@@ -3236,7 +3236,7 @@ class ELinkTest(unittest.TestCase):
         # List all available links in PubMed, except for libraries, for
         # PMIDs 12085856 and 12085853
         # To create the XML file, use
-        # >>> Bio.Entrez.elink(dbfrom="pubmed", id="12085856,12085853", cmd="llinks")
+        # >>> biopython.Entrez.elink(dbfrom="pubmed", id="12085856,12085853", cmd="llinks")
         with open("Entrez/elink6.xml", "rb") as handle:
             record = Entrez.read(handle)
         self.assertEqual(record[0]["DbFrom"], "pubmed")
@@ -3437,7 +3437,7 @@ class ELinkTest(unittest.TestCase):
         """Test parsing pubmed links returned by ELink (fifth test)."""
         # List Entrez database links for PubMed PMIDs 12169658 and 11748140
         # To create the XML file, use
-        # >>> Bio.Entrez.elink(dbfrom="pubmed", id="12169658,11748140",
+        # >>> biopython.Entrez.elink(dbfrom="pubmed", id="12169658,11748140",
         #                      cmd="acheck")
         with open("Entrez/elink7.xml", "rb") as handle:
             record = Entrez.read(handle)
@@ -4170,7 +4170,7 @@ class ELinkTest(unittest.TestCase):
         # Check for the existence of a Related Articles link for PMID
         # 12068369.
         # To create the XML file, use
-        # >>> Bio.Entrez.elink(dbfrom="pubmed", id="12068369", cmd="ncheck")
+        # >>> biopython.Entrez.elink(dbfrom="pubmed", id="12068369", cmd="ncheck")
 
         with open("Entrez/elink8.xml", "rb") as handle:
             record = Entrez.read(handle)
@@ -4193,7 +4193,7 @@ class EGQueryTest(unittest.TestCase):
         """Test parsing XML output returned by EGQuery (first test)."""
         # Display counts in XML for stem cells in each Entrez database
         # To create the XML file, use
-        # >>> Bio.Entrez.egquery(term="stem cells")
+        # >>> biopython.Entrez.egquery(term="stem cells")
         with open("Entrez/egquery1.xml", "rb") as handle:
             record = Entrez.read(handle)
         self.assertEqual(record["Term"], "stem cells")
@@ -4404,7 +4404,7 @@ class EGQueryTest(unittest.TestCase):
         """Test parsing XML output returned by EGQuery (second test)."""
         # Display counts in XML for brca1 or brca2 for each Entrez database
         # To create the XML file, use
-        # >>> Bio.Entrez.egquery(term="brca1 OR brca2")
+        # >>> biopython.Entrez.egquery(term="brca1 OR brca2")
         with open("Entrez/egquery2.xml", "rb") as handle:
             record = Entrez.read(handle)
         self.assertEqual(record["Term"], "brca1 OR brca2")
@@ -4577,7 +4577,7 @@ class ESpellTest(unittest.TestCase):
         """Test parsing XML output returned by ESpell."""
         # Request suggestions for the PubMed search biopythooon
         # To create the XML file, use
-        # >>> Bio.Entrez.espell(db="pubmed", term="biopythooon")
+        # >>> biopython.Entrez.espell(db="pubmed", term="biopythooon")
         with open("Entrez/espell.xml", "rb") as handle:
             record = Entrez.read(handle)
         self.assertEqual(record["Database"], "pubmed")
@@ -4596,7 +4596,7 @@ class EFetchTest(unittest.TestCase):
         # In PubMed display PMIDs 12091962 and 9997 in xml retrieval mode
         # and abstract retrieval type.
         # To create the XML file, use
-        # >>> Bio.Entrez.efetch(db='pubmed', id='12091962,9997',
+        # >>> biopython.Entrez.efetch(db='pubmed', id='12091962,9997',
         #                       retmode='xml', rettype='abstract')
         with open("Entrez/pubmed1.xml", "rb") as handle:
             record = Entrez.read(handle)
@@ -5275,7 +5275,7 @@ class EFetchTest(unittest.TestCase):
         """Test parsing XML returned by EFetch, PubMed database (second test)."""
         # In PubMed display PMIDs in xml retrieval mode.
         # To create the XML file, use
-        # >>> Bio.Entrez.efetch(db='pubmed', id="11748933,11700088",
+        # >>> biopython.Entrez.efetch(db='pubmed', id="11748933,11700088",
         #                       retmode="xml")
         with open("Entrez/pubmed2.xml", "rb") as handle:
             record = Entrez.read(handle)
@@ -5982,7 +5982,7 @@ class EFetchTest(unittest.TestCase):
         """Test parsing XML returned by EFetch, PubMed database with HTML tags."""
         # In PubMed display PMIDs in xml retrieval mode.
         # To create the XML file, use
-        # >>> Bio.Entrez.efetch(db='pubmed', retmode='xml', id='29106400')
+        # >>> biopython.Entrez.efetch(db='pubmed', retmode='xml', id='29106400')
         with open("Entrez/pubmed4.xml", "rb") as handle:
             records = Entrez.read(handle)
         self.assertEqual(len(records), 2)
@@ -6317,7 +6317,7 @@ class EFetchTest(unittest.TestCase):
         """Test parsing XML returned by EFetch, PubMed database with HTML tags and HTML escape characters."""
         # In PubMed display PMIDs in xml retrieval mode.
         # To create the XML file, use
-        # >>> Bio.Entrez.efetch(db='pubmed', retmode='xml', id='28775130')
+        # >>> biopython.Entrez.efetch(db='pubmed', retmode='xml', id='28775130')
         with open("Entrez/pubmed5.xml", "rb") as handle:
             record = Entrez.read(handle, escape=True)
         self.assertEqual(len(record), 2)
@@ -7883,7 +7883,7 @@ class EFetchTest(unittest.TestCase):
         # In PubMed display PMID 30108519 in xml retrieval mode, containing
         # both HTML and MathML tags in the abstract text.
         # To create the XML file, use
-        # >>> Bio.Entrez.efetch(db="pubmed", id='30108519', rettype="null",
+        # >>> biopython.Entrez.efetch(db="pubmed", id='30108519', rettype="null",
         #                       retmode="xml", parsed=True)
         with open("Entrez/pubmed6.xml", "rb") as handle:
             record = Entrez.read(handle)
@@ -9013,7 +9013,7 @@ Maximal Lactate Steady State (MLSS) and Lactate Threshold (LT) are physiological
         # In PubMed display PMID 29963580 in xml retrieval mode, containing
         # extensive MathML tags in the abstract text.
         # To create the XML file, use
-        # >>> Bio.Entrez.efetch(db="pubmed", id="29963580", retmode="xml")
+        # >>> biopython.Entrez.efetch(db="pubmed", id="29963580", retmode="xml")
         with open("Entrez/pubmed7.xml", "rb") as handle:
             record = Entrez.read(handle)
         self.assertEqual(len(record), 2)
@@ -10085,7 +10085,7 @@ We designed and generated pulmonary imaging biomarker pipelines to facilitate hi
         """Test parsing XML returned by EFetch, OMIM database."""
         # In OMIM show the full record for MIM number 601100 as XML
         # To create the XML file, use
-        # >>> Bio.Entrez.efetch(db="omim", id="601100", retmode='xml',
+        # >>> biopython.Entrez.efetch(db="omim", id="601100", retmode='xml',
         #                       rettype='full')
         with open("Entrez/ncbi_mim.xml", "rb") as handle:
             record = Entrez.read(handle)
@@ -10825,7 +10825,7 @@ We designed and generated pulmonary imaging biomarker pipelines to facilitate hi
         """Test parsing XML returned by EFetch, Taxonomy database."""
         # Access the Taxonomy database using efetch.
         # To create the XML file, use
-        # >>> Bio.Entrez.efetch(db="taxonomy", id="9685", retmode="xml")
+        # >>> biopython.Entrez.efetch(db="taxonomy", id="9685", retmode="xml")
         with open("Entrez/taxonomy.xml", "rb") as handle:
             record = Entrez.read(handle)
         self.assertEqual(len(record), 1)
@@ -10943,7 +10943,7 @@ We designed and generated pulmonary imaging biomarker pipelines to facilitate hi
         """Test parsing XML returned by EFetch, Nucleotide database (first test)."""
         # Access the nucleotide database using efetch.
         # To create the XML file, use
-        # >>> Bio.Entrez.efetch(db='nucleotide', id=5, retmode='xml')
+        # >>> biopython.Entrez.efetch(db='nucleotide', id=5, retmode='xml')
         with open("Entrez/nucleotide1.xml", "rb") as handle:
             record = Entrez.read(handle)
         self.assertEqual(record[0]["GBSeq_locus"], "X60065")
@@ -11438,7 +11438,7 @@ We designed and generated pulmonary imaging biomarker pipelines to facilitate hi
         """Test parsing XML returned by EFetch, Nucleotide database (second test)."""
         # Access the nucleotide database using efetch.
         # To create the XML file, use
-        # >>> Bio.Entrez.efetch(db='nucleotide', id=5,
+        # >>> biopython.Entrez.efetch(db='nucleotide', id=5,
         #                       rettype='fasta', complexity=0, retmode='xml')
         with open("Entrez/nucleotide2.xml", "rb") as handle:
             record = Entrez.read(handle)
@@ -11476,7 +11476,7 @@ We designed and generated pulmonary imaging biomarker pipelines to facilitate hi
         """Test parsing XML returned by EFetch, Protein database."""
         # Access the protein database using efetch.
         # To create the XML file, use
-        # >>> Bio.Entrez.efetch(db='protein', id=8, rettype='gp', retmode='xml')
+        # >>> biopython.Entrez.efetch(db='protein', id=8, rettype='gp', retmode='xml')
         with open("Entrez/protein.xml", "rb") as handle:
             record = Entrez.read(handle)
         self.assertEqual(record[0]["GBSeq_locus"], "CAA35997")
@@ -11827,7 +11827,7 @@ We designed and generated pulmonary imaging biomarker pipelines to facilitate hi
     def test_efetch_schemas(self):
         """Test parsing XML using Schemas."""
         # To create the XML file,use
-        # >>> Bio.Entrez.efetch("protein", id="783730874", rettype="ipg", retmode="xml")
+        # >>> biopython.Entrez.efetch("protein", id="783730874", rettype="ipg", retmode="xml")
         with open("Entrez/efetch_schemas.xml", "rb") as handle:
             records = Entrez.read(handle)
         self.assertEqual(len(records), 1)
@@ -11934,8 +11934,8 @@ We designed and generated pulmonary imaging biomarker pipelines to facilitate hi
         # Access the nucleotide database using efetch, but return the data
         # in GenBank format.
         # To create the GenBank file, use
-        # >>> Bio.Entrez.efetch(db='nucleotide', id='NT_019265', rettype='gb')
-        from Bio.Entrez import Parser
+        # >>> biopython.Entrez.efetch(db='nucleotide', id='NT_019265', rettype='gb')
+        from biopython.Entrez import Parser
 
         with open("GenBank/NT_019265.gb", "rb") as handle:
             self.assertRaises(Parser.NotXMLError, Entrez.read, handle)
@@ -11945,7 +11945,7 @@ We designed and generated pulmonary imaging biomarker pipelines to facilitate hi
 
     def test_fasta(self):
         """Test error handling when presented with Fasta non-XML data."""
-        from Bio.Entrez import Parser
+        from biopython.Entrez import Parser
 
         with open("Fasta/wisteria.nu", "rb") as handle:
             self.assertRaises(Parser.NotXMLError, Entrez.read, handle)
@@ -11956,8 +11956,8 @@ We designed and generated pulmonary imaging biomarker pipelines to facilitate hi
     def test_pubmed_html(self):
         """Test error handling when presented with HTML (so XML-like) data."""
         # To create the HTML file, use
-        # >>> Bio.Entrez.efetch(db="pubmed", id="19304878")
-        from Bio.Entrez import Parser
+        # >>> biopython.Entrez.efetch(db="pubmed", id="19304878")
+        from biopython.Entrez import Parser
 
         with open("Entrez/pubmed3.html", "rb") as handle:
             self.assertRaises(Parser.NotXMLError, Entrez.read, handle)
@@ -11969,8 +11969,8 @@ We designed and generated pulmonary imaging biomarker pipelines to facilitate hi
     def test_xml_without_declaration(self):
         """Test error handling for a missing XML declaration."""
         # To create the XML file, use
-        # >>> Bio.Entrez.efetch(db="journals",id="2830,6011,7473",retmode='xml')
-        from Bio.Entrez import Parser
+        # >>> biopython.Entrez.efetch(db="journals",id="2830,6011,7473",retmode='xml')
+        from biopython.Entrez import Parser
 
         with open("Entrez/journals.xml", "rb") as handle:
             self.assertRaises(Parser.NotXMLError, Entrez.read, handle)
@@ -11982,7 +11982,7 @@ We designed and generated pulmonary imaging biomarker pipelines to facilitate hi
     def test_xml_without_definition(self):
         """Test error handling for a missing DTD or XML Schema."""
         # To create the XML file, use
-        # >>> Bio.Entrez.efetch(db="biosample", id="3502652", rettype="xml")
+        # >>> biopython.Entrez.efetch(db="biosample", id="3502652", rettype="xml")
         with open("Entrez/biosample.xml", "rb") as handle:
             self.assertRaises(ValueError, Entrez.read, handle)
         # Test if the error is also raised with Entrez.parse
@@ -11992,7 +11992,7 @@ We designed and generated pulmonary imaging biomarker pipelines to facilitate hi
 
     def test_truncated_xml(self):
         """Test error handling for a truncated XML declaration."""
-        from Bio.Entrez.Parser import CorruptedXMLError
+        from biopython.Entrez.Parser import CorruptedXMLError
         from io import BytesIO
 
         truncated_xml = b"""<?xml version="1.0"?>

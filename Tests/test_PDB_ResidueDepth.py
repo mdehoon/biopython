@@ -7,13 +7,13 @@
 # choice of the "Biopython License Agreement" or the "BSD 3-Clause License".
 # Please see the LICENSE file that should have been included as part of this
 # package.
-"""Unit tests for the Bio.PDB.ResidueDepth module."""
+"""Unit tests for the biopython.PDB.ResidueDepth module."""
 
 import unittest
 import warnings
-from Bio.PDB import PDBParser, ResidueDepth
-from Bio import MissingExternalDependencyError
-from Bio.PDB.PDBExceptions import PDBConstructionWarning
+from biopython.PDB import PDBParser, ResidueDepth
+from biopython import MissingExternalDependencyError
+from biopython.PDB.PDBExceptions import PDBConstructionWarning
 
 from subprocess import getoutput
 

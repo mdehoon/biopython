@@ -9,28 +9,28 @@
 
 """Tests for samtools tool."""
 
-from Bio import MissingExternalDependencyError
+from biopython import MissingExternalDependencyError
 import sys
 import os
 import unittest
 
-from Bio.Application import ApplicationError
-from Bio.Sequencing.Applications import SamtoolsViewCommandline
-from Bio.Sequencing.Applications import SamtoolsCalmdCommandline
-from Bio.Sequencing.Applications import SamtoolsCatCommandline
-from Bio.Sequencing.Applications import SamtoolsFaidxCommandline
-from Bio.Sequencing.Applications import SamtoolsIdxstatsCommandline
-from Bio.Sequencing.Applications import SamtoolsIndexCommandline
-from Bio.Sequencing.Applications import SamtoolsMergeCommandline
-from Bio.Sequencing.Applications import SamtoolsMpileupCommandline
-from Bio.Sequencing.Applications import SamtoolsVersion1xSortCommandline
-from Bio.Sequencing.Applications import SamtoolsSortCommandline
+from biopython.Application import ApplicationError
+from biopython.Sequencing.Applications import SamtoolsViewCommandline
+from biopython.Sequencing.Applications import SamtoolsCalmdCommandline
+from biopython.Sequencing.Applications import SamtoolsCatCommandline
+from biopython.Sequencing.Applications import SamtoolsFaidxCommandline
+from biopython.Sequencing.Applications import SamtoolsIdxstatsCommandline
+from biopython.Sequencing.Applications import SamtoolsIndexCommandline
+from biopython.Sequencing.Applications import SamtoolsMergeCommandline
+from biopython.Sequencing.Applications import SamtoolsMpileupCommandline
+from biopython.Sequencing.Applications import SamtoolsVersion1xSortCommandline
+from biopython.Sequencing.Applications import SamtoolsSortCommandline
 
-# TODO from Bio.Sequencing.Applications import SamtoolsPhaseCommandline
-# TODO from Bio.Sequencing.Applications import SamtoolsReheaderCommandline
-# TODO from Bio.Sequencing.Applications import SamtoolsRmdupCommandline
-# TODO from Bio.Sequencing.Applications import SamtoolsTargetcutCommandline
-# TODO from Bio.Sequencing.Applications import SamtoolsFixmateCommandline
+# TODO from biopython.Sequencing.Applications import SamtoolsPhaseCommandline
+# TODO from biopython.Sequencing.Applications import SamtoolsReheaderCommandline
+# TODO from biopython.Sequencing.Applications import SamtoolsRmdupCommandline
+# TODO from biopython.Sequencing.Applications import SamtoolsTargetcutCommandline
+# TODO from biopython.Sequencing.Applications import SamtoolsFixmateCommandline
 #################################################################
 SamtoolsVersion0xSortCommandline = SamtoolsSortCommandline
 # Try to avoid problems when the OS is in another language

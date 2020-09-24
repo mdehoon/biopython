@@ -3,14 +3,14 @@
 # license.  Please see the LICENSE file that should have been included
 # as part of this package.
 
-"""Bio.Align.AlignInfo related tests."""
+"""biopython.Align.AlignInfo related tests."""
 import unittest
 
-from Bio.Align import MultipleSeqAlignment
-from Bio.Seq import Seq
-from Bio import AlignIO
-from Bio.Align.AlignInfo import SummaryInfo
-from Bio.Data import IUPACData
+from biopython.Align import MultipleSeqAlignment
+from biopython.Seq import Seq
+from biopython import AlignIO
+from biopython.Align.AlignInfo import SummaryInfo
+from biopython.Data import IUPACData
 import math
 
 

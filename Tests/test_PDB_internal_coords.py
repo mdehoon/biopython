@@ -4,7 +4,7 @@
 # Please see the LICENSE file that should have been included as part of this
 # package.
 
-"""Unit tests for PARTS of the parse_pdb_header module of Bio.PDB."""
+"""Unit tests for PARTS of the parse_pdb_header module of biopython.PDB."""
 
 
 import unittest
@@ -14,22 +14,22 @@ import warnings
 try:
     import numpy  # noqa F401
 except ImportError:
-    from Bio import MissingPythonDependencyError
+    from biopython import MissingPythonDependencyError
 
-    raise MissingPythonDependencyError("Install NumPy if you want to use Bio.PDB.")
+    raise MissingPythonDependencyError("Install NumPy if you want to use biopython.PDB.")
 
-from Bio.PDB.ic_rebuild import structure_rebuild_test, write_PDB
-from Bio.PDB.PDBParser import PDBParser
-from Bio.PDB.MMCIFParser import MMCIFParser
+from biopython.PDB.ic_rebuild import structure_rebuild_test, write_PDB
+from biopython.PDB.PDBParser import PDBParser
+from biopython.PDB.MMCIFParser import MMCIFParser
 from io import StringIO
-from Bio.PDB.SCADIO import write_SCAD
-from Bio.PDB.PICIO import write_PIC
-from Bio.File import as_handle
-from Bio.PDB.Model import Model
-from Bio.PDB.Residue import Residue
-from Bio.PDB.internal_coords import IC_Residue
+from biopython.PDB.SCADIO import write_SCAD
+from biopython.PDB.PICIO import write_PIC
+from biopython.File import as_handle
+from biopython.PDB.Model import Model
+from biopython.PDB.Residue import Residue
+from biopython.PDB.internal_coords import IC_Residue
 
-from Bio.PDB.PDBExceptions import PDBConstructionWarning
+from biopython.PDB.PDBExceptions import PDBConstructionWarning
 
 
 class Rebuild(unittest.TestCase):

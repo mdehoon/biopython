@@ -10,11 +10,11 @@
 # Builtins
 import unittest
 
-from Bio.KEGG.KGML import KGML_parser
-from Bio.KEGG.REST import kegg_conv, kegg_find, kegg_get
-from Bio.KEGG.REST import kegg_info, kegg_link, kegg_list
+from biopython.KEGG.KGML import KGML_parser
+from biopython.KEGG.REST import kegg_conv, kegg_find, kegg_get
+from biopython.KEGG.REST import kegg_info, kegg_link, kegg_list
 
-from Bio import SeqIO
+from biopython import SeqIO
 
 import requires_internet
 

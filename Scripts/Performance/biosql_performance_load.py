@@ -10,7 +10,7 @@
 import time
 
 # set up the connection
-from Bio import GenBank
+from biopython import GenBank
 from BioSQL import BioSeqDatabase
 
 

@@ -18,15 +18,15 @@ try:
     del dot
     from numpy.linalg import svd, det  # Missing in PyPy 2.0 numpypy
 except ImportError:
-    from Bio import MissingPythonDependencyError
+    from biopython import MissingPythonDependencyError
 
     raise MissingPythonDependencyError(
-        "Install NumPy if you want to use Bio.PDB."
+        "Install NumPy if you want to use biopython.PDB."
     ) from None
 
-from Bio.PDB.MMCIFParser import MMCIFParser
-from Bio.PDB import PDBParser
-from Bio.PDB.PDBExceptions import PDBConstructionException, PDBConstructionWarning
+from biopython.PDB.MMCIFParser import MMCIFParser
+from biopython.PDB import PDBParser
+from biopython.PDB.PDBExceptions import PDBConstructionException, PDBConstructionWarning
 
 
 class CompareStructures(unittest.TestCase):

@@ -22,7 +22,7 @@ Most of the time when we think about sequences we have in my mind a string of le
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio.Seq import Seq
+>>> from biopython.Seq import Seq
 >>> my_seq = Seq("AGTACACTGGT")
 >>> my_seq
 Seq('AGTACACTGGT')
@@ -42,7 +42,7 @@ Seq('TCATGTGACCA')
 Seq('ACCAGTGTACT')
 \end{minted}
 
-The next most important class is the \verb|SeqRecord| or Sequence Record.  This holds a sequence (as a \verb|Seq| object) with additional annotation including an identifier, name and description.  The \verb|Bio.SeqIO| module for reading and writing sequence file formats works with \verb|SeqRecord| objects, which will be introduced below and covered in more detail by Chapter~\ref{chapter:seqio}.
+The next most important class is the \verb|SeqRecord| or Sequence Record.  This holds a sequence (as a \verb|Seq| object) with additional annotation including an identifier, name and description.  The \verb|biopython.SeqIO| module for reading and writing sequence file formats works with \verb|SeqRecord| objects, which will be introduced below and covered in more detail by Chapter~\ref{chapter:seqio}.
 
 This covers the basic features and uses of the Biopython sequence class.
 Now that you've got some idea of what it is like to interact with the Biopython libraries, it's time to delve into the fun, fun world of dealing with biological file formats!
@@ -69,7 +69,7 @@ That gives us enough to get started delving for more information. So, let's look
 
 A large part of much bioinformatics work involves dealing with the many types of file formats designed to hold biological data. These files are loaded with interesting biological data, and a special challenge is parsing these files into a format so that you can manipulate them with some kind of programming language. However the task of parsing these files can be frustrated by the fact that the formats can change quite regularly, and that formats may contain small subtleties which can break even the most well designed parsers.
 
-We are now going to briefly introduce the \verb|Bio.SeqIO| module -- you can find out more in Chapter~\ref{chapter:seqio}.  We'll start with an online search for our friends, the lady slipper orchids. To keep this introduction simple, we're just using the NCBI website by hand.  Let's just take a look through the nucleotide databases at NCBI, using an Entrez online search (\url{https://www.ncbi.nlm.nih.gov:80/entrez/query.fcgi?db=Nucleotide}) for everything mentioning the text Cypripedioideae (this is the subfamily of lady slipper orchids).
+We are now going to briefly introduce the \verb|biopython.SeqIO| module -- you can find out more in Chapter~\ref{chapter:seqio}.  We'll start with an online search for our friends, the lady slipper orchids. To keep this introduction simple, we're just using the NCBI website by hand.  Let's just take a look through the nucleotide databases at NCBI, using an Entrez online search (\url{https://www.ncbi.nlm.nih.gov:80/entrez/query.fcgi?db=Nucleotide}) for everything mentioning the text Cypripedioideae (this is the subfamily of lady slipper orchids).
 
 When this tutorial was originally written, this search gave us only 94 hits, which we saved as a FASTA formatted text file and as a GenBank formatted text file (files \href{https://raw.githubusercontent.com/biopython/biopython/master/Doc/examples/ls_orchid.fasta}{ls\_orchid.fasta} and \href{https://raw.githubusercontent.com/biopython/biopython/master/Doc/examples/ls_orchid.gbk}{ls\_orchid.gbk}, also included with the Biopython source code under \texttt{docs/tutorial/examples/}).
 
@@ -93,7 +93,7 @@ AATCCGGAGGACCGGTGTACTCAGCTCACCGGGGGCATTGCTCCCGTGGTGACCCTGATTTGTTGTTGGG
 It contains 94 records, each has a line starting with ``\verb+>+'' (greater-than symbol) followed by the sequence on one or more lines.  Now try this in Python:
 
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> for seq_record in SeqIO.parse("ls_orchid.fasta", "fasta"):
 ...     print(seq_record.id)
 ...     print(repr(seq_record.seq))
@@ -118,7 +118,7 @@ Seq('CATTGTTGAGATCACATAATAATTGATCGAGTTAATCTGGAGGATCTGTTTACT...GCC')
 Now let's load the GenBank file \href{https://raw.githubusercontent.com/biopython/biopython/master/Doc/examples/ls_orchid.gbk}{ls\_orchid.gbk} instead - notice that the code to do this is almost identical to the snippet used above for the FASTA file - the only difference is we change the filename and the format string:
 
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> for seq_record in SeqIO.parse("ls_orchid.gbk", "genbank"):
 ...     print(seq_record.id)
 ...     print(repr(seq_record.seq))
@@ -142,9 +142,9 @@ You'll notice that a shorter string has been used as the \verb|seq_record.id| in
 
 \subsection{I love parsing -- please don't stop talking about it!}
 
-Biopython has a lot of parsers, and each has its own little special niches based on the sequence format it is parsing and all of that.  Chapter~\ref{chapter:seqio} covers \verb|Bio.SeqIO| in more detail, while Chapter~\ref{chapter:align} introduces \verb|Bio.AlignIO| for sequence alignments.
+Biopython has a lot of parsers, and each has its own little special niches based on the sequence format it is parsing and all of that.  Chapter~\ref{chapter:seqio} covers \verb|biopython.SeqIO| in more detail, while Chapter~\ref{chapter:align} introduces \verb|biopython.AlignIO| for sequence alignments.
 
-While the most popular file formats have parsers integrated into \verb|Bio.SeqIO| and/or \verb|Bio.AlignIO|, for some of the rarer and unloved file formats there is either no parser at all, or an old parser which has not been linked in yet.
+While the most popular file formats have parsers integrated into \verb|biopython.SeqIO| and/or \verb|biopython.AlignIO|, for some of the rarer and unloved file formats there is either no parser at all, or an old parser which has not been linked in yet.
 Please also check the wiki pages \url{http://biopython.org/wiki/SeqIO} and \url{http://biopython.org/wiki/AlignIO} for the latest information, or ask on the mailing list. The wiki pages should include an up to date list of supported file types, and some additional  examples.
 
 The next place to look for information about specific parsers and how to do cool things with them is in the Cookbook (Chapter~\ref{chapter:cookbook} of this Tutorial). If you don't find the information you are looking for, please consider helping out your poor overworked documentors and submitting a cookbook entry about it! (once you figure out how to do it, that is!)
@@ -157,7 +157,7 @@ One of the very common things that you need to do in bioinformatics is extract i
 \begin{itemize}
   \item \href{https://www.ncbi.nlm.nih.gov/Web/Search/entrezfs.html}{Entrez} (and \href{https://www.ncbi.nlm.nih.gov/PubMed/}{PubMed}) from the NCBI -- See Chapter~\ref{chapter:entrez}.
   \item \href{https://www.expasy.org/}{ExPASy} -- See Chapter~\ref{chapter:uniprot}.
-  \item \href{http://scop.mrc-lmb.cam.ac.uk/scop/}{SCOP} -- See the \verb|Bio.SCOP.search()| function.
+  \item \href{http://scop.mrc-lmb.cam.ac.uk/scop/}{SCOP} -- See the \verb|biopython.SCOP.search()| function.
 \end{itemize}
 
 The code in these modules basically makes it easy to write Python code that interact with the CGI scripts on these pages, so that you can get results in an easy to deal with format. In some cases, the results can be tightly integrated with the Biopython parsers to make it even easier to extract information.

@@ -7,7 +7,7 @@
 
 import unittest
 
-from Bio.SCOP import Hie
+from biopython.SCOP import Hie
 
 
 class HieTests(unittest.TestCase):

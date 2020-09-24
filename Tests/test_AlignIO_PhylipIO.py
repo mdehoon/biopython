@@ -4,13 +4,13 @@
 # license.  Please see the LICENSE file that should have been included
 # as part of this package.
 
-"""Tests for Bio.AlignIO.PhylipIO module."""
+"""Tests for biopython.AlignIO.PhylipIO module."""
 
 import unittest
 
 from io import StringIO
 
-from Bio.AlignIO.PhylipIO import PhylipIterator, PhylipWriter
+from biopython.AlignIO.PhylipIO import PhylipIterator, PhylipWriter
 
 phylip_text = """     8    286
 V_Harveyi_ --MKNWIKVA VAAIA--LSA A--------- ---------T VQAATEVKVG

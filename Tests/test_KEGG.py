@@ -8,14 +8,14 @@
 
 import unittest
 
-from Bio.KEGG import Enzyme
-from Bio.KEGG import Compound
-from Bio.KEGG import Map
-from Bio.Pathway import System
+from biopython.KEGG import Enzyme
+from biopython.KEGG import Compound
+from biopython.KEGG import Map
+from biopython.Pathway import System
 
 
 class EnzymeTests(unittest.TestCase):
-    """Tests for Bio.KEGG.Enzyme."""
+    """Tests for biopython.KEGG.Enzyme."""
 
     def test_sample(self):
         """enzyme.sample tests."""
@@ -126,7 +126,7 @@ class EnzymeTests(unittest.TestCase):
 
 
 class CompoundTests(unittest.TestCase):
-    """Bio.KEGG.Compound tests."""
+    """biopython.KEGG.Compound tests."""
 
     def test_sample(self):
         """compound.sample tests."""
@@ -169,7 +169,7 @@ class CompoundTests(unittest.TestCase):
 
 
 class MapTests(unittest.TestCase):
-    """Bio.KEGG.Map tests."""
+    """biopython.KEGG.Map tests."""
 
     def test_map00950(self):
         """map00950.rea tests."""

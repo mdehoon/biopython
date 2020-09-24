@@ -13,11 +13,11 @@ import unittest
 
 from subprocess import getoutput
 
-from Bio import MissingExternalDependencyError
-from Bio import SeqIO
-from Bio import AlignIO
-from Bio.Align.Applications import ClustalOmegaCommandline
-from Bio.Application import ApplicationError
+from biopython import MissingExternalDependencyError
+from biopython import SeqIO
+from biopython import AlignIO
+from biopython.Align.Applications import ClustalOmegaCommandline
+from biopython.Application import ApplicationError
 
 #################################################################
 
@@ -78,7 +78,7 @@ class ClustalOmegaTestCase(unittest.TestCase):
         for record in align:
             self.assertEqual(record, output_records[record.id])
 
-        # TODO - Try and parse this with Bio.Nexus?
+        # TODO - Try and parse this with biopython.Nexus?
         if cline.guidetree_out:
             self.assertTrue(os.path.isfile(cline.guidetree_out))
 

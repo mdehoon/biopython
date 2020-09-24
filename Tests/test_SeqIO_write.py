@@ -10,10 +10,10 @@ import unittest
 import warnings
 from io import BytesIO
 from io import StringIO
-from Bio import BiopythonWarning
-from Bio import SeqIO
-from Bio import AlignIO
-from Bio.Seq import Seq
+from biopython import BiopythonWarning
+from biopython import SeqIO
+from biopython import AlignIO
+from biopython.Seq import Seq
 from test_SeqIO import SeqIOTestBaseClass
 
 

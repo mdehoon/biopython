@@ -9,14 +9,14 @@ import os
 import sys
 import unittest
 
-from Bio import MissingExternalDependencyError
-from Bio import AlignIO
-from Bio.Nexus import Trees  # One day we should use planned TreeIO module
+from biopython import MissingExternalDependencyError
+from biopython import AlignIO
+from biopython.Nexus import Trees  # One day we should use planned TreeIO module
 
-from Bio.Emboss.Applications import FDNADistCommandline, FNeighborCommandline
-from Bio.Emboss.Applications import FSeqBootCommandline, FProtDistCommandline
-from Bio.Emboss.Applications import FProtParsCommandline, FConsenseCommandline
-from Bio.Emboss.Applications import FTreeDistCommandline, FDNAParsCommandline
+from biopython.Emboss.Applications import FDNADistCommandline, FNeighborCommandline
+from biopython.Emboss.Applications import FSeqBootCommandline, FProtDistCommandline
+from biopython.Emboss.Applications import FProtParsCommandline, FConsenseCommandline
+from biopython.Emboss.Applications import FTreeDistCommandline, FDNAParsCommandline
 
 # Try to avoid problems when the OS is in another language
 os.environ["LANG"] = "C"
@@ -56,7 +56,7 @@ if sys.platform != "win32":
 if len(exes) < len(exes_wanted):
     raise MissingExternalDependencyError(
         "Install the Emboss package 'PhylipNew' if you want to use the "
-        "Bio.Emboss.Applications wrappers for phylogenetic tools."
+        "biopython.Emboss.Applications wrappers for phylogenetic tools."
     )
 
 # #########################################################################
@@ -87,7 +87,7 @@ def clean_up():
 def parse_trees(filename):
     """Parse trees.
 
-    Helper function until we have Bio.Phylo on trunk.
+    Helper function until we have biopython.Phylo on trunk.
     """
     # TODO - Can this be removed now?
     with open("test_file") as handle:

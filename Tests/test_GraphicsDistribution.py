@@ -13,7 +13,7 @@ import os
 import random
 import unittest
 
-from Bio import MissingExternalDependencyError
+from biopython import MissingExternalDependencyError
 
 try:
     import reportlab as r
@@ -21,14 +21,14 @@ try:
     del r
 except ImportError:
     raise MissingExternalDependencyError(
-        "Install reportlab if you want to use Bio.Graphics."
+        "Install reportlab if you want to use biopython.Graphics."
     ) from None
 
 # local stuff
-from Bio.Graphics.Distribution import BarChartDistribution
+from biopython.Graphics.Distribution import BarChartDistribution
 
-# TODO from Bio.Graphics.Distribution import LineDistribution
-from Bio.Graphics.Distribution import DistributionPage
+# TODO from biopython.Graphics.Distribution import LineDistribution
+from biopython.Graphics.Distribution import DistributionPage
 
 
 def random_distribution(min=-5.0, max=5.0, total_items=50):

@@ -3,14 +3,14 @@
 # license. Please see the LICENSE file that should have been included
 # as part of this package.
 
-"""Unit tests for Bio.Phylo.Applications wrappers."""
+"""Unit tests for biopython.Phylo.Applications wrappers."""
 
 import os
 import unittest
 
-from Bio import Phylo
-from Bio.Phylo.Applications import RaxmlCommandline
-from Bio import MissingExternalDependencyError
+from biopython import Phylo
+from biopython.Phylo.Applications import RaxmlCommandline
+from biopython import MissingExternalDependencyError
 
 raxml_exe = None
 try:
@@ -26,7 +26,7 @@ except FileNotFoundError:
 if not raxml_exe:
     raise MissingExternalDependencyError(
         "Install RAxML (binary raxmlHPC) if you want"
-        " to test the Bio.Phylo.Applications wrapper."
+        " to test the biopython.Phylo.Applications wrapper."
     )
 
 # Example Phylip file with 4 aligned protein sequences

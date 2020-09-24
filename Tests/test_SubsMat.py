@@ -9,10 +9,10 @@ try:
 
     del numpy
 except ImportError:
-    from Bio import MissingExternalDependencyError
+    from biopython import MissingExternalDependencyError
 
     raise MissingExternalDependencyError(
-        "Install NumPy if you want to use Bio.SubsMat."
+        "Install NumPy if you want to use biopython.SubsMat."
     )
 
 import os
@@ -20,8 +20,8 @@ import pickle
 import unittest
 
 
-from Bio import SubsMat
-from Bio.SubsMat import FreqTable, MatrixInfo
+from biopython import SubsMat
+from biopython.SubsMat import FreqTable, MatrixInfo
 
 
 class TestGeo(unittest.TestCase):

@@ -3,25 +3,25 @@
 # license. Please see the LICENSE file that should have been included
 # as part of this package.
 
-"""Unit tests for the Bio.Phylo.TreeConstruction module."""
+"""Unit tests for the biopython.Phylo.TreeConstruction module."""
 
 import os
 import unittest
 import tempfile
 
 from io import StringIO
-from Bio import AlignIO
-from Bio import Phylo
-from Bio.Phylo import BaseTree
-from Bio.Phylo import TreeConstruction
-from Bio.Phylo import Consensus
-from Bio.Phylo.TreeConstruction import _Matrix
-from Bio.Phylo.TreeConstruction import DistanceMatrix
-from Bio.Phylo.TreeConstruction import DistanceCalculator
-from Bio.Phylo.TreeConstruction import DistanceTreeConstructor
-from Bio.Phylo.TreeConstruction import ParsimonyScorer
-from Bio.Phylo.TreeConstruction import NNITreeSearcher
-from Bio.Phylo.TreeConstruction import ParsimonyTreeConstructor
+from biopython import AlignIO
+from biopython import Phylo
+from biopython.Phylo import BaseTree
+from biopython.Phylo import TreeConstruction
+from biopython.Phylo import Consensus
+from biopython.Phylo.TreeConstruction import _Matrix
+from biopython.Phylo.TreeConstruction import DistanceMatrix
+from biopython.Phylo.TreeConstruction import DistanceCalculator
+from biopython.Phylo.TreeConstruction import DistanceTreeConstructor
+from biopython.Phylo.TreeConstruction import ParsimonyScorer
+from biopython.Phylo.TreeConstruction import NNITreeSearcher
+from biopython.Phylo.TreeConstruction import ParsimonyTreeConstructor
 
 
 temp_dir = tempfile.mkdtemp()

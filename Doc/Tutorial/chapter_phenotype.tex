@@ -1,11 +1,11 @@
-\chapter{Bio.phenotype: analyse phenotypic data}
+\chapter{biopython.phenotype: analyse phenotypic data}
 \label{chapter:phenotype}
 
 This chapter gives an overview of the functionalities of the
-\verb|Bio.phenotype| package included in Biopython. The scope of this
-package is the analysis of phenotypic data, which means parsing and
+\verb|biopython.phenotype| module included in Biopython. The scope of this
+module is the analysis of phenotypic data, which means parsing and
 analysing growth measurements of cell cultures.
-In its current state the package is focused on the analysis of
+In its current state the module is focused on the analysis of
 high-throughput phenotypic experiments produced by the
 \href{https://en.wikipedia.org/wiki/Phenotype_microarray}{Phenotype Microarray technology},
 but future developments may include other platforms and formats.
@@ -27,7 +27,7 @@ series of growth parameters can be retrieved.
 
 \subsection{Parsing Phenotype Microarray data}
 
-The \verb|Bio.phenotype| package can parse two different formats of
+The \verb|biopython.phenotype| module can parse two different formats of
 Phenotype Microarray data: the
 \href{https://en.wikipedia.org/wiki/Comma-separated_values}{CSV}
 (comma separated values) files produced by the machine's proprietary
@@ -41,7 +41,7 @@ You can test the parse function by using the \href{https://github.com/biopython/
 
 %doctest examples lib:numpy
 \begin{minted}{pycon}
->>> from Bio import phenotype
+>>> from biopython import phenotype
 >>> for record in phenotype.parse("Plates.csv", "pm-csv"):
 ...     print("%s %i" % (record.id, len(record)))
 ...
@@ -68,7 +68,7 @@ There are several ways to access WellRecord objects from a PlateRecord objects:
 
 %doctest examples lib:numpy
 \begin{minted}{pycon}
->>> from Bio import phenotype
+>>> from biopython import phenotype
 >>> record = list(phenotype.parse("Plates.csv", "pm-csv"))[-1]
 >>> print(record[0, 1].id)
 A02
@@ -114,7 +114,7 @@ in the example below only the first ten time points are shown.
 
 %doctest examples lib:numpy
 \begin{minted}{pycon}
->>> from Bio import phenotype
+>>> from biopython import phenotype
 >>> record = list(phenotype.parse("Plates.csv", "pm-csv"))[-1]
 >>> well = record["A02"]
 \end{minted}
@@ -240,7 +240,7 @@ the logistic and then the richards function. The user can also specify one of th
 
 %TODO: enable with doctest examples
 \begin{minted}{pycon}
->>> from Bio import phenotype
+>>> from biopython import phenotype
 >>> record = list(phenotype.parse("Plates.csv", "pm-csv"))[-1]
 >>> well = record["A02"]
 >>> well.fit()

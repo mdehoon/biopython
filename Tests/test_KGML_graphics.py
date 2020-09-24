@@ -11,10 +11,10 @@ import os
 import unittest
 
 # Biopython
-from Bio.Graphics.ColorSpiral import ColorSpiral
+from biopython.Graphics.ColorSpiral import ColorSpiral
 
 # Do we have ReportLab?  Raise error if not present.
-from Bio import MissingExternalDependencyError
+from biopython import MissingExternalDependencyError
 
 try:
     # Not actually using these imports directly:
@@ -23,7 +23,7 @@ try:
     from reportlab.lib.colors import HexColor
 except ImportError:
     raise MissingExternalDependencyError(
-        "Install reportlab if you want to use Bio.Graphics."
+        "Install reportlab if you want to use biopython.Graphics."
     ) from None
 
 try:
@@ -46,9 +46,9 @@ except ImportError:
     ) from None
 
 
-# Biopython Bio.KEGG.KGML
-from Bio.KEGG.KGML.KGML_parser import read
-from Bio.Graphics.KGML_vis import KGMLCanvas
+# Biopython biopython.KEGG.KGML
+from biopython.KEGG.KGML.KGML_parser import read
+from biopython.Graphics.KGML_vis import KGMLCanvas
 
 
 # The PathwayData class is also imported by the online test module in

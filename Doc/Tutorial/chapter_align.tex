@@ -8,9 +8,9 @@ strings are the same length. Such an alignment can be regarded as a matrix of le
 where each row is held as a \verb|Seq| object internally.
 
 We will introduce the \verb|MultipleSeqAlignment| object which holds this kind of data,
-and the \verb|Bio.AlignIO| module for reading and writing them as various file formats
-(following the design of the \verb|Bio.SeqIO| module from the previous chapter).
-Note that both \verb|Bio.SeqIO| and \verb|Bio.AlignIO| can read and write sequence
+and the \verb|biopython.AlignIO| module for reading and writing them as various file formats
+(following the design of the \verb|biopython.SeqIO| module from the previous chapter).
+Note that both \verb|biopython.SeqIO| and \verb|biopython.AlignIO| can read and write sequence
 alignment files.  The appropriate choice will depend largely on what you want to do
 with the data.
 
@@ -19,17 +19,17 @@ sequence alignment tools like ClustalW and MUSCLE.
 
 \section{Parsing or Reading Sequence Alignments}
 
-We have two functions for reading in sequence alignments, \verb|Bio.AlignIO.read()| and \verb|Bio.AlignIO.parse()| which following the convention introduced in \verb|Bio.SeqIO| are for files containing one or multiple alignments respectively.
+We have two functions for reading in sequence alignments, \verb|biopython.AlignIO.read()| and \verb|biopython.AlignIO.parse()| which following the convention introduced in \verb|biopython.SeqIO| are for files containing one or multiple alignments respectively.
 
-Using \verb|Bio.AlignIO.parse()| will return an {\textit iterator} which gives \verb|MultipleSeqAlignment| objects.  Iterators are typically used in a for loop.  Examples of situations where you will have multiple different alignments include resampled alignments from the PHYLIP tool \verb|seqboot|, or multiple pairwise alignments from the EMBOSS tools \verb|water| or \verb|needle|, or Bill Pearson's FASTA tools.
+Using \verb|biopython.AlignIO.parse()| will return an {\textit iterator} which gives \verb|MultipleSeqAlignment| objects.  Iterators are typically used in a for loop.  Examples of situations where you will have multiple different alignments include resampled alignments from the PHYLIP tool \verb|seqboot|, or multiple pairwise alignments from the EMBOSS tools \verb|water| or \verb|needle|, or Bill Pearson's FASTA tools.
 
-However, in many situations you will be dealing with files which contain only a single alignment.  In this case, you should use the \verb|Bio.AlignIO.read()| function which returns a single \verb|MultipleSeqAlignment| object.
+However, in many situations you will be dealing with files which contain only a single alignment.  In this case, you should use the \verb|biopython.AlignIO.read()| function which returns a single \verb|MultipleSeqAlignment| object.
 
 Both functions expect two mandatory arguments:
 
 \begin{enumerate}
 \item The first argument is a {\textit handle} to read the data from, typically an open file (see Section~\ref{sec:appendix-handles}), or a filename.
-\item The second argument is a lower case string specifying the alignment format.  As in \verb|Bio.SeqIO| we don't try and guess the file format for you!  See \url{http://biopython.org/wiki/AlignIO} for a full listing of supported formats.
+\item The second argument is a lower case string specifying the alignment format.  As in \verb|biopython.SeqIO| we don't try and guess the file format for you!  See \url{http://biopython.org/wiki/AlignIO} for a full listing of supported formats.
 \end{enumerate}
 
 \noindent There is also an optional \verb|seq_count| argument which is discussed in Section~\ref{sec:AlignIO-count-argument} below for dealing with ambiguous file formats which may contain more than one alignment.
@@ -71,7 +71,7 @@ This is the seed alignment for the Phage\_Coat\_Gp8 (PF05371) PFAM entry, downlo
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio import AlignIO
+>>> from biopython import AlignIO
 >>> alignment = AlignIO.read("PF05371_seed.sth", "stockholm")
 \end{minted}
 
@@ -94,7 +94,7 @@ You'll notice in the above output the sequences have been truncated.  We could i
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio import AlignIO
+>>> from biopython import AlignIO
 >>> alignment = AlignIO.read("PF05371_seed.sth", "stockholm")
 >>> print("Alignment length %i" % alignment.get_alignment_length())
 Alignment length 52
@@ -156,7 +156,7 @@ FAADDATSQAKAAFDSLTAQATEMSGYAWALVVLVVGATVGIKLFKKFVSRA
 \noindent Note the website should have an option about showing gaps as periods (dots) or dashes, we've shown dashes above.  Assuming you download and save this as file ``PF05371\_seed.faa'' then you can load it with almost exactly the same code:
 
 \begin{minted}{pycon}
->>> from Bio import AlignIO
+>>> from biopython import AlignIO
 >>> alignment = AlignIO.read("PF05371_seed.faa", "fasta")
 >>> print(alignment)
 \end{minted}
@@ -164,18 +164,18 @@ FAADDATSQAKAAFDSLTAQATEMSGYAWALVVLVVGATVGIKLFKKFVSRA
 All that has changed in this code is the filename and the format string.  You'll get the same output as before, the sequences and record identifiers are the same.
 However, as you should expect, if you check each \verb|Seq| object there is no annotation nor database cross-references because these are not included in the FASTA file format.
 
-Note that rather than using the Sanger website, you could have used \verb|Bio.AlignIO| to convert the original Stockholm format file into a FASTA file yourself (see below).
+Note that rather than using the Sanger website, you could have used \verb|biopython.AlignIO| to convert the original Stockholm format file into a FASTA file yourself (see below).
 
-With any supported file format, you can load an alignment in exactly the same way just by changing the format string.  For example, use ``phylip'' for PHYLIP files, ``nexus'' for NEXUS files or ``emboss'' for the alignments output by the EMBOSS tools.  There is a full listing on the wiki page (\url{http://biopython.org/wiki/AlignIO}) and in the built in documentation (also \href{http://biopython.org/docs/\bpversion/api/Bio.AlignIO.html}{online}):
+With any supported file format, you can load an alignment in exactly the same way just by changing the format string.  For example, use ``phylip'' for PHYLIP files, ``nexus'' for NEXUS files or ``emboss'' for the alignments output by the EMBOSS tools.  There is a full listing on the wiki page (\url{http://biopython.org/wiki/AlignIO}) and in the built in documentation (also \href{http://biopython.org/docs/\bpversion/api/biopython.AlignIO.html}{online}):
 
 \begin{minted}{pycon}
->>> from Bio import AlignIO
+>>> from biopython import AlignIO
 >>> help(AlignIO)
 \end{minted}
 
 \subsection{Multiple Alignments}
 
-The previous section focused on reading files containing a single alignment.  In general however, files can contain more than one alignment, and to read these files we must use the \verb|Bio.AlignIO.parse()| function.
+The previous section focused on reading files containing a single alignment.  In general however, files can contain more than one alignment, and to read these files we must use the \verb|biopython.AlignIO.parse()| function.
 
 Suppose you have a small alignment in PHYLIP format:
 
@@ -218,10 +218,10 @@ Delta     CCCCAA
 Epsilon   CAAACC
 \end{minted}
 
-If you wanted to read this in using \verb|Bio.AlignIO| you could use:
+If you wanted to read this in using \verb|biopython.AlignIO| you could use:
 
 \begin{minted}{pycon}
->>> from Bio import AlignIO
+>>> from biopython import AlignIO
 >>> alignments = AlignIO.parse("resampled.phy", "phylip")
 >>> for alignment in alignments:
 ...     print(alignment)
@@ -263,11 +263,11 @@ CCCCAA Delta
 CAAACC Epsilon
 \end{minted}
 
-As with the function \verb|Bio.SeqIO.parse()|, using \verb|Bio.AlignIO.parse()| returns an iterator.
+As with the function \verb|biopython.SeqIO.parse()|, using \verb|biopython.AlignIO.parse()| returns an iterator.
 If you want to keep all the alignments in memory at once, which will allow you to access them in any order, then turn the iterator into a list:
 
 \begin{minted}{pycon}
->>> from Bio import AlignIO
+>>> from biopython import AlignIO
 >>> alignments = list(AlignIO.parse("resampled.phy", "phylip"))
 >>> last_align = alignments[-1]
 >>> first_align = alignments[0]
@@ -332,10 +332,10 @@ GGACTACGACAATAGCTCAGG
 
 \noindent In this third example, because of the differing lengths, this cannot be treated as a single alignment containing all six records.  However, it could be three pairwise alignments.
 
-Clearly trying to store more than one alignment in a FASTA file is not ideal.  However, if you are forced to deal with these as input files \verb|Bio.AlignIO| can cope with the most common situation where all the alignments have the same number of records.
-One example of this is a collection of pairwise alignments, which can be produced by the EMBOSS tools \verb|needle| and \verb|water| -- although in this situation, \verb|Bio.AlignIO| should be able to understand their native output using ``emboss'' as the format string.
+Clearly trying to store more than one alignment in a FASTA file is not ideal.  However, if you are forced to deal with these as input files \verb|biopython.AlignIO| can cope with the most common situation where all the alignments have the same number of records.
+One example of this is a collection of pairwise alignments, which can be produced by the EMBOSS tools \verb|needle| and \verb|water| -- although in this situation, \verb|biopython.AlignIO| should be able to understand their native output using ``emboss'' as the format string.
 
-To interpret these FASTA examples as several separate alignments, we can use \verb|Bio.AlignIO.parse()| with the optional \verb|seq_count| argument which specifies how many sequences are expected in each alignment (in these examples, 3, 2 and 2 respectively).
+To interpret these FASTA examples as several separate alignments, we can use \verb|biopython.AlignIO.parse()| with the optional \verb|seq_count| argument which specifies how many sequences are expected in each alignment (in these examples, 3, 2 and 2 respectively).
 For example, using the third example as the input data:
 
 \begin{minted}{pycon}
@@ -363,23 +363,23 @@ Alignment length 21
 GGACTACGACAATAGCTCAGG - ZZZ
 \end{minted}
 
-Using \verb|Bio.AlignIO.read()| or \verb|Bio.AlignIO.parse()| without the \verb|seq_count| argument would give a single alignment containing all six records for the first two examples.  For the third example, an exception would be raised because the lengths differ preventing them being turned into a single alignment.
+Using \verb|biopython.AlignIO.read()| or \verb|biopython.AlignIO.parse()| without the \verb|seq_count| argument would give a single alignment containing all six records for the first two examples.  For the third example, an exception would be raised because the lengths differ preventing them being turned into a single alignment.
 
-If the file format itself has a block structure allowing \verb|Bio.AlignIO| to determine the number of sequences in each alignment directly, then the \verb|seq_count| argument is not needed.  If it is supplied, and doesn't agree with the file contents, an error is raised.
+If the file format itself has a block structure allowing \verb|biopython.AlignIO| to determine the number of sequences in each alignment directly, then the \verb|seq_count| argument is not needed.  If it is supplied, and doesn't agree with the file contents, an error is raised.
 
-Note that this optional \verb|seq_count| argument assumes each alignment in the file has the same number of sequences.  Hypothetically you may come across stranger situations, for example a FASTA file containing several alignments each with a different number of sequences -- although I would love to hear of a real world example of this.  Assuming you cannot get the data in a nicer file format, there is no straight forward way to deal with this using \verb|Bio.AlignIO|.  In this case, you could consider reading in the sequences themselves using \verb|Bio.SeqIO| and batching them together to create the alignments as appropriate.
+Note that this optional \verb|seq_count| argument assumes each alignment in the file has the same number of sequences.  Hypothetically you may come across stranger situations, for example a FASTA file containing several alignments each with a different number of sequences -- although I would love to hear of a real world example of this.  Assuming you cannot get the data in a nicer file format, there is no straight forward way to deal with this using \verb|biopython.AlignIO|.  In this case, you could consider reading in the sequences themselves using \verb|biopython.SeqIO| and batching them together to create the alignments as appropriate.
 
 \section{Writing Alignments}
 
-We've talked about using \verb|Bio.AlignIO.read()| and \verb|Bio.AlignIO.parse()| for alignment input (reading files), and now we'll look at \verb|Bio.AlignIO.write()| which is for alignment output (writing files).  This is a function taking three arguments: some \verb|MultipleSeqAlignment| objects (or for backwards compatibility the obsolete \verb|Alignment| objects), a handle or filename to write to, and a sequence format.
+We've talked about using \verb|biopython.AlignIO.read()| and \verb|biopython.AlignIO.parse()| for alignment input (reading files), and now we'll look at \verb|biopython.AlignIO.write()| which is for alignment output (writing files).  This is a function taking three arguments: some \verb|MultipleSeqAlignment| objects (or for backwards compatibility the obsolete \verb|Alignment| objects), a handle or filename to write to, and a sequence format.
 
 Here is an example, where we start by creating a few \verb|MultipleSeqAlignment| objects the hard way (by hand, rather than by loading them from a file).
 Note we create some \verb|Seq| objects to construct the alignment from.
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio.Seq import Seq
->>> from Bio.Align import MultipleSeqAlignment
+>>> from biopython.Seq import Seq
+>>> from biopython.Align import MultipleSeqAlignment
 >>> align1 = MultipleSeqAlignment(
 ...     [
 ...         Seq("ACTGCTAGCTAG", id="Alpha"),
@@ -407,7 +407,7 @@ Note we create some \verb|Seq| objects to construct the alignment from.
 \noindent Now we have a list of \verb|Alignment| objects, we'll write them to a PHYLIP format file:
 
 \begin{minted}{pycon}
->>> from Bio import AlignIO
+>>> from biopython import AlignIO
 >>> AlignIO.write(my_alignments, "my_example.phy", "phylip")
 \end{minted}
 
@@ -430,45 +430,45 @@ Iota       -CTACTACAG GTG
 
 Its more common to want to load an existing alignment, and save that, perhaps after some simple manipulation like removing certain rows or columns.
 
-Suppose you wanted to know how many alignments the \verb|Bio.AlignIO.write()| function wrote to the handle? If your alignments were in a list like the example above, you could just use \verb|len(my_alignments)|, however you can't do that when your records come from a generator/iterator.  Therefore the \verb|Bio.AlignIO.write()| function returns the number of alignments written to the file.
+Suppose you wanted to know how many alignments the \verb|biopython.AlignIO.write()| function wrote to the handle? If your alignments were in a list like the example above, you could just use \verb|len(my_alignments)|, however you can't do that when your records come from a generator/iterator.  Therefore the \verb|biopython.AlignIO.write()| function returns the number of alignments written to the file.
 
-\emph{Note} - If you tell the \verb|Bio.AlignIO.write()| function to write to a file that already exists, the old file will be overwritten without any warning.
+\emph{Note} - If you tell the \verb|biopython.AlignIO.write()| function to write to a file that already exists, the old file will be overwritten without any warning.
 
 
 \subsection{Converting between sequence alignment file formats}
 \label{sec:converting-alignments}
 
-Converting between sequence alignment file formats with \verb|Bio.AlignIO| works
-in the same way as converting between sequence file formats with \verb|Bio.SeqIO|
+Converting between sequence alignment file formats with \verb|biopython.AlignIO| works
+in the same way as converting between sequence file formats with \verb|biopython.SeqIO|
 (Section~\ref{sec:SeqIO-conversion}). We load generally the alignment(s) using
-\verb|Bio.AlignIO.parse()| and then save them using the \verb|Bio.AlignIO.write()|
--- or just use the \verb|Bio.AlignIO.convert()| helper function.
+\verb|biopython.AlignIO.parse()| and then save them using the \verb|biopython.AlignIO.write()|
+-- or just use the \verb|biopython.AlignIO.convert()| helper function.
 
 For this example, we'll load the PFAM/Stockholm format file used earlier and save it as a Clustal W format file:
 
 \begin{minted}{pycon}
->>> from Bio import AlignIO
+>>> from biopython import AlignIO
 >>> count = AlignIO.convert("PF05371_seed.sth", "stockholm", "PF05371_seed.aln", "clustal")
 >>> print("Converted %i alignments" % count)
 Converted 1 alignments
 \end{minted}
 
-Or, using \verb|Bio.AlignIO.parse()| and \verb|Bio.AlignIO.write()|:
+Or, using \verb|biopython.AlignIO.parse()| and \verb|biopython.AlignIO.write()|:
 
 \begin{minted}{pycon}
->>> from Bio import AlignIO
+>>> from biopython import AlignIO
 >>> alignments = AlignIO.parse("PF05371_seed.sth", "stockholm")
 >>> count = AlignIO.write(alignments, "PF05371_seed.aln", "clustal")
 >>> print("Converted %i alignments" % count)
 Converted 1 alignments
 \end{minted}
 
-The \verb|Bio.AlignIO.write()| function expects to be given multiple alignment objects.  In the example above we gave it the alignment iterator returned by \verb|Bio.AlignIO.parse()|.
+The \verb|biopython.AlignIO.write()| function expects to be given multiple alignment objects.  In the example above we gave it the alignment iterator returned by \verb|biopython.AlignIO.parse()|.
 
-In this case, we know there is only one alignment in the file so we could have used \verb|Bio.AlignIO.read()| instead, but notice we have to pass this alignment to \verb|Bio.AlignIO.write()| as a single element list:
+In this case, we know there is only one alignment in the file so we could have used \verb|biopython.AlignIO.read()| instead, but notice we have to pass this alignment to \verb|biopython.AlignIO.write()| as a single element list:
 
 \begin{minted}{pycon}
->>> from Bio import AlignIO
+>>> from biopython import AlignIO
 >>> alignment = AlignIO.read("PF05371_seed.sth", "stockholm")
 >>> AlignIO.write([alignment], "PF05371_seed.aln", "clustal")
 \end{minted}
@@ -499,7 +499,7 @@ COATB_BPIF1/22-73                   RA
 Alternatively, you could make a PHYLIP format file which we'll name ``PF05371\_seed.phy'':
 
 \begin{minted}{pycon}
->>> from Bio import AlignIO
+>>> from biopython import AlignIO
 >>> AlignIO.convert("PF05371_seed.sth", "stockholm", "PF05371_seed.phy", "phylip")
 \end{minted}
 
@@ -531,7 +531,7 @@ but they are not very readable. As a result, a more relaxed variant of
 the original PHYLIP format is now quite widely used:
 
 \begin{minted}{pycon}
->>> from Bio import AlignIO
+>>> from biopython import AlignIO
 >>> AlignIO.convert("PF05371_seed.sth", "stockholm", "PF05371_seed.phy", "phylip-relaxed")
 \end{minted}
 
@@ -562,7 +562,7 @@ compress the identifiers somehow -- or assign your own names or numbering system
 This following bit of code manipulates the record identifiers before saving the output:
 
 \begin{minted}{pycon}
->>> from Bio import AlignIO
+>>> from biopython import AlignIO
 >>> alignment = AlignIO.read("PF05371_seed.sth", "stockholm")
 >>> name_mapping = {}
 >>> for i, record in enumerate(alignment):
@@ -610,12 +610,12 @@ Using the PFAM/Stockholm format on the other hand allows you to record a lot of 
 
 \subsection{Getting your alignment objects as formatted strings}
 \label{sec:alignment-format}
-The \verb|Bio.AlignIO| interface is based on handles, which means if you want to get your alignment(s) into a string in a particular file format you need to do a little bit more work (see below).
+The \verb|biopython.AlignIO| interface is based on handles, which means if you want to get your alignment(s) into a string in a particular file format you need to do a little bit more work (see below).
 However, you will probably prefer to call Python's built-in \verb|format| function on the alignment object.
-This takes an output format specification as a single argument, a lower case string which is supported by \verb|Bio.AlignIO| as an output format.  For example:
+This takes an output format specification as a single argument, a lower case string which is supported by \verb|biopython.AlignIO| as an output format.  For example:
 
 \begin{minted}{pycon}
->>> from Bio import AlignIO
+>>> from biopython import AlignIO
 >>> alignment = AlignIO.read("PF05371_seed.sth", "stockholm")
 >>> print(format(alignment, "clustal"))
 CLUSTAL X (1.81) multiple sequence alignment
@@ -629,14 +629,14 @@ COATB_BPI22/32-83                   DGTSTATSYATEAMNSLKTQATDLIDQTWPVVTSVAVAGLAIRL
 
 Without an output format specification, \verb|format| returns the same output as \verb|str|.
 
-As described in Section~\ref{sec:SeqRecord-format}, the \verb|Seq| object has a similar method using output formats supported by \verb|Bio.SeqIO|.
+As described in Section~\ref{sec:SeqRecord-format}, the \verb|Seq| object has a similar method using output formats supported by \verb|biopython.SeqIO|.
 
-Internally \verb|format| is calling \verb|Bio.AlignIO.write()| with a \verb|StringIO| handle.  You can do this in your own code if for example you are using an
-older version of Biopython:
+Internally \verb|format| is calling \verb|biopython.AlignIO.write()| with a \verb|StringIO| handle.  You can do this in your own code if for example you are using an
+older version of biopythonpython:
 
 \begin{minted}{pycon}
 >>> from io import StringIO
->>> from Bio import AlignIO
+>>> from biopython import AlignIO
 >>> alignments = AlignIO.parse("PF05371_seed.sth", "stockholm")
 >>> out_handle = StringIO()
 >>> AlignIO.write(alignments, out_handle, "clustal")
@@ -667,7 +667,7 @@ make sense:
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio import AlignIO
+>>> from biopython import AlignIO
 >>> alignment = AlignIO.read("PF05371_seed.sth", "stockholm")
 >>> print("Number of rows: %i" % len(alignment))
 Number of rows: 7
@@ -837,7 +837,7 @@ object into an array of letters -- and you can do this with NumPy:
 %doctest examples lib:numpy
 \begin{minted}{pycon}
 >>> import numpy as np
->>> from Bio import AlignIO
+>>> from biopython import AlignIO
 >>> alignment = AlignIO.read("PF05371_seed.sth", "stockholm")
 >>> align_array = np.array([list(rec) for rec in alignment], np.character)
 >>> print("Array shape %i by %i" % align_array.shape)
@@ -862,8 +862,8 @@ The \verb+substitutions+ property of an alignment reports how often letters in t
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio.Seq import Seq
->>> from Bio.Align import MultipleSeqAlignment
+>>> from biopython.Seq import Seq
+>>> from biopython.Align import MultipleSeqAlignment
 >>> alignment = MultipleSeqAlignment(
 ...     [
 ...         Seq("ACTCCTA", id='seq1'),
@@ -909,16 +909,16 @@ This also allows you to change the order of letters in the alphabet.
 There are \emph{lots} of algorithms out there for aligning sequences, both pairwise alignments
 and multiple sequence alignments. These calculations are relatively slow, and you generally
 wouldn't want to write such an algorithm in Python. For pairwise alignments Biopython contains
-the \verb|Bio.pairwise2| module , which is supplemented by functions written in C for speed
+the \verb|biopython.pairwise2| module , which is supplemented by functions written in C for speed
 enhancements and the new \verb|PairwiseAligner| (see Section~\ref{sec:pairwise}). In addition,
 you can use Biopython to invoke a command line tool on your behalf. Normally you would:
 \begin{enumerate}
 \item Prepare an input file of your unaligned sequences, typically this will be a FASTA file
-      which you might create using \verb|Bio.SeqIO| (see Chapter~\ref{chapter:seqio}).
+      which you might create using \verb|biopython.SeqIO| (see Chapter~\ref{chapter:seqio}).
 \item Call the command line tool to process this input file, typically via one of Biopython's
       command line wrappers (which we'll discuss here).
 \item Read the output from the tool, i.e. your aligned sequences, typically using
-      \verb|Bio.AlignIO| (see earlier in this chapter).
+      \verb|biopython.AlignIO| (see earlier in this chapter).
 \end{enumerate}
 
 All the command line wrappers we're going to talk about in this chapter follow the same style.
@@ -926,18 +926,18 @@ You create a command line object specifying the options (e.g. the input filename
 output filename), then invoke this command line via a Python operating system call (e.g.
 using the \texttt{subprocess} module).
 
-Most of these wrappers are defined in the \verb|Bio.Align.Applications| module:
+Most of these wrappers are defined in the \verb|biopython.Align.Applications| module:
 
 %doctest
 \begin{minted}{pycon}
->>> import Bio.Align.Applications
->>> dir(Bio.Align.Applications) # doctest:+ELLIPSIS
+>>> import biopython.Align.Applications
+>>> dir(biopython.Align.Applications) # doctest:+ELLIPSIS
 ['ClustalOmegaCommandline', 'ClustalwCommandline', 'DialignCommandline', 'MSAProbsCommandline', 'MafftCommandline', 'MuscleCommandline', 'PrankCommandline', 'ProbconsCommandline', 'TCoffeeCommandline', ...]
 \end{minted}
 
 \noindent (Ignore the entries starting with an underscore -- these have
 special meaning in Python.)
-The module \verb|Bio.Emboss.Applications| has wrappers for some of the
+The module \verb|biopython.Emboss.Applications| has wrappers for some of the
 \href{http://emboss.sourceforge.net/}{EMBOSS suite}, including
 \texttt{needle} and \texttt{water}, which are described below in
 Section~\ref{sec:emboss-needle-water}, and wrappers for the EMBOSS
@@ -951,7 +951,7 @@ sample, but the same principles apply.
 \label{sec:align_clustal}
 ClustalW is a popular command line tool for multiple sequence alignment
 (there is also a graphical interface called ClustalX). Biopython's
-\verb|Bio.Align.Applications| module has a wrapper for this alignment tool
+\verb|biopython.Align.Applications| module has a wrapper for this alignment tool
 (and several others).
 
 Before trying to use ClustalW from within Python, you should first try running
@@ -960,7 +960,7 @@ yourself the other options. You'll find the Biopython wrapper is very
 faithful to the actual command line API:
 
 \begin{minted}{pycon}
->>> from Bio.Align.Applications import ClustalwCommandline
+>>> from biopython.Align.Applications import ClustalwCommandline
 >>> help(ClustalwCommandline)
 \end{minted}
 
@@ -976,7 +976,7 @@ based on the input FASTA file, in this case \texttt{opuntia.aln} and
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio.Align.Applications import ClustalwCommandline
+>>> from biopython.Align.Applications import ClustalwCommandline
 >>> cline = ClustalwCommandline("clustalw2", infile="opuntia.fasta")
 >>> print(cline)
 clustalw2 -infile=opuntia.fasta
@@ -999,7 +999,7 @@ the full path of the tool. For example:
 %doctest
 \begin{minted}{pycon}
 >>> import os
->>> from Bio.Align.Applications import ClustalwCommandline
+>>> from biopython.Align.Applications import ClustalwCommandline
 >>> clustalw_exe = r"C:\Program Files\new clustal\clustalw2.exe"
 >>> clustalw_cline = ClustalwCommandline(clustalw_exe, infile="opuntia.fasta")
 \end{minted}
@@ -1043,11 +1043,11 @@ tree. We didn't tell ClustalW what filenames to use, but it defaults to
 picking names based on the input file. In this case the output should be
 in the file \verb|opuntia.aln|.
 You should be able to work out how to read in the alignment using
-\verb|Bio.AlignIO| by now:
+\verb|biopython.AlignIO| by now:
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio import AlignIO
+>>> from biopython import AlignIO
 >>> align = AlignIO.read("opuntia.aln", "clustal")
 >>> print(align)
 Alignment with 7 rows and 906 columns
@@ -1062,12 +1062,12 @@ TATACATTAAAGGAGGGGGATGCGGATAAATGGAAAGGCGAAAG...AGA gi|6273291|gb|AF191665.1|AF19
 
 In case you are interested (and this is an aside from the main thrust of this
 chapter), the \texttt{opuntia.dnd} file ClustalW creates is just a standard
-Newick tree file, and \verb|Bio.Phylo| can parse these:
+Newick tree file, and \verb|biopython.Phylo| can parse these:
 
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio import Phylo
+>>> from biopython import Phylo
 >>> tree = Phylo.read("opuntia.dnd", "newick")
 >>> Phylo.draw_ascii(tree)
                              _______________ gi|6273291|gb|AF191665.1|AF191665
@@ -1091,13 +1091,13 @@ depth.
 
 \subsection{MUSCLE}
 MUSCLE is a more recent multiple sequence alignment tool than ClustalW, and
-Biopython also has a wrapper for it under the \verb|Bio.Align.Applications|
+Biopython also has a wrapper for it under the \verb|biopython.Align.Applications|
 module. As before, we recommend you try using MUSCLE from the command line before
 trying it from within Python, as the Biopython wrapper is very faithful to the
 actual command line API:
 
 \begin{minted}{pycon}
->>> from Bio.Align.Applications import MuscleCommandline
+>>> from biopython.Align.Applications import MuscleCommandline
 >>> help(MuscleCommandline)
 \end{minted}
 
@@ -1109,7 +1109,7 @@ alignment to an output file:
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio.Align.Applications import MuscleCommandline
+>>> from biopython.Align.Applications import MuscleCommandline
 >>> cline = MuscleCommandline(input="opuntia.fasta", out="opuntia.txt")
 >>> print(cline)
 muscle -in opuntia.fasta -out opuntia.txt
@@ -1120,13 +1120,13 @@ Note that MUSCLE uses ``-in'' and ``-out'' but in Biopython we have to use
 because ``in'' is a reserved word in Python.
 
 By default MUSCLE will output the alignment as a FASTA file (using gapped
-sequences). The \verb|Bio.AlignIO| module should be able to read this
+sequences). The \verb|biopython.AlignIO| module should be able to read this
 alignment using \texttt{format="fasta"}.
 You can also ask for ClustalW-like output:
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio.Align.Applications import MuscleCommandline
+>>> from biopython.Align.Applications import MuscleCommandline
 >>> cline = MuscleCommandline(input="opuntia.fasta", out="opuntia.aln", clw=True)
 >>> print(cline)
 muscle -in opuntia.fasta -out opuntia.aln -clw
@@ -1137,13 +1137,13 @@ used for maximum compatibility:
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio.Align.Applications import MuscleCommandline
+>>> from biopython.Align.Applications import MuscleCommandline
 >>> cline = MuscleCommandline(input="opuntia.fasta", out="opuntia.aln", clwstrict=True)
 >>> print(cline)
 muscle -in opuntia.fasta -out opuntia.aln -clwstrict
 \end{minted}
 
-\noindent The \verb|Bio.AlignIO| module should be able to read these alignments
+\noindent The \verb|biopython.AlignIO| module should be able to read these alignments
 using \texttt{format="clustal"}.
 
 MUSCLE can also output in GCG MSF format (using the \texttt{msf} argument), but
@@ -1154,7 +1154,7 @@ You can also set the other optional parameters, for example the maximum number
 of iterations. See the built in help for details.
 
 You would then run MUSCLE command line string as described above for
-ClustalW, and parse the output using \verb|Bio.AlignIO| to get an
+ClustalW, and parse the output using \verb|biopython.AlignIO| to get an
 alignment object.
 
 \subsection{MUSCLE using stdout}
@@ -1167,7 +1167,7 @@ advantage of this to avoid having a temporary output file! For example:
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio.Align.Applications import MuscleCommandline
+>>> from biopython.Align.Applications import MuscleCommandline
 >>> muscle_cline = MuscleCommandline(input="opuntia.fasta")
 >>> print(muscle_cline)
 muscle -in opuntia.fasta
@@ -1178,11 +1178,11 @@ to parse this we can use \verb|StringIO| to turn it into a handle.
 Remember that MUSCLE defaults to using FASTA as the output format:
 
 \begin{minted}{pycon}
->>> from Bio.Align.Applications import MuscleCommandline
+>>> from biopython.Align.Applications import MuscleCommandline
 >>> muscle_cline = MuscleCommandline(input="opuntia.fasta")
 >>> stdout, stderr = muscle_cline()
 >>> from io import StringIO
->>> from Bio import AlignIO
+>>> from biopython import AlignIO
 >>> align = AlignIO.read(StringIO(stdout), "fasta")
 >>> print(align)
 Alignment with 7 rows and 906 columns
@@ -1202,7 +1202,7 @@ with handles instead:
 
 \begin{minted}{pycon}
 >>> import subprocess
->>> from Bio.Align.Applications import MuscleCommandline
+>>> from biopython.Align.Applications import MuscleCommandline
 >>> muscle_cline = MuscleCommandline(input="opuntia.fasta")
 >>> child = subprocess.Popen(str(muscle_cline),
 ...                          stdout=subprocess.PIPE,
@@ -1210,7 +1210,7 @@ with handles instead:
 ...                          universal_newlines=True,
 ...                          shell=(sys.platform!="win32"))
 ...
->>> from Bio import AlignIO
+>>> from biopython import AlignIO
 >>> align = AlignIO.read(child.stdout, "fasta")
 >>> print(align)
 Alignment with 7 rows and 906 columns
@@ -1236,7 +1236,7 @@ file (using a generator expression), taking just six of the seven sequences:
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> records = (r for r in SeqIO.parse("opuntia.fasta", "fasta") if len(r) < 900)
 \end{minted}
 
@@ -1246,7 +1246,7 @@ as for the output.
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio.Align.Applications import MuscleCommandline
+>>> from biopython.Align.Applications import MuscleCommandline
 >>> muscle_cline = MuscleCommandline(clwstrict=True)
 >>> print(muscle_cline)
 muscle -clwstrict
@@ -1280,7 +1280,7 @@ this is all the input data by closing the handle. At that point MUSCLE should
 start to run, and we can ask for the output:
 
 \begin{minted}{pycon}
->>> from Bio import AlignIO
+>>> from biopython import AlignIO
 >>> align = AlignIO.read(child.stdout, "clustal")
 >>> print(align)
 Alignment with 6 rows and 900 columns
@@ -1311,7 +1311,7 @@ a string using \texttt{StringIO} (see Section~\ref{sec:appendix-handles}):
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> records = (r for r in SeqIO.parse("opuntia.fasta", "fasta") if len(r) < 900)
 >>> from io import StringIO
 >>> handle = StringIO()
@@ -1325,7 +1325,7 @@ a string using \texttt{StringIO} (see Section~\ref{sec:appendix-handles}):
 %not a doctest as can't assume the MUSCLE binary is present
 \begin{minted}{pycon}
 >>> stdout, stderr = muscle_cline(stdin=data)
->>> from Bio import AlignIO
+>>> from biopython import AlignIO
 >>> align = AlignIO.read(StringIO(stdout), "clustal")
 >>> print(align)
 Alignment with 6 rows and 900 columns
@@ -1373,7 +1373,7 @@ Let's start by creating a complete \texttt{needle} command line object in one go
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio.Emboss.Applications import NeedleCommandline
+>>> from biopython.Emboss.Applications import NeedleCommandline
 >>> needle_cline = NeedleCommandline(asequence="alpha.faa", bsequence="beta.faa",
 ...                                  gapopen=10, gapextend=0.5, outfile="needle.txt")
 >>> print(needle_cline)
@@ -1392,7 +1392,7 @@ the full path to the tool, for example:
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio.Emboss.Applications import NeedleCommandline
+>>> from biopython.Emboss.Applications import NeedleCommandline
 >>> needle_cline = NeedleCommandline(r"C:\EMBOSS\needle.exe",
 ...                                  asequence="alpha.faa", bsequence="beta.faa",
 ...                                  gapopen=10, gapextend=0.5, outfile="needle.txt")
@@ -1406,7 +1406,7 @@ command line, to familiarise yourself the other options and compare them to the
 Biopython help text:
 
 \begin{minted}{pycon}
->>> from Bio.Emboss.Applications import NeedleCommandline
+>>> from biopython.Emboss.Applications import NeedleCommandline
 >>> help(NeedleCommandline)
 \end{minted}
 
@@ -1414,7 +1414,7 @@ Note that you can also specify (or change or look at) the settings like this:
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio.Emboss.Applications import NeedleCommandline
+>>> from biopython.Emboss.Applications import NeedleCommandline
 >>> needle_cline = NeedleCommandline()
 >>> needle_cline.asequence="alpha.faa"
 >>> needle_cline.bsequence="beta.faa"
@@ -1437,11 +1437,11 @@ module, but for simple usage the wrapper object usually suffices:
 Needleman-Wunsch global alignment of two sequences
 \end{minted}
 
-Next we can load the output file with \verb|Bio.AlignIO| as
+Next we can load the output file with \verb|biopython.AlignIO| as
 discussed earlier in this chapter, as the \texttt{emboss} format:
 
 \begin{minted}{pycon}
->>> from Bio import AlignIO
+>>> from biopython import AlignIO
 >>> align = AlignIO.read("needle.txt", "emboss")
 >>> print(align)
 Alignment with 2 rows and 149 columns
@@ -1468,8 +1468,8 @@ alignments.
 
 Pairwise sequence alignment is the process of aligning two sequences to each
 other by optimizing the similarity score between them. Biopython includes two
-built-in pairwise aligners: the 'old' \verb|Bio.pairwise2| module and the new
-\verb|PairwiseAligner| class within the \verb|Bio.Align| module (since Biopython
+built-in pairwise aligners: the 'old' \verb|biopython.pairwise2| module and the new
+\verb|PairwiseAligner| class within the \verb|biopython.Align| module (since Biopython
 version 1.72). Both can perform global and local alignments and offer numerous
 options to change the alignment parameters. Although \verb|pairwise2| has gained
 some speed and memory enhancements recently, the new \verb|PairwiseAligner| is
@@ -1485,7 +1485,7 @@ they may return different subsets of all valid alignments).
 \subsection{pairwise2}
 \label{sec:pairwise2}
 
-\verb|Bio.pairwise2| contains essentially the same algorithms as
+\verb|biopython.pairwise2| contains essentially the same algorithms as
 \texttt{water} (local) and \texttt{needle} (global) from the
 \href{http://emboss.sourceforge.net/}{EMBOSS} suite (see above) and should
 return the same results. The \verb|pairwise2| module has undergone some
@@ -1501,8 +1501,8 @@ stored in \texttt{alpha.faa} and \texttt{beta.faa}:
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio import pairwise2
->>> from Bio import SeqIO
+>>> from biopython import pairwise2
+>>> from biopython import SeqIO
 >>> seq1 = SeqIO.read("alpha.faa", "fasta")
 >>> seq2 = SeqIO.read("beta.faa", "fasta")
 >>> alignments = pairwise2.align.globalxx(seq1, seq2)
@@ -1514,14 +1514,14 @@ used for  decoding the scores and penalties for matches (and mismatches) and gap
 The first letter decodes the match score, e.g. \texttt{x} means that a match counts
 1 while mismatches have no costs. With \texttt{m} general values for either matches
 or mismatches can be defined
-(for more options see \href{http://biopython.org/docs/1.77/api/Bio.pairwise2.html}{Biopython's API}).
+(for more options see \href{http://biopython.org/docs/1.77/api/biopython.pairwise2.html}{Biopython's API}).
 The second letter decodes the cost for gaps; \texttt{x} means no gap costs at all,
 with \texttt{s} different penalties for opening and extending a gap can be assigned.
 So, \verb|globalxx| means that only matches between both sequences are counted.
 
 Our variable \texttt{alignments} now contains a list of alignments (at least one) which
 have the same optimal score for the given conditions. In our example this are 80
-different alignments with the score 72 (\verb|Bio.pairwise2| will return up to 1000
+different alignments with the score 72 (\verb|biopython.pairwise2| will return up to 1000
 alignments). Have a look at one of these alignments:
 
 %cont-doctest
@@ -1534,7 +1534,7 @@ Alignment(seqA='MV-LSPADKTNV---K-A--A-WGKVGAHAG...YR-', seqB='MVHL-----T--PEEKSA
 
 Each alignment is a named tuple consisting of the two aligned sequences, the score, the
 start and the end positions of the alignment (in global alignments the start is
-always 0 and the end the length of the alignment). \verb|Bio.pairwise2| has a
+always 0 and the end the length of the alignment). \verb|biopython.pairwise2| has a
 function \verb|format_alignment| for a nicer printout:
 
 %cont-doctest
@@ -1563,9 +1563,9 @@ obtained by using the BLOSUM62 matrix, together with a gap open penalty of 10
 and a gap extension penalty of 0.5 (using \verb|globalds|):
 
 \begin{minted}{pycon}
->>> from Bio import pairwise2
->>> from Bio import SeqIO
->>> from Bio.Align import substitution_matrices
+>>> from biopython import pairwise2
+>>> from biopython import SeqIO
+>>> from biopython.Align import substitution_matrices
 >>> blosum62 = substitution_matrices.load("BLOSUM62")
 >>> seq1 = SeqIO.read("alpha.faa", "fasta")
 >>> seq2 = SeqIO.read("beta.faa", "fasta")
@@ -1588,8 +1588,8 @@ where again XX stands for a two letter code for the match and gap functions:
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio import pairwise2
->>> from Bio.Align import substitution_matrices
+>>> from biopython import pairwise2
+>>> from biopython.Align import substitution_matrices
 >>> blosum62 = substitution_matrices.load("BLOSUM62")
 >>> alignments = pairwise2.align.localds("LSPADKTNVKAA", "PEEKSAV", blosum62, -10, -1)
 >>> print(pairwise2.format_alignment(*alignments[0]))
@@ -1607,8 +1607,8 @@ aligned parts of the sequences, use the keyword-parameter \verb|full_sequences=T
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio import pairwise2
->>> from Bio.Align import substitution_matrices
+>>> from biopython import pairwise2
+>>> from biopython.Align import substitution_matrices
 >>> blosum62 = substitution_matrices.load("BLOSUM62")
 >>> alignments = pairwise2.align.localds("LSPADKTNVKAA", "PEEKSAV", blosum62, -10, -1)
 >>> print(pairwise2.format_alignment(*alignments[0], full_sequences=True))
@@ -1629,8 +1629,8 @@ part has not been extended:
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio import pairwise2
->>> from Bio.Align import substitution_matrices
+>>> from biopython import pairwise2
+>>> from biopython.Align import substitution_matrices
 >>> blosum62 = substitution_matrices.load("BLOSUM62")
 >>> alignments = pairwise2.align.localds("LSSPADKTNVKKAA", "DDPEEKSAVNN", blosum62, -10, -1)
 >>> print(pairwise2.format_alignment(*alignments[0]))
@@ -1657,14 +1657,14 @@ of 2/0.5 using \verb|localms|:
 <BLANKLINE>
 \end{minted}
 
-One useful keyword argument of the \verb|Bio.pairwise2.align| functions is
+One useful keyword argument of the \verb|biopython.pairwise2.align| functions is
 \texttt{score\_only}. When set to \texttt{True} it will only return the score
 of the best alignment(s), but in a significantly shorter time. It will also
 allow the alignment of longer sequences before a memory error is raised.
 Another useful keyword argument is \texttt{one\_alignment\_only=True} which
 will also result in some speed gain.
 
-Unfortunately, \verb|Bio.pairwise2| does not work with Biopython's multiple
+Unfortunately, \verb|biopython.pairwise2| does not work with Biopython's multiple
 sequence alignment objects (yet).
 However, the module has some interesting advanced features: you can
 define your own match and gap functions (interested in testing affine
@@ -1673,11 +1673,11 @@ for both sequences, sequences can be supplied as lists (useful if you have
 residues that are encoded by more than one character), etc. These features
 are hard (if at all) to realize with other alignment tools. For more details
 see the modules documentation in
-\href{http://biopython.org/docs/\bpversion/api/Bio.pairwise2.html}{Biopython's API}.
+\href{http://biopython.org/docs/\bpversion/api/biopython.pairwise2.html}{Biopython's API}.
 
 \subsection{PairwiseAligner}
 \label{sec:pairwisealigner}
-The new \verb|Bio.Align.PairwiseAligner| implements the Needleman-Wunsch, Smith-Waterman,
+The new \verb|biopython.Align.PairwiseAligner| implements the Needleman-Wunsch, Smith-Waterman,
 Gotoh (three-state), and Waterman-Smith-Beyer global and local pairwise alignment algorithms.
 We refer to Durbin {\textit et al.} \cite{durbin1998} for in-depth information on sequence alignment algorithms.
 
@@ -1688,7 +1688,7 @@ To generate pairwise alignments, first create a \verb+PairwiseAligner+ object:
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio import Align
+>>> from biopython import Align
 >>> aligner = Align.PairwiseAligner()
 \end{minted}
 The \verb+PairwiseAligner+ object \verb+aligner+
@@ -1829,7 +1829,7 @@ Substitution scores define the value to be added to the total score when two let
 
 %doctest examples lib:numpy
 \begin{minted}{pycon}
->>> from Bio import Align
+>>> from biopython import Align
 >>> aligner = Align.PairwiseAligner()
 >>> aligner.match_score
 1.0
@@ -1857,7 +1857,7 @@ Alternatively, you can use the \verb+substitution_matrix+ attribute of the \verb
 
 %cont-doctest
 \begin{minted}{pycon}
->>> from Bio.Align import substitution_matrices
+>>> from biopython.Align import substitution_matrices
 >>> substitution_matrices.load()  #doctest: +ELLIPSIS
 ['BENNER22', 'BENNER6', 'BENNER74', 'BLOSUM45', 'BLOSUM50', 'BLOSUM62', ..., 'TRANS']
 >>> matrix = substitution_matrices.load("BLOSUM62")
@@ -2014,7 +2014,7 @@ For even more fine-grained control over the gap scores, you can specify a gap sc
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio import Align
+>>> from biopython import Align
 >>> aligner = Align.PairwiseAligner()
 >>> def my_gap_score_function(start, length):
 ...     if start==2:
@@ -2055,7 +2055,7 @@ You can perform the following operations on \verb+alignments+:
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio import Align
+>>> from biopython import Align
 >>> aligner = Align.PairwiseAligner()
 >>> alignments = aligner.align("AAA", "AA")
 >>> len(alignments)
@@ -2065,7 +2065,7 @@ You can perform the following operations on \verb+alignments+:
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio import Align
+>>> from biopython import Align
 >>> aligner = Align.PairwiseAligner()
 >>> alignments = aligner.align("AAA", "AA")
 >>> print(alignments[2])
@@ -2089,7 +2089,7 @@ Note that \verb+alignments+ can be reused, i.e. you can iterate over alignments 
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio import Align
+>>> from biopython import Align
 >>> aligner = Align.PairwiseAligner()
 >>> alignments = aligner.align("AAA", "AA")
 >>> for alignment in alignments:
@@ -2142,14 +2142,14 @@ The \verb+aligner.align+ method returns \verb+PairwiseAlignment+ objects, each r
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio import Align
+>>> from biopython import Align
 >>> aligner = Align.PairwiseAligner()
 >>> seq1 = "GAACT"
 >>> seq2 = "GAT"
 >>> alignments = aligner.align(seq1, seq2)
 >>> alignment = alignments[0]
 >>> alignment # doctest: +SKIP
-<Bio.Align.PairwiseAlignment object at 0x10204d250>
+<biopython.Align.PairwiseAlignment object at 0x10204d250>
 \end{minted}
 
 Each alignment stores the alignment score:
@@ -2253,8 +2253,8 @@ stored in \texttt{alpha.faa} and \texttt{beta.faa}:
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio import Align
->>> from Bio import SeqIO
+>>> from biopython import Align
+>>> from biopython import SeqIO
 >>> seq1 = SeqIO.read("alpha.faa", "fasta")
 >>> seq2 = SeqIO.read("beta.faa", "fasta")
 >>> aligner = Align.PairwiseAligner()
@@ -2307,9 +2307,9 @@ and a gap extension penalty of 0.5:
 
 %doctest examples lib:numpy
 \begin{minted}{pycon}
->>> from Bio import Align
->>> from Bio import SeqIO
->>> from Bio.Align import substitution_matrices
+>>> from biopython import Align
+>>> from biopython import SeqIO
+>>> from biopython.Align import substitution_matrices
 >>> seq1 = SeqIO.read("alpha.faa", "fasta")
 >>> seq2 = SeqIO.read("beta.faa", "fasta")
 >>> aligner = Align.PairwiseAligner()
@@ -2365,7 +2365,7 @@ Schneider \textit{et al.} \cite{schneider2005} created a substitution matrix for
 
 %doctest . lib:numpy
 \begin{minted}{pycon}
->>> from Bio.Align import substitution_matrices
+>>> from biopython.Align import substitution_matrices
 >>> m = substitution_matrices.load("SCHNEIDER")
 >>> m.alphabet  #doctest: +ELLIPSIS
 ('AAA', 'AAC', 'AAG', 'AAT', 'ACA', 'ACC', 'ACG', 'ACT', ..., 'TTG', 'TTT')
@@ -2374,7 +2374,7 @@ We can use this matrix to align codon sequences to each other:
 
 %cont-doctest
 \begin{minted}{pycon}
->>> from Bio import Align
+>>> from biopython import Align
 >>> aligner = Align.PairwiseAligner()
 >>> aligner.substitution_matrix = m
 >>> aligner.gap_score = -1.0
@@ -2440,7 +2440,7 @@ We can align these sequences directly to each other by using a three-letter amin
 
 %cont-doctest
 \begin{minted}{pycon}
->>> from Bio import Align
+>>> from biopython import Align
 >>> aligner = Align.PairwiseAligner()
 >>> aligner.alphabet = ['Ala', 'Arg', 'Asn', 'Asp', 'Cys',
 ...                     'Gln', 'Glu', 'Gly', 'His', 'Ile',
@@ -2477,7 +2477,7 @@ Internally, the first step when performing an alignment is to replace the two se
 %doctest . lib:numpy
 \begin{minted}{pycon}
 >>> import numpy
->>> from Bio import Align
+>>> from biopython import Align
 >>> aligner = Align.PairwiseAligner()
 >>> s1 = numpy.array([2, 10, 10, 13], numpy.int32)
 >>> s2 = numpy.array([2, 10, 13], numpy.int32)
@@ -2530,7 +2530,7 @@ Integer sequences can also be aligned using a substitution matrix, in this case 
 
 %doctest . lib:numpy
 \begin{minted}{pycon}
->>> from Bio import Align
+>>> from biopython import Align
 >>> import numpy
 >>> aligner = Align.PairwiseAligner()
 >>> m = numpy.eye(5)
@@ -2566,7 +2566,7 @@ Integer sequences can also be aligned using a substitution matrix, in this case 
 \section{Substitution matrices}
 \label{sec:substitution_matrices}
 
-The \verb+Array+ class in \verb+Bio.Align.substitution_matrices+ is a subclass of numpy arrays that supports indexing both by integers and by specific strings. An \verb+Array+ instance can either be a one-dimensional array or a square two-dimensional arrays. A one-dimensional \verb+Array+ object can for example be used to store the nucleotide frequency of a DNA sequence, while a two-dimensional \verb+Array+ object can be used to represent a scoring matrix for sequence alignments.
+The \verb+Array+ class in \verb+biopython.Align.substitution_matrices+ is a subclass of numpy arrays that supports indexing both by integers and by specific strings. An \verb+Array+ instance can either be a one-dimensional array or a square two-dimensional arrays. A one-dimensional \verb+Array+ object can for example be used to store the nucleotide frequency of a DNA sequence, while a two-dimensional \verb+Array+ object can be used to represent a scoring matrix for sequence alignments.
 
 \subsection*{Creating an Array object}
 
@@ -2574,7 +2574,7 @@ To create a one-dimensional \verb+Array+, only the alphabet of allowed letters n
 
 %doctest . lib:numpy
 \begin{minted}{pycon}
->>> from Bio.Align.substitution_matrices import Array
+>>> from biopython.Align.substitution_matrices import Array
 >>> counts = Array("ACGT")
 >>> print(counts)
 A 0.0
@@ -2629,7 +2629,7 @@ A two-dimensional \verb+Array+ can be created by specifying \verb+dims=2+:
 
 %doctest . lib:numpy
 \begin{minted}{pycon}
->>> from Bio.Align.substitution_matrices import Array
+>>> from biopython.Align.substitution_matrices import Array
 >>> counts = Array("ACGT", dims=2)
 >>> print(counts)
     A   C   G   T
@@ -2743,7 +2743,7 @@ As \verb+Array+ is a subclass of a numpy array, you can apply mathematical opera
 
 %doctest ../Tests/Align lib:numpy
 \begin{minted}{pycon}
->>> from Bio.Align import PairwiseAligner
+>>> from biopython.Align import PairwiseAligner
 >>> aligner = PairwiseAligner()
 >>> aligner.mode = 'local'
 >>> aligner.match_score = 2
@@ -2755,7 +2755,7 @@ Next, we read in the 16S ribosomal RNA gene sequence of {\it Escherichia coli} a
 
 %cont-doctest
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> sequence1 = SeqIO.read('ecoli.fa', 'fasta')
 >>> sequence2 = SeqIO.read('bsubtilis.fa', 'fasta')
 >>> alignments = aligner.align(sequence1, sequence2)
@@ -2772,7 +2772,7 @@ However, as they only differ trivially from each other, we arbitrarily choose th
 %cont-doctest
 \begin{minted}{pycon}
 >>> alignment = alignments[0]
->>> from Bio.Align.substitution_matrices import Array
+>>> from biopython.Align.substitution_matrices import Array
 >>> frequency = Array("ACGT", dims=2)
 >>> for (start1, end1), (start2, end2) in zip(*alignment.aligned):
 ...     seq1 = sequence1[start1:end1]
@@ -2853,7 +2853,7 @@ A \verb+ValueError+ is triggered if the \verb+Array+ objects appearing in a math
 
 %doctest . lib:numpy
 \begin{minted}{pycon}
->>> from Bio.Align.substitution_matrices import Array
+>>> from biopython.Align.substitution_matrices import Array
 >>> d = Array("ACGT")
 >>> r = Array("ACGU")
 >>> d + r
@@ -2864,7 +2864,7 @@ ValueError: alphabets are inconsistent
 
 \subsection*{Reading \texttt{Array} object from file}
 
-\verb+Bio.Align.substitution_matrices+ includes a parser to read one- and two-dimensional \verb+Array+ objects from file. One-dimensional arrays are represented by a simple two-column format, with the first column containing the key and the second column the corresponding value. For example, the file \verb+hg38.chrom.sizes+ (obtained from UCSC), available in the \verb+Tests/Align+ subdirectory of the Biopython distribution, contains the size in nucleotides of each chromosome in human genome assembly hg38:
+\verb+biopython.Align.substitution_matrices+ includes a parser to read one- and two-dimensional \verb+Array+ objects from file. One-dimensional arrays are represented by a simple two-column format, with the first column containing the key and the second column the corresponding value. For example, the file \verb+hg38.chrom.sizes+ (obtained from UCSC), available in the \verb+Tests/Align+ subdirectory of the Biopython distribution, contains the size in nucleotides of each chromosome in human genome assembly hg38:
 \begin{minted}{text}
 chr1    248956422
 chr2    242193529
@@ -2880,7 +2880,7 @@ To parse this file, use
 
 %doctest ../Tests/Align lib:numpy
 \begin{minted}{pycon}
->>> from Bio.Align import substitution_matrices
+>>> from biopython.Align import substitution_matrices
 >>> with open("hg38.chrom.sizes") as handle:
 ...    table = substitution_matrices.read(handle)
 ...
@@ -2934,11 +2934,11 @@ G  0 -2  0 -1 -3 -2 -2  6 -2 -4 -4 -2 -3 -3 -2  0 -2 -2 -3 -3 -1 -2 -1 -4
 H -2  0  1 -1 -3  0  0 -2  8 -3 -3 -1 -2 -1 -2 -1 -2 -2  2 -3  0  0 -1 -4 
 ...
 \end{minted}
-This file is included in the Biopython distribution under \verb+Bio/Align/substitution_matrices/data+. To parse this file, use
+This file is included in the Biopython distribution under \verb+biopython/Align/substitution_matrices/data+. To parse this file, use
 
-%doctest ../Bio/Align/substitution_matrices/data lib:numpy
+%doctest ../biopython/Align/substitution_matrices/data lib:numpy
 \begin{minted}{pycon}
->>> from Bio.Align import substitution_matrices
+>>> from biopython.Align import substitution_matrices
 >>> with open("BLOSUM62") as handle:
 ...    matrix = substitution_matrices.read(handle)
 ...
@@ -2958,7 +2958,7 @@ We can now use this matrix as the substitution matrix on an aligner object:
 
 %cont-doctest
 \begin{minted}{pycon}
->>> from Bio.Align import PairwiseAligner
+>>> from biopython.Align import PairwiseAligner
 >>> aligner = PairwiseAligner()
 >>> aligner.substitution_matrix = matrix
 \end{minted}
@@ -2986,11 +2986,11 @@ and write the \verb+text+ to a file.
 
 \subsection*{Loading predefined substitution matrices}
 
-Biopython contains a large set of substitution matrices defined in the literature, including BLOSUM (Blocks Substitution Matrix) \cite{henikoff1992} and PAM (Point Accepted Mutation) matrices \cite{dayhoff1978}. These matrices are available as flat files in the \verb+Bio/Align/scoring_matrices/data+ directory, and can be loaded into Python using the \verb+load+ function in the \verb+scoring_matrices+ submodule. For example, the BLOSUM62 matrix can be loaded by running
+Biopython contains a large set of substitution matrices defined in the literature, including BLOSUM (Blocks Substitution Matrix) \cite{henikoff1992} and PAM (Point Accepted Mutation) matrices \cite{dayhoff1978}. These matrices are available as flat files in the \verb+biopython/Align/scoring_matrices/data+ directory, and can be loaded into Python using the \verb+load+ function in the \verb+scoring_matrices+ submodule. For example, the BLOSUM62 matrix can be loaded by running
 
 %doctest . lib:numpy
 \begin{minted}{pycon}
->>> from Bio.Align import substitution_matrices
+>>> from biopython.Align import substitution_matrices
 >>> m = substitution_matrices.load("BLOSUM62")
 \end{minted}
 This substitution matrix has an alphabet consisting of the 20 amino acids used in the genetic code, the three ambiguous amino acids B (asparagine or aspartic acid), Z (glutamine or glutamic acid), and X (representing any amino acid), and the stop codon represented by an asterisk:

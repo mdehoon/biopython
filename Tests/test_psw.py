@@ -9,7 +9,7 @@ import unittest
 import random
 import sys
 
-from Bio.Wise import psw
+from biopython.Wise import psw
 
 if "requires_wise" in sys.modules:
     del sys.modules["requires_wise"]

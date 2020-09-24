@@ -11,7 +11,7 @@
 
 """Common code to check if the internet is available."""
 
-from Bio import MissingExternalDependencyError
+from biopython import MissingExternalDependencyError
 
 
 def check():

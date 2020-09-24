@@ -9,9 +9,9 @@
 import unittest
 from io import BytesIO
 
-from Bio import SeqIO, BiopythonWarning
-from Bio.Seq import Seq
-from Bio.SeqFeature import SeqFeature, FeatureLocation, BeforePosition
+from biopython import SeqIO, BiopythonWarning
+from biopython.Seq import Seq
+from biopython.SeqFeature import SeqFeature, FeatureLocation, BeforePosition
 
 
 class TestXdna(unittest.TestCase):

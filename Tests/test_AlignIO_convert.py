@@ -3,11 +3,11 @@
 # license.  Please see the LICENSE file that should have been included
 # as part of this package.
 
-"""Unit tests for Bio.SeqIO.convert(...) function."""
+"""Unit tests for biopython.SeqIO.convert(...) function."""
 import unittest
 from io import StringIO
 
-from Bio import AlignIO
+from biopython import AlignIO
 
 
 class ConvertTests(unittest.TestCase):

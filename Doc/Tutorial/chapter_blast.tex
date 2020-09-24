@@ -16,17 +16,17 @@ We're going to start this chapter by invoking the NCBI online BLAST service
 from within a Python script.
 
 \emph{NOTE}: The following Chapter~\ref{chapter:searchio} describes
-\verb|Bio.SearchIO|, an \emph{experimental} module in Biopython. We
-intend this to ultimately replace the older \verb|Bio.Blast| module, as it
+\verb|biopython.SearchIO|, an \emph{experimental} module in Biopython. We
+intend this to ultimately replace the older \verb|biopython.Blast| module, as it
 provides a more general framework handling other related sequence
 searching tools as well. However, until that is declared stable, for
-production code please continue to use the  \verb|Bio.Blast| module
+production code please continue to use the  \verb|biopython.Blast| module
 for dealing with NCBI BLAST.
 
 \section{Running BLAST over the Internet}
 \label{sec:running-www-blast}
 
-We use the function \verb|qblast()| in the \verb|Bio.Blast.NCBIWWW| module
+We use the function \verb|qblast()| in the \verb|biopython.Blast.NCBIWWW| module
 to call the online version of BLAST.  This has three non-optional arguments:
 \begin{itemize}
 \item The first argument is the blast program to use for the search, as a
@@ -63,7 +63,7 @@ For more about the optional BLAST arguments, we refer you to the NCBI's own
 documentation, or that built into Biopython:
 
 \begin{minted}{pycon}
->>> from Bio.Blast import NCBIWWW
+>>> from biopython.Blast import NCBIWWW
 >>> help(NCBIWWW.qblast)
 ...
 \end{minted}
@@ -78,7 +78,7 @@ the nucleotide database (nt) using BLASTN, and you know the GI number of your
 query sequence, you can use:
 
 \begin{minted}{pycon}
->>> from Bio.Blast import NCBIWWW
+>>> from biopython.Blast import NCBIWWW
 >>> result_handle = NCBIWWW.qblast("blastn", "nt", "8332116")
 \end{minted}
 
@@ -87,7 +87,7 @@ file, we just need to open the file and read in this record as a string,
 and use that as the query argument:
 
 \begin{minted}{pycon}
->>> from Bio.Blast import NCBIWWW
+>>> from biopython.Blast import NCBIWWW
 >>> fasta_string = open("m_cold.fasta").read()
 >>> result_handle = NCBIWWW.qblast("blastn", "nt", fasta_string)
 \end{minted}
@@ -96,8 +96,8 @@ We could also have read in the FASTA file as a \verb|SeqRecord| and then
 supplied just the sequence itself:
 
 \begin{minted}{pycon}
->>> from Bio.Blast import NCBIWWW
->>> from Bio import SeqIO
+>>> from biopython.Blast import NCBIWWW
+>>> from biopython import SeqIO
 >>> record = SeqIO.read("m_cold.fasta", format="fasta")
 >>> result_handle = NCBIWWW.qblast("blastn", "nt", record.seq)
 \end{minted}
@@ -108,14 +108,14 @@ for your sequence automatically.  You might prefer to use the
 (which will include the existing identifier):
 
 \begin{minted}{pycon}
->>> from Bio.Blast import NCBIWWW
->>> from Bio import SeqIO
+>>> from biopython.Blast import NCBIWWW
+>>> from biopython import SeqIO
 >>> record = SeqIO.read("m_cold.fasta", format="fasta")
 >>> result_handle = NCBIWWW.qblast("blastn", "nt", record.format("fasta"))
 \end{minted}
 
 This approach makes more sense if you have your sequence(s) in a
-non-FASTA file format which you can extract using \verb|Bio.SeqIO|
+non-FASTA file format which you can extract using \verb|biopython.SeqIO|
 (see Chapter~\ref{chapter:seqio}).
 
 Whatever arguments you give the \verb|qblast()| function, you should
@@ -209,11 +209,11 @@ On my computer this takes about six minutes - a good reason to save the output
 to a file so you can repeat any analysis as needed.
 
 From within Biopython we can use the NCBI BLASTX wrapper from the
-\verb|Bio.Blast.Applications| module to build the command line string,
+\verb|biopython.Blast.Applications| module to build the command line string,
 and run it:
 
 \begin{minted}{pycon}
->>> from Bio.Blast.Applications import NcbiblastxCommandline
+>>> from biopython.Blast.Applications import NcbiblastxCommandline
 >>> help(NcbiblastxCommandline)
 ...
 >>> blastx_cline = NcbiblastxCommandline(query="opuntia.fasta", db="nr", evalue=0.001,
@@ -232,7 +232,7 @@ so stdout and stderr should be empty. You may want to check the output file
 
 As you may recall from earlier examples in the tutorial, the \verb|opuntia.fasta|
 contains seven sequences, so the BLAST XML output should contain multiple results.
-Therefore use \verb|Bio.Blast.NCBIXML.parse()| to parse it as described below in
+Therefore use \verb|biopython.Blast.NCBIXML.parse()| to parse it as described below in
 Section~\ref{sec:parsing-blast}.
 
 \subsection{Other versions of BLAST}
@@ -265,7 +265,7 @@ plain text and HTML output, as these were the only output formats offered
 at the time. Unfortunately, the BLAST output in these formats kept changing,
 each time breaking the Biopython parsers. Our HTML BLAST parser has been
 removed, while the deprectaed plain text BLAST parser is now only available
-via \verb|Bio.SearchIO|. Use it at your own risk, it may or may not work,
+via \verb|biopython.SearchIO|. Use it at your own risk, it may or may not work,
 depending on which BLAST version you're using.
 
 As keeping up with changes in BLAST
@@ -303,7 +303,7 @@ script, then you already have \verb|result_handle|, the handle to the
 BLAST results.  For example, using a GI number to do an online search:
 
 \begin{minted}{pycon}
->>> from Bio.Blast import NCBIWWW
+>>> from biopython.Blast import NCBIWWW
 >>> result_handle = NCBIWWW.qblast("blastn", "nt", "8332116")
 \end{minted}
 
@@ -320,18 +320,18 @@ code to parse it is really quite small.  If you expect a single
 BLAST result (i.e., you used a single query):
 
 \begin{minted}{pycon}
->>> from Bio.Blast import NCBIXML
+>>> from biopython.Blast import NCBIXML
 >>> blast_record = NCBIXML.read(result_handle)
 \end{minted}
 
 \noindent or, if you have lots of results (i.e., multiple query sequences):
 
 \begin{minted}{pycon}
->>> from Bio.Blast import NCBIXML
+>>> from biopython.Blast import NCBIXML
 >>> blast_records = NCBIXML.parse(result_handle)
 \end{minted}
 
-Just like \verb|Bio.SeqIO| and \verb|Bio.AlignIO|
+Just like \verb|biopython.SeqIO| and \verb|biopython.AlignIO|
 (see Chapters~\ref{chapter:seqio} and~\ref{chapter:align}),
 we have a pair of input functions, \verb|read| and \verb|parse|, where
 \verb|read| is for when you have exactly one object, and \verb|parse|
@@ -346,7 +346,7 @@ the BLAST output, retrieving BLAST records one by one for each BLAST
 search result:
 
 \begin{minted}{pycon}
->>> from Bio.Blast import NCBIXML
+>>> from biopython.Blast import NCBIXML
 >>> blast_records = NCBIXML.parse(result_handle)
 >>> blast_record = next(blast_records)
 # ... do something with blast_record
@@ -381,13 +381,13 @@ save them all in a list.
 Usually, you'll be running one BLAST search at a time. Then, all you need
 to do is to pick up the first (and only) BLAST record in \verb|blast_records|:
 \begin{minted}{pycon}
->>> from Bio.Blast import NCBIXML
+>>> from biopython.Blast import NCBIXML
 >>> blast_records = NCBIXML.parse(result_handle)
 >>> blast_record = next(blast_records)
 \end{minted}
 \noindent or more elegantly:
 \begin{minted}{pycon}
->>> from Bio.Blast import NCBIXML
+>>> from biopython.Blast import NCBIXML
 >>> blast_record = NCBIXML.read(result_handle)
 \end{minted}
 
@@ -440,7 +440,7 @@ report once you have parsed it. This will, of course, depend on what
 you want to use it for, but hopefully this helps you get started on
 doing what you need to do!
 
-An important consideration for extracting information from a BLAST report is the type of objects that the information is stored in. In Biopython, the parsers return \verb|Record| objects, either \verb|Blast| or \verb|PSIBlast| depending on what you are parsing. These objects are defined in \verb|Bio.Blast.Record| and are quite complete.
+An important consideration for extracting information from a BLAST report is the type of objects that the information is stored in. In Biopython, the parsers return \verb|Record| objects, either \verb|Blast| or \verb|PSIBlast| depending on what you are parsing. These objects are defined in \verb|biopython.Blast.Record| and are quite complete.
 
 Here are my attempts at UML class diagrams for the \verb|Blast| and \verb|PSIBlast| record classes. If you are good at UML and see mistakes/improvements that can be made, please let me know. The Blast class diagram is shown in Figure~\ref{fig:blastrecord}.
 
@@ -479,12 +479,12 @@ The PSIBlast record object is similar, but has support for the rounds that are u
 
 You can run the standalone version of PSI-BLAST (the legacy NCBI command line
 tool \verb|blastpgp|, or its replacement \verb|psiblast|) using the wrappers
-in \verb|Bio.Blast.Applications| module.
+in \verb|biopython.Blast.Applications| module.
 
 At the time of writing, the NCBI do not appear to support tools running a
 PSI-BLAST search via the internet.
 
-Note that the \verb|Bio.Blast.NCBIXML| parser can read the XML output from
+Note that the \verb|biopython.Blast.NCBIXML| parser can read the XML output from
 current versions of PSI-BLAST, but information like which sequences in each
 iteration is new or reused isn't present in the XML file.
 
@@ -492,10 +492,10 @@ iteration is new or reused isn't present in the XML file.
 
 You can run the standalone version of RPS-BLAST (either the legacy NCBI
 command line tool \verb|rpsblast|, or its replacement with the same name)
-using the wrappers in \verb|Bio.Blast.Applications| module.
+using the wrappers in \verb|biopython.Blast.Applications| module.
 
 At the time of writing, the NCBI do not appear to support tools running an
 RPS-BLAST search via the internet.
 
-You can use the \verb|Bio.Blast.NCBIXML| parser to read the XML output from
+You can use the \verb|biopython.Blast.NCBIXML| parser to read the XML output from
 current versions of RPS-BLAST.

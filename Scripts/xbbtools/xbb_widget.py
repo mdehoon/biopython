@@ -19,8 +19,8 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import filedialog
 
-from Bio.Data import CodonTable
-from Bio.SeqIO.FastaIO import SimpleFastaParser
+from biopython.Data import CodonTable
+from biopython.SeqIO.FastaIO import SimpleFastaParser
 
 from xbb_utils import NotePad
 from xbb_translations import xbb_translations

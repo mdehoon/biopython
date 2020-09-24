@@ -4,10 +4,10 @@
 
 """Common code for Seq object tests."""
 
-from Bio.Seq import Seq, UnknownSeq
-from Bio.SeqUtils.CheckSum import seguid
-from Bio.SeqFeature import ExactPosition, UnknownPosition
-from Bio.SeqFeature import FeatureLocation, CompoundLocation, SeqFeature
+from biopython.Seq import Seq, UnknownSeq
+from biopython.SeqUtils.CheckSum import seguid
+from biopython.SeqFeature import ExactPosition, UnknownPosition
+from biopython.SeqFeature import FeatureLocation, CompoundLocation, SeqFeature
 
 
 def checksum_summary(record):

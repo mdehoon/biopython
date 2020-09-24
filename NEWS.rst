@@ -2430,7 +2430,7 @@ May 14, 2004: Biopython 1.30
 
 - Fasta parser updated to use Martel for parsing and indexing, allowing better
   speed and dealing with large data files.
-- Updated to Registry code. Now 'from Bio import db' gives you a number of new
+- Updated to Registry code. Now 'from biopython import db' gives you a number of new
   retrieval options, including embl, fasta, genbak, interpro, prodoc and
   swissprot.
 - GenBank parser uses new Martel format. GenBank retrieval now uses EUtils

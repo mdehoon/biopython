@@ -10,7 +10,7 @@
 import os
 import unittest
 
-from Bio.ExPASy import Prosite
+from biopython.ExPASy import Prosite
 
 
 class TestPrositeRead(unittest.TestCase):

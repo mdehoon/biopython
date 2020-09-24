@@ -8,8 +8,8 @@
 import unittest
 import os
 import os.path
-from Bio.Phylo.PAML import yn00
-from Bio.Phylo.PAML._paml import PamlError
+from biopython.Phylo.PAML import yn00
+from biopython.Phylo.PAML._paml import PamlError
 import glob
 
 

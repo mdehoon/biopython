@@ -13,18 +13,18 @@ try:
     from numpy import dot  # Missing on PyPy's micronumpy
 
     del dot
-    # We don't need this (?) but Bio.PDB imports it automatically :(
+    # We don't need this (?) but biopython.PDB imports it automatically :(
     from numpy.linalg import svd, det  # Missing in PyPy 2.0 numpypy
 except ImportError:
-    from Bio import MissingPythonDependencyError
+    from biopython import MissingPythonDependencyError
 
     raise MissingPythonDependencyError(
         "Install NumPy if you want to use PDB formats with SeqIO."
     ) from None
 
-from Bio import SeqIO
-from Bio import BiopythonParserWarning
-from Bio.PDB.PDBExceptions import PDBConstructionWarning
+from biopython import SeqIO
+from biopython import BiopythonParserWarning
+from biopython.PDB.PDBExceptions import PDBConstructionWarning
 
 
 def SeqresTestGenerator(extension, parser):

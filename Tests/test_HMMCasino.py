@@ -25,9 +25,9 @@ import random
 import unittest
 
 # HMM stuff we are testing
-from Bio.HMM import MarkovModel
-from Bio.HMM import Trainer
-from Bio.HMM import Utilities
+from biopython.HMM import MarkovModel
+from biopython.HMM import Trainer
+from biopython.HMM import Utilities
 
 
 # whether we should print everything out. Set this to zero for

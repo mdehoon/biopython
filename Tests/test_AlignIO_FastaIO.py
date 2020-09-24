@@ -2,10 +2,10 @@
 # This code is part of the Biopython distribution and governed by its
 # license.  Please see the LICENSE file that should have been included
 # as part of this package.
-"""Unit tests for the Bio.AlignIO.FastaIO module."""
+"""Unit tests for the biopython.AlignIO.FastaIO module."""
 
 import unittest
-from Bio.AlignIO import FastaIO
+from biopython.AlignIO import FastaIO
 
 
 class FastaIOTests(unittest.TestCase):

@@ -10,7 +10,7 @@ import datetime
 from io import BytesIO
 import unittest
 
-from Bio import SeqIO
+from biopython import SeqIO
 
 
 class TestSnapGene(unittest.TestCase):

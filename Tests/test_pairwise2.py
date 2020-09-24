@@ -15,10 +15,10 @@ import unittest
 from pairwise2_testCases import *  # noqa: F401, F403
 
 # Implicitly using functions from C extension:
-from Bio import pairwise2
+from biopython import pairwise2
 
 if pairwise2.rint == pairwise2._python_rint:
-    from Bio import MissingExternalDependencyError
+    from biopython import MissingExternalDependencyError
 
     raise MissingExternalDependencyError("Missing or non-compiled file: 'cpairwise2'")
 

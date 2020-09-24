@@ -6,7 +6,7 @@
 """Example using Bio.SeqIO to parse a FASTA file."""
 
 
-from Bio import SeqIO
+from biopython import SeqIO
 
 
 def extract_organisms(file_to_parse, fmt):

@@ -8,8 +8,8 @@
 import unittest
 import os
 import os.path
-from Bio.Phylo.PAML import baseml
-from Bio.Phylo.PAML._paml import PamlError
+from biopython.Phylo.PAML import baseml
+from biopython.Phylo.PAML._paml import PamlError
 
 
 class ModTest(unittest.TestCase):

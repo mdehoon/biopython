@@ -10,8 +10,8 @@ import os
 import unittest
 
 import warnings
-from Bio import BiopythonWarning
-from Bio.SearchIO._legacy import NCBIStandalone
+from biopython import BiopythonWarning
+from biopython.SearchIO._legacy import NCBIStandalone
 
 # This prevents the NCBIStandalone usage warning from
 # printing to screen when running the test suite

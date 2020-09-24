@@ -6,7 +6,7 @@
 """Tests for Chi2 module."""
 
 import unittest
-from Bio.Phylo.PAML import chi2
+from biopython.Phylo.PAML import chi2
 
 
 class ModTest(unittest.TestCase):

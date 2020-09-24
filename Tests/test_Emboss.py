@@ -10,13 +10,13 @@ import unittest
 import subprocess
 from io import StringIO
 
-from Bio.Emboss.Applications import WaterCommandline, NeedleCommandline
-from Bio.Emboss.Applications import SeqretCommandline, SeqmatchallCommandline
-from Bio import SeqIO
-from Bio import AlignIO
-from Bio import MissingExternalDependencyError
-from Bio.Application import _escape_filename
-from Bio.Seq import Seq, translate
+from biopython.Emboss.Applications import WaterCommandline, NeedleCommandline
+from biopython.Emboss.Applications import SeqretCommandline, SeqmatchallCommandline
+from biopython import SeqIO
+from biopython import AlignIO
+from biopython import MissingExternalDependencyError
+from biopython.Application import _escape_filename
+from biopython.Seq import Seq, translate
 
 
 # ###############################################################
@@ -54,7 +54,7 @@ if sys.platform != "win32":
 
 if len(exes) < len(exes_wanted):
     raise MissingExternalDependencyError(
-        "Install EMBOSS if you want to use Bio.Emboss."
+        "Install EMBOSS if you want to use biopython.Emboss."
     )
 
 
@@ -98,7 +98,7 @@ def get_emboss_version():
             # Either we can't understand the output, or this is really
             # an error message not caught earlier (e.g. not in English)
             raise MissingExternalDependencyError(
-                "Install EMBOSS if you want to use Bio.Emboss (%s)." % line
+                "Install EMBOSS if you want to use biopython.Emboss (%s)." % line
             )
     # In case there was no output at all...
     raise MissingExternalDependencyError("Could not get EMBOSS version")
@@ -197,7 +197,7 @@ class SeqRetTests(unittest.TestCase):
 
 
 class SeqRetSeqIOTests(SeqRetTests):
-    """Check EMBOSS seqret against Bio.SeqIO for converting files."""
+    """Check EMBOSS seqret against biopython.SeqIO for converting files."""
 
     def tearDown(self):
         clean_up()
@@ -245,9 +245,9 @@ class SeqRetSeqIOTests(SeqRetTests):
             self.compare_records(old_records, new_records, msg)
 
     def check_SeqIO_with_EMBOSS(self, filename, old_format, skip_formats=()):
-        # Check EMBOSS can read Bio.SeqIO output...
+        # Check EMBOSS can read biopython.SeqIO output...
         self.check_SeqIO_to_EMBOSS(filename, old_format, skip_formats)
-        # Check Bio.SeqIO can read EMBOSS seqret output...
+        # Check biopython.SeqIO can read EMBOSS seqret output...
         self.check_EMBOSS_to_SeqIO(filename, old_format, skip_formats)
 
     def test_abi(self):
@@ -335,7 +335,7 @@ class SeqRetSeqIOTests(SeqRetTests):
 
 
 class SeqRetAlignIOTests(SeqRetTests):
-    """Check EMBOSS seqret against Bio.AlignIO for converting files."""
+    """Check EMBOSS seqret against biopython.AlignIO for converting files."""
 
     def tearDown(self):
         clean_up()
@@ -378,7 +378,7 @@ class SeqRetAlignIOTests(SeqRetTests):
             self.compare_alignments(old_aligns, new_aligns, msg)
 
     def check_AlignIO_to_EMBOSS(self, in_filename, in_format, skip_formats=()):
-        """Check Bio.AlignIO can write files seqret can read."""
+        """Check biopython.AlignIO can write files seqret can read."""
         old_aligns = list(AlignIO.parse(in_filename, in_format))
 
         formats = ["clustal", "phylip"]
@@ -408,9 +408,9 @@ class SeqRetAlignIOTests(SeqRetTests):
             self.compare_alignments(old_aligns, new_aligns, msg)
 
     def check_AlignIO_with_EMBOSS(self, filename, old_format, skip_formats=()):
-        # Check EMBOSS can read Bio.AlignIO output...
+        # Check EMBOSS can read biopython.AlignIO output...
         self.check_AlignIO_to_EMBOSS(filename, old_format, skip_formats)
-        # Check Bio.AlignIO can read EMBOSS seqret output...
+        # Check biopython.AlignIO can read EMBOSS seqret output...
         self.check_EMBOSS_to_AlignIO(filename, old_format, skip_formats)
 
     def test_align_clustalw(self):
@@ -707,7 +707,7 @@ class PairwiseAlignmentTests(unittest.TestCase):
 
     def test_needle_piped2(self):
         """Run needle with asis trick, and nucleotide FASTA file, output piped to stdout."""
-        # TODO - Support needle in Bio.Emboss.Applications
+        # TODO - Support needle in biopython.Emboss.Applications
         # (ideally with the -auto and -filter arguments)
         # Setup,
         query = "ACACACTCACACACACTTGGTCAGAGATGCTGTGCTTCTTGGAA"
@@ -812,7 +812,7 @@ class PairwiseAlignmentTests(unittest.TestCase):
 # Top level function as this makes it easier to use for debugging:
 def emboss_translate(sequence, table=None, frame=None):
     """Call transeq, returns protein sequence as string."""
-    # TODO - Support transeq in Bio.Emboss.Applications?
+    # TODO - Support transeq in biopython.Emboss.Applications?
     # (doesn't seem worthwhile as Biopython can do translations)
 
     if not sequence:
@@ -897,7 +897,7 @@ class TranslationTests(unittest.TestCase):
         clean_up()
 
     def test_simple(self):
-        """Run transeq vs Bio.Seq for simple translations (including alt tables)."""
+        """Run transeq vs biopython.Seq for simple translations (including alt tables)."""
         examples = [
             Seq("ACGTGACTGACGTAGCATGCCACTAGG"),
             # Unamibguous TA? codons:
@@ -951,19 +951,19 @@ class TranslationTests(unittest.TestCase):
         self.check(sequence)
 
     # def test_all_ambig_dna_codons(self):
-    #    """transeq vs Bio.Seq on ambiguous DNA codons (inc. alt tables)."""
+    #    """transeq vs biopython.Seq on ambiguous DNA codons (inc. alt tables)."""
     #    self.translate_all_codons(ambiguous_dna_letters)
 
     def test_all_unambig_dna_codons(self):
-        """Run transeq vs Bio.Seq on unambiguous DNA codons (inc. alt tables)."""
+        """Run transeq vs biopython.Seq on unambiguous DNA codons (inc. alt tables)."""
         self.translate_all_codons("ATCGatcg")
 
     def test_all_unambig_rna_codons(self):
-        """Run transeq vs Bio.Seq on unambiguous RNA codons (inc. alt tables)."""
+        """Run transeq vs biopython.Seq on unambiguous RNA codons (inc. alt tables)."""
         self.translate_all_codons("AUCGaucg")
 
     def test_mixed_unambig_rna_codons(self):
-        """Run transeq vs Bio.Seq on unambiguous DNA/RNA codons (inc. alt tables)."""
+        """Run transeq vs biopython.Seq on unambiguous DNA/RNA codons (inc. alt tables)."""
         self.translate_all_codons("ATUCGatucg")
 
 

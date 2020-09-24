@@ -14,7 +14,7 @@ VERSIONS = ["4_1", "4_3", "4_4", "4_4c", "4_5", "4_6", "4_7", "4_8", "4_9a", "4_
 
 
 def codeml(vers=None, verbose=False):
-    from Bio.Phylo.PAML import codeml
+    from biopython.Phylo.PAML import codeml
 
     if vers is not None:
         versions = [vers]
@@ -58,7 +58,7 @@ def codeml(vers=None, verbose=False):
 
 
 def baseml(vers=None, verbose=False):
-    from Bio.Phylo.PAML import baseml
+    from biopython.Phylo.PAML import baseml
 
     if vers is not None:
         versions = [vers]
@@ -111,7 +111,7 @@ def baseml(vers=None, verbose=False):
 
 
 def yn00(vers=None, verbose=False):
-    from Bio.Phylo.PAML import yn00
+    from biopython.Phylo.PAML import yn00
 
     if vers is not None:
         versions = [vers]
@@ -135,7 +135,7 @@ def print_usage():
     versions = ", ".join(vers.replace("_", ".") for vers in VERSIONS)
     usage = """Usage: gen_results.py [-v] PROGRAM [VERSION]
 
-Generate result files to be used in Bio.Phylo.PAML unit tests.
+Generate result files to be used in biopython.Phylo.PAML unit tests.
 
   -v         Use verbose output
   PROGRAM    codeml, baseml or yn00

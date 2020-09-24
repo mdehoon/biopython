@@ -10,12 +10,12 @@
 import os
 import unittest
 
-from Bio import SeqIO
-from Bio.Seq import Seq, MutableSeq
-from Bio.SeqUtils import GC, seq1, seq3, GC_skew
-from Bio.SeqUtils.lcc import lcc_simp, lcc_mult
-from Bio.SeqUtils.CheckSum import crc32, crc64, gcg, seguid
-from Bio.SeqUtils.CodonUsage import CodonAdaptationIndex
+from biopython import SeqIO
+from biopython.Seq import Seq, MutableSeq
+from biopython.SeqUtils import GC, seq1, seq3, GC_skew
+from biopython.SeqUtils.lcc import lcc_simp, lcc_mult
+from biopython.SeqUtils.CheckSum import crc32, crc64, gcg, seguid
+from biopython.SeqUtils.CodonUsage import CodonAdaptationIndex
 
 
 class SeqUtilsTests(unittest.TestCase):

@@ -18,13 +18,13 @@ try:
 
     del asarray
 except ImportError:
-    from Bio import MissingPythonDependencyError
+    from biopython import MissingPythonDependencyError
 
     raise MissingPythonDependencyError(
-        "Install NumPy if you want to use Bio.kNN."
+        "Install NumPy if you want to use biopython.kNN."
     ) from None
 
-from Bio import kNN
+from biopython import kNN
 
 xs = [
     [-53, -200.78],

@@ -9,7 +9,7 @@ import unittest
 
 from os.path import join, basename
 
-from Bio import SeqIO
+from biopython import SeqIO
 
 # TODO PEP8 address long lines.
 

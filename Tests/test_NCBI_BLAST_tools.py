@@ -16,9 +16,9 @@ import subprocess
 import unittest
 import re
 
-from Bio.Application import _escape_filename
-from Bio import MissingExternalDependencyError
-from Bio.Blast import Applications
+from biopython.Application import _escape_filename
+from biopython import MissingExternalDependencyError
+from biopython.Blast import Applications
 
 # TODO - On windows, can we use the ncbi.ini file?
 wanted = [
@@ -94,7 +94,7 @@ optional = ["blast_formatter", "deltablast"]
 if len(set(exe_names).difference(optional)) < len(set(wanted).difference(optional)):
     raise MissingExternalDependencyError(
         "Install the NCBI BLAST+ command line tools if you want to use the "
-        "Bio.Blast.Applications wrapper."
+        "biopython.Blast.Applications wrapper."
     )
 
 

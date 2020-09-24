@@ -9,7 +9,7 @@ import array
 import os
 import unittest
 
-from Bio import Align, SeqIO
+from biopython import Align, SeqIO
 
 
 class TestAlignerProperties(unittest.TestCase):
@@ -1027,7 +1027,7 @@ class TestPairwiseMatchDictionary(unittest.TestCase):
 
     def test_match_dictionary1(self):
         try:
-            from Bio.Align import substitution_matrices
+            from biopython.Align import substitution_matrices
         except ImportError:
             return
         substitution_matrix = substitution_matrices.Array(data=self.match_dict)
@@ -1090,7 +1090,7 @@ AT-T
 
     def test_match_dictionary2(self):
         try:
-            from Bio.Align import substitution_matrices
+            from biopython.Align import substitution_matrices
         except ImportError:
             return
         substitution_matrix = substitution_matrices.Array(data=self.match_dict)
@@ -1141,7 +1141,7 @@ ATT
 
     def test_match_dictionary3(self):
         try:
-            from Bio.Align import substitution_matrices
+            from biopython.Align import substitution_matrices
         except ImportError:
             return
         substitution_matrix = substitution_matrices.Array(data=self.match_dict)
@@ -1192,7 +1192,7 @@ ATAT
 
     def test_match_dictionary4(self):
         try:
-            from Bio.Align import substitution_matrices
+            from biopython.Align import substitution_matrices
         except ImportError:
             return
         substitution_matrix = substitution_matrices.Array(alphabet="AT", dims=2)
@@ -1257,7 +1257,7 @@ AT-T
 
     def test_match_dictionary5(self):
         try:
-            from Bio.Align import substitution_matrices
+            from biopython.Align import substitution_matrices
         except ImportError:
             return
         substitution_matrix = substitution_matrices.Array(alphabet="AT", dims=2)
@@ -1310,7 +1310,7 @@ ATT
 
     def test_match_dictionary6(self):
         try:
-            from Bio.Align import substitution_matrices
+            from biopython.Align import substitution_matrices
         except ImportError:
             return
         substitution_matrix = substitution_matrices.Array(alphabet="AT", dims=2)

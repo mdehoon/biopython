@@ -9,7 +9,7 @@
 """Tests for Fasttree tool."""
 
 
-from Bio import MissingExternalDependencyError
+from biopython import MissingExternalDependencyError
 
 import sys
 import os
@@ -18,11 +18,11 @@ import unittest
 
 from io import StringIO
 
-from Bio import SeqIO
-from Bio import Phylo
-from Bio.Phylo.Applications import FastTreeCommandline
-from Bio.Phylo.Applications import _Fasttree
-from Bio.Application import ApplicationError
+from biopython import SeqIO
+from biopython import Phylo
+from biopython.Phylo.Applications import FastTreeCommandline
+from biopython.Phylo.Applications import _Fasttree
+from biopython.Application import ApplicationError
 
 #################################################################
 

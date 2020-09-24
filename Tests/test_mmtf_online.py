@@ -9,8 +9,8 @@
 import unittest
 import warnings
 
-from Bio.PDB.PDBExceptions import PDBConstructionWarning
-from Bio.PDB.mmtf import MMTFParser
+from biopython.PDB.PDBExceptions import PDBConstructionWarning
+from biopython.PDB.mmtf import MMTFParser
 
 import requires_internet
 

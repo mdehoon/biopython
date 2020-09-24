@@ -4,15 +4,15 @@
 # license.  Please see the LICENSE file that should have been included
 # as part of this package.
 
-"""Tests for Bio.AlignIO.MauveIO module."""
+"""Tests for biopython.AlignIO.MauveIO module."""
 
 import unittest
 import os
 
 from io import StringIO
 
-from Bio.AlignIO.MauveIO import MauveIterator, MauveWriter
-from Bio import SeqIO
+from biopython.AlignIO.MauveIO import MauveIterator, MauveWriter
+from biopython import SeqIO
 
 
 class TestMauveIO(unittest.TestCase):

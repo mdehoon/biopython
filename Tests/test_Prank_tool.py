@@ -1,17 +1,17 @@
 # This code is part of the Biopython distribution and governed by its
 # license.  Please see the LICENSE file that should have been included
 # as part of this package.
-"""Unittests for Bio.Align.Applications interface for PRANK."""
+"""Unittests for biopython.Align.Applications interface for PRANK."""
 
 import sys
 import os
 import unittest
-from Bio.Application import _escape_filename
-from Bio import AlignIO
-from Bio import SeqIO
-from Bio import MissingExternalDependencyError
-from Bio.Align.Applications import PrankCommandline
-from Bio.Nexus.Nexus import NexusError
+from biopython.Application import _escape_filename
+from biopython import AlignIO
+from biopython import SeqIO
+from biopython import MissingExternalDependencyError
+from biopython.Align.Applications import PrankCommandline
+from biopython.Nexus.Nexus import NexusError
 
 # Try to avoid problems when the OS is in another language
 os.environ["LANG"] = "C"
@@ -47,7 +47,7 @@ else:
             prank_exe = "prank"
 if not prank_exe:
     raise MissingExternalDependencyError(
-        "Install PRANK if you want to use the Bio.Align.Applications wrapper."
+        "Install PRANK if you want to use the biopython.Align.Applications wrapper."
     )
 
 
@@ -126,7 +126,7 @@ class PrankApplication(unittest.TestCase):
                 self.assertEqual(str(new).replace("-", ""), str(old).replace("-", ""))
         except NexusError:
             # See bug 3119,
-            # Bio.Nexus can't parse output from prank v100701 (1 July 2010)
+            # biopython.Nexus can't parse output from prank v100701 (1 July 2010)
             pass
 
     def test_Prank_complex_command_line(self):

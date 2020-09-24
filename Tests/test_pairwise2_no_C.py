@@ -14,7 +14,7 @@ import unittest
 # Import all test classes deliberately:
 from pairwise2_testCases import *  # noqa: F401, F403
 
-from Bio import pairwise2
+from biopython import pairwise2
 
 # Explicitly using pure Python fallback functions:
 pairwise2._make_score_matrix_fast = pairwise2._python_make_score_matrix_fast

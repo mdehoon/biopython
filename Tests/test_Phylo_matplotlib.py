@@ -3,21 +3,21 @@
 # license. Please see the LICENSE file that should have been included
 # as part of this package.
 
-"""Unit tests for Bio.Phylo functions with external dependencies."""
+"""Unit tests for biopython.Phylo functions with external dependencies."""
 
 import unittest
 
 from io import StringIO
-from Bio import Phylo
+from biopython import Phylo
 
 # Check for any missing dependencies at the top level so we can skip
-from Bio import MissingExternalDependencyError
+from biopython import MissingExternalDependencyError
 
 try:
     import matplotlib
 except ImportError:
     raise MissingExternalDependencyError(
-        "Install matplotlib if you want to use Bio.Phylo._utils."
+        "Install matplotlib if you want to use biopython.Phylo._utils."
     ) from None
 
 # Don't use the Wx backend for matplotlib, use the simpler postscript
@@ -30,7 +30,7 @@ try:
 except ImportError:
     # Can fail here with font problems
     raise MissingExternalDependencyError(
-        "Install matplotlib if you want to use Bio.Phylo._utils."
+        "Install matplotlib if you want to use biopython.Phylo._utils."
     ) from None
 
 

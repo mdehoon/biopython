@@ -8,8 +8,8 @@
 import os
 import unittest
 
-from Bio import MissingExternalDependencyError
-from Bio.PopGen.GenePop.EasyController import EasyController
+from biopython import MissingExternalDependencyError
+from biopython.PopGen.GenePop.EasyController import EasyController
 
 # Tests genepop related code for easy contorller. Note: this requires genepop
 # test_PopGen_GenePop_nodepend tests code that does not require genepop
@@ -24,7 +24,7 @@ for path in os.environ["PATH"].split(os.pathsep):
         pass  # Path doesn't exist - correct to pass
 if not found:
     raise MissingExternalDependencyError(
-        "Install GenePop if you want to use Bio.PopGen.GenePop."
+        "Install GenePop if you want to use biopython.PopGen.GenePop."
     )
 
 

@@ -11,11 +11,11 @@ import warnings
 
 
 from io import StringIO
-from Bio import SeqIO
-from Bio import AlignIO
-from Bio.Align import AlignInfo, MultipleSeqAlignment
-from Bio.Seq import Seq
-from Bio.Data import IUPACData
+from biopython import SeqIO
+from biopython import AlignIO
+from biopython.Align import AlignInfo, MultipleSeqAlignment
+from biopython.Seq import Seq
+from biopython.Data import IUPACData
 
 test_write_read_alignment_formats = sorted(AlignIO._FormatToWriter)
 test_write_read_align_with_seq_count = test_write_read_alignment_formats + [
@@ -206,7 +206,7 @@ class TestAlignIO_reading(unittest.TestCase):
         handle.close()
 
     def check_read(self, path, fmt, m, k):
-        # Check Bio.AlignIO.read(...)
+        # Check biopython.AlignIO.read(...)
         with open(path) as handle:
             alignment = AlignIO.read(handle, format=fmt)
         self.assertIsInstance(alignment, MultipleSeqAlignment)

@@ -54,8 +54,8 @@ NOE coordinates as well as an nmrview peaklist out_example.xpk.
 # -- just need Biopython installed somewhere in the PYTHONPATH
 # sys.path=[sys.path,"./"]
 # sys.path=[sys.path,"/usr/people/robert/development/xpktools"]
-from Bio.NMR import xpktools  # Contains data classes and functions for .xpk files
-from Bio.NMR import NOEtools  # A module specific for generate NOE predictions
+from biopython.NMR import xpktools  # Contains data classes and functions for .xpk files
+from biopython.NMR import NOEtools  # A module specific for generate NOE predictions
 
 # * * * * * * * * * * MAIN * * * * * * * * * *
 

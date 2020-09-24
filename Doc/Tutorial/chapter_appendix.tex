@@ -50,12 +50,12 @@ we handle to the file \texttt{m\_cold.fasta} which you can download
 \end{minted}
 
 Handles are regularly used in Biopython for passing information to parsers.
-For example, since Biopython 1.54 the main functions in \verb|Bio.SeqIO|
-and \verb|Bio.AlignIO| have allowed you to use a filename instead of a
+For example, since Biopython 1.54 the main functions in \verb|biopython.SeqIO|
+and \verb|biopython.AlignIO| have allowed you to use a filename instead of a
 handle:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 for record in SeqIO.parse("m_cold.fasta", "fasta"):
     print(record.id, len(record))
@@ -64,7 +64,7 @@ for record in SeqIO.parse("m_cold.fasta", "fasta"):
 On older versions of Biopython you had to use a handle, e.g.
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 handle = open("m_cold.fasta", "r")
 for record in SeqIO.parse(handle, "fasta"):
@@ -77,7 +77,7 @@ compressed FASTA file you want to parse:
 
 \begin{minted}{python}
 import gzip
-from Bio import SeqIO
+from biopython import SeqIO
 
 handle = gzip.open("m_cold.fasta.gz", "rt")
 for record in SeqIO.parse(handle, "fasta"):

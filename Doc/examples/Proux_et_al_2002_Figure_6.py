@@ -16,11 +16,11 @@ from reportlab.lib import colors
 from reportlab.lib.colors import red, grey, orange, green, brown
 from reportlab.lib.colors import blue, lightblue, purple
 
-from Bio.Graphics import GenomeDiagram
-from Bio.Graphics.GenomeDiagram import CrossLink
+from biopython.Graphics import GenomeDiagram
+from biopython.Graphics.GenomeDiagram import CrossLink
 
-from Bio import SeqIO
-from Bio.SeqFeature import SeqFeature, FeatureLocation
+from biopython import SeqIO
+from biopython.SeqFeature import SeqFeature, FeatureLocation
 
 name = "Proux Fig 6"
 

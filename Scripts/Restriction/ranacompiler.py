@@ -48,16 +48,16 @@ import sys
 import shutil
 import optparse
 
-from Bio.Seq import Seq
-from Bio.Data.IUPACData import ambiguous_dna_values as amb_dna
+from biopython.Seq import Seq
+from biopython.Data.IUPACData import ambiguous_dna_values as amb_dna
 
 import Bio.Restriction.Restriction
-from Bio.Restriction.Restriction import AbstractCut, RestrictionType, NoCut
-from Bio.Restriction.Restriction import OneCut, TwoCuts, Meth_Dep, Meth_Undep
-from Bio.Restriction.Restriction import Palindromic, NonPalindromic, Unknown
-from Bio.Restriction.Restriction import Blunt, Ov5, Ov3
-from Bio.Restriction.Restriction import NotDefined, Defined, Ambiguous
-from Bio.Restriction.Restriction import Commercially_available, Not_available
+from biopython.Restriction.Restriction import AbstractCut, RestrictionType, NoCut
+from biopython.Restriction.Restriction import OneCut, TwoCuts, Meth_Dep, Meth_Undep
+from biopython.Restriction.Restriction import Palindromic, NonPalindromic, Unknown
+from biopython.Restriction.Restriction import Blunt, Ov5, Ov3
+from biopython.Restriction.Restriction import NotDefined, Defined, Ambiguous
+from biopython.Restriction.Restriction import Commercially_available, Not_available
 
 from rebase_update import release_number, get_files
 
@@ -123,7 +123,7 @@ def is_palindrom(sequence):
     Deprecated alias for is_palindrome (with e at end).
     """
     import warnings
-    from Bio import BiopythonDeprecationWarning
+    from biopython import BiopythonDeprecationWarning
 
     warnings.warn(
         "is_palindrom is deprecated, please use is_palindrome instead.",

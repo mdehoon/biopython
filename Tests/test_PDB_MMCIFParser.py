@@ -8,7 +8,7 @@
 #
 # Tests adapted from test_PDB.py
 
-"""Unit tests for the MMCIF portion of the Bio.PDB module."""
+"""Unit tests for the MMCIF portion of the biopython.PDB module."""
 
 import tempfile
 import unittest
@@ -21,19 +21,19 @@ try:
     del dot
     from numpy.linalg import svd, det  # Missing in PyPy 2.0 numpypy
 except ImportError:
-    from Bio import MissingPythonDependencyError
+    from biopython import MissingPythonDependencyError
 
     raise MissingPythonDependencyError(
-        "Install NumPy if you want to use Bio.PDB."
+        "Install NumPy if you want to use biopython.PDB."
     ) from None
 
 
-from Bio.Seq import Seq
-from Bio.PDB.PDBExceptions import PDBConstructionException, PDBConstructionWarning
+from biopython.Seq import Seq
+from biopython.PDB.PDBExceptions import PDBConstructionException, PDBConstructionWarning
 
-from Bio.PDB import PPBuilder, CaPPBuilder
-from Bio.PDB.MMCIFParser import MMCIFParser, FastMMCIFParser
-from Bio.PDB import PDBParser, PDBIO
+from biopython.PDB import PPBuilder, CaPPBuilder
+from biopython.PDB.MMCIFParser import MMCIFParser, FastMMCIFParser
+from biopython.PDB import PDBParser, PDBIO
 
 
 class ParseReal(unittest.TestCase):

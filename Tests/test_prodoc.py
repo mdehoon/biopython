@@ -3,11 +3,11 @@
 # This code is part of the Biopython distribution and governed by its
 # license.  Please see the LICENSE file that should have been included
 # as part of this package.
-"""Tests for Bio.ExPASy.Prodoc module."""
+"""Tests for biopython.ExPASy.Prodoc module."""
 
 import os
 import unittest
-from Bio.ExPASy import Prodoc
+from biopython.ExPASy import Prodoc
 
 
 class TestProdocRead(unittest.TestCase):

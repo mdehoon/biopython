@@ -10,7 +10,7 @@ import math
 
 
 # Do we have ReportLab?  Raise error if not present.
-from Bio import MissingPythonDependencyError
+from biopython import MissingPythonDependencyError
 
 try:
     from reportlab.lib import colors
@@ -19,7 +19,7 @@ try:
     from reportlab.lib.units import cm
 except ImportError:
     raise MissingPythonDependencyError(
-        "Install reportlab if you want to use Bio.Graphics."
+        "Install reportlab if you want to use biopython.Graphics."
     ) from None
 
 try:
@@ -35,13 +35,13 @@ except ImportError:
     # bitmap format is attempted.
     renderPM = None
 
-from Bio import SeqIO
-from Bio.SeqFeature import SeqFeature, FeatureLocation
+from biopython import SeqIO
+from biopython.SeqFeature import SeqFeature, FeatureLocation
 
-from Bio.Graphics.GenomeDiagram import FeatureSet, GraphSet, Track, Diagram
-from Bio.Graphics.GenomeDiagram import CrossLink
-from Bio.Graphics.GenomeDiagram._Graph import GraphData
-from Bio.Graphics.GenomeDiagram._Colors import ColorTranslator
+from biopython.Graphics.GenomeDiagram import FeatureSet, GraphSet, Track, Diagram
+from biopython.Graphics.GenomeDiagram import CrossLink
+from biopython.Graphics.GenomeDiagram._Graph import GraphData
+from biopython.Graphics.GenomeDiagram._Colors import ColorTranslator
 
 from reportlab import rl_config
 
@@ -72,11 +72,11 @@ def apply_to_window(sequence, window_size, function, step=None):
     sequence of length window_size (stepped by step), calculated by the passed
     function.  Returned positions are the midpoint of each window.
 
-    - sequence - Bio.Seq.Seq object.
+    - sequence - biopython.Seq.Seq object.
     - window_size - an integer describing the length of sequence to consider.
     - step - an integer describing the step to take between windows
       (default = window_size//2).
-    - function - Method or function that accepts a Bio.Seq.Seq object
+    - function - Method or function that accepts a biopython.Seq.Seq object
       as its sole argument and returns a single value.
     """
     seqlen = len(sequence)  # Total length of sequence to be used
@@ -118,7 +118,7 @@ def calc_gc_content(sequence):
     """Return the % G+C content in a passed sequence.
 
     Arguments:
-        - sequence  - a Bio.Seq.Seq object.
+        - sequence  - a biopython.Seq.Seq object.
 
     calc_gc_content(sequence)
 
@@ -138,7 +138,7 @@ def calc_at_content(sequence):
     """Return the % A+T content in a passed sequence.
 
     Arguments:
-        - sequence  - a Bio.Seq.Seq object.
+        - sequence  - a biopython.Seq.Seq object.
 
     calc_at_content(sequence)
 
@@ -157,7 +157,7 @@ def calc_gc_skew(sequence):
     """Return the (G-C)/(G+C) GC skew in a passed sequence.
 
     Arguments:
-        - sequence   - a Bio.Seq.Seq object.
+        - sequence   - a biopython.Seq.Seq object.
 
     calc_gc_skew(sequence)
 
@@ -174,7 +174,7 @@ def calc_at_skew(sequence):
     """Return the (A-T)/(A+T) AT skew in a passed sequence.
 
     Arguments:
-        - sequence   - a Bio.Seq.Seq object.
+        - sequence   - a biopython.Seq.Seq object.
 
     calc_at_skew(sequence)
 
@@ -731,10 +731,10 @@ class DiagramTest(unittest.TestCase):
     def test_str(self):
         """Test diagram's info as string."""
         expected = (
-            "\n<<class 'Bio.Graphics.GenomeDiagram._Diagram.Diagram'>: Test Diagram>"
+            "\n<<class 'biopython.Graphics.GenomeDiagram._Diagram.Diagram'>: Test Diagram>"
             "\n1 tracks"
             "\nTrack 1: "
-            "\n<<class 'Bio.Graphics.GenomeDiagram._Track.Track'>: CDS Features>"
+            "\n<<class 'biopython.Graphics.GenomeDiagram._Track.Track'>: CDS Features>"
             "\n0 sets"
             "\n"
         )
@@ -769,10 +769,10 @@ class DiagramTest(unittest.TestCase):
         """Move a track."""
         self.gdd.move_track(1, 2)
         expected = (
-            "\n<<class 'Bio.Graphics.GenomeDiagram._Diagram.Diagram'>: Test Diagram>"
+            "\n<<class 'biopython.Graphics.GenomeDiagram._Diagram.Diagram'>: Test Diagram>"
             "\n1 tracks"
             "\nTrack 2: "
-            "\n<<class 'Bio.Graphics.GenomeDiagram._Track.Track'>: CDS Features>"
+            "\n<<class 'biopython.Graphics.GenomeDiagram._Track.Track'>: CDS Features>"
             "\n0 sets"
             "\n"
         )
@@ -782,10 +782,10 @@ class DiagramTest(unittest.TestCase):
         """Test renumbering tracks."""
         self.gdd.renumber_tracks(0)
         expected = (
-            "\n<<class 'Bio.Graphics.GenomeDiagram._Diagram.Diagram'>: Test Diagram>"
+            "\n<<class 'biopython.Graphics.GenomeDiagram._Diagram.Diagram'>: Test Diagram>"
             "\n1 tracks"
             "\nTrack 0: "
-            "\n<<class 'Bio.Graphics.GenomeDiagram._Track.Track'>: CDS Features>"
+            "\n<<class 'biopython.Graphics.GenomeDiagram._Track.Track'>: CDS Features>"
             "\n0 sets"
             "\n"
         )

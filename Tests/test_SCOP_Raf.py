@@ -7,7 +7,7 @@
 
 import unittest
 
-from Bio.SCOP import Raf
+from biopython.SCOP import Raf
 from io import StringIO
 
 

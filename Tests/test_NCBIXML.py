@@ -6,7 +6,7 @@
 
 import os
 import unittest
-from Bio.Blast import NCBIXML
+from biopython.Blast import NCBIXML
 
 E_VALUE_THRESH = 1e-10
 

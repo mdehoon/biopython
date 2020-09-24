@@ -9,8 +9,8 @@ import os
 import unittest
 import warnings
 
-from Bio.SearchIO import parse
-from Bio import BiopythonWarning
+from biopython.SearchIO import parse
+from biopython import BiopythonWarning
 
 # test case files are in the Blast directory
 TEST_DIR = "Blast"

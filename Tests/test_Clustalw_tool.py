@@ -10,15 +10,15 @@
 """Tests for Clustalw tool."""
 
 
-from Bio import MissingExternalDependencyError
+from biopython import MissingExternalDependencyError
 
 import sys
 import os
 import unittest
-from Bio import SeqIO
-from Bio import AlignIO
-from Bio.Align.Applications import ClustalwCommandline
-from Bio.Application import ApplicationError
+from biopython import SeqIO
+from biopython import AlignIO
+from biopython.Align.Applications import ClustalwCommandline
+from biopython.Application import ApplicationError
 
 #################################################################
 
@@ -135,7 +135,7 @@ class ClustalWTestCase(unittest.TestCase):
             )
 
         # Check the DND file was created.
-        # TODO - Try and parse this with Bio.Nexus?
+        # TODO - Try and parse this with biopython.Nexus?
         self.assertTrue(os.path.isfile(tree_file))
 
     def add_file_to_clean(self, filename):

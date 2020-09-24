@@ -11,8 +11,8 @@ import os
 import unittest
 import tempfile
 
-# Biopython Bio.KEGG.KGML (?)
-from Bio.KEGG.KGML.KGML_parser import read
+# Biopython biopython.KEGG.KGML (?)
+from biopython.KEGG.KGML.KGML_parser import read
 
 
 class PathwayData:

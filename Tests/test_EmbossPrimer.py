@@ -12,7 +12,7 @@ import os
 import unittest
 
 # local stuff
-from Bio.Emboss import PrimerSearch, Primer3
+from biopython.Emboss import PrimerSearch, Primer3
 
 
 class Primer3ParseTest(unittest.TestCase):

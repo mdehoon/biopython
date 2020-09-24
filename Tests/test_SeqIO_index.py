@@ -3,7 +3,7 @@
 # license.  Please see the LICENSE file that should have been included
 # as part of this package.
 
-"""Unit tests for Bio.SeqIO.index(...) and index_db() functions."""
+"""Unit tests for biopython.SeqIO.index(...) and index_db() functions."""
 
 try:
     import sqlite3
@@ -21,12 +21,12 @@ import warnings
 from io import BytesIO
 from io import StringIO
 
-from Bio.Seq import Seq
-from Bio import SeqIO
-from Bio.SeqIO._index import _FormatToRandomAccess
+from biopython.Seq import Seq
+from biopython import SeqIO
+from biopython.SeqIO._index import _FormatToRandomAccess
 
-from Bio import BiopythonParserWarning
-from Bio import MissingPythonDependencyError
+from biopython import BiopythonParserWarning
+from biopython import MissingPythonDependencyError
 
 from seq_tests_common import compare_record
 from test_SeqIO import SeqIOTestBaseClass
@@ -67,7 +67,7 @@ if sqlite3:
     class OldIndexTest(unittest.TestCase):
         """Testing a pre-built index (make sure cross platform etc).
 
-        >>> from Bio import SeqIO
+        >>> from biopython import SeqIO
         >>> d = SeqIO.index_db("triple_sff.idx", ["E3MFGYR02_no_manifest.sff", "greek.sff", "paired.sff"], "sff")
         >>> len(d)
         54
@@ -673,8 +673,8 @@ class IndexDictTests(SeqIOTestBaseClass):
     if sqlite3:
 
         def test_alpha_fails_db(self):
-            """Reject alphabet argument in Bio.SeqIO.index_db()."""
-            # In historic usage, alphabet=... would be a Bio.Alphabet object.
+            """Reject alphabet argument in biopython.SeqIO.index_db()."""
+            # In historic usage, alphabet=... would be a biopython.Alphabet object.
             self.assertRaises(
                 ValueError,
                 SeqIO.index_db,
@@ -685,8 +685,8 @@ class IndexDictTests(SeqIOTestBaseClass):
             )
 
     def test_alpha_fails(self):
-        """Reject alphabet argument in Bio.SeqIO.index()."""
-        # In historic usage, alphabet=... would be a Bio.Alphabet object.
+        """Reject alphabet argument in biopython.SeqIO.index()."""
+        # In historic usage, alphabet=... would be a biopython.Alphabet object.
         self.assertRaises(
             ValueError, SeqIO.index, "Fasta/dups.fasta", "fasta", alphabet="XXX"
         )
@@ -694,17 +694,17 @@ class IndexDictTests(SeqIOTestBaseClass):
     if sqlite3:
 
         def test_duplicates_index_db(self):
-            """Index file with duplicate identifiers with Bio.SeqIO.index_db()."""
+            """Index file with duplicate identifiers with biopython.SeqIO.index_db()."""
             self.assertRaises(
                 ValueError, SeqIO.index_db, ":memory:", ["Fasta/dups.fasta"], "fasta"
             )
 
     def test_duplicates_index(self):
-        """Index file with duplicate identifiers with Bio.SeqIO.index()."""
+        """Index file with duplicate identifiers with biopython.SeqIO.index()."""
         self.assertRaises(ValueError, SeqIO.index, "Fasta/dups.fasta", "fasta")
 
     def test_duplicates_to_dict(self):
-        """Index file with duplicate identifiers with Bio.SeqIO.to_dict()."""
+        """Index file with duplicate identifiers with biopython.SeqIO.to_dict()."""
         with open("Fasta/dups.fasta") as handle:
             iterator = SeqIO.parse(handle, "fasta")
             self.assertRaises(ValueError, SeqIO.to_dict, iterator)

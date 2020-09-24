@@ -12,16 +12,16 @@ try:
     import numpy
     from numpy import linalg  # missing in PyPy's micronumpy
 except ImportError:
-    from Bio import MissingExternalDependencyError
+    from biopython import MissingExternalDependencyError
 
     raise MissingExternalDependencyError(
-        "Install NumPy if you want to use Bio.LogisticRegression."
+        "Install NumPy if you want to use biopython.LogisticRegression."
     ) from None
 
 import unittest
 import copy
 
-from Bio import LogisticRegression
+from biopython import LogisticRegression
 
 
 xs = [

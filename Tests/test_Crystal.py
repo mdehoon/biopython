@@ -10,12 +10,12 @@ import unittest
 import copy
 import warnings
 
-from Bio import BiopythonDeprecationWarning
+from biopython import BiopythonDeprecationWarning
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", BiopythonDeprecationWarning)
     # modules to be tested
-    from Bio.Crystal import Hetero, Chain, Crystal, CrystalError
+    from biopython.Crystal import Hetero, Chain, Crystal, CrystalError
 
 
 class ChainTestCase(unittest.TestCase):

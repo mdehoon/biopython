@@ -21,10 +21,10 @@ import unittest
 from io import StringIO
 
 # biopython
-from Bio.Seq import Seq
-from Bio.Align import AlignInfo
-from Bio import AlignIO
-from Bio.Align import MultipleSeqAlignment
+from biopython.Seq import Seq
+from biopython.Align import AlignInfo
+from biopython import AlignIO
+from biopython.Align import MultipleSeqAlignment
 
 
 opuntia_clustal = """\

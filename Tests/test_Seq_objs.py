@@ -8,11 +8,11 @@
 import warnings
 import unittest
 
-from Bio import BiopythonWarning
-from Bio import SeqIO
-from Bio.Data.IUPACData import ambiguous_dna_values, ambiguous_rna_values
-from Bio.Seq import Seq, UnknownSeq, MutableSeq, translate
-from Bio.Data.CodonTable import TranslationError, CodonTable
+from biopython import BiopythonWarning
+from biopython import SeqIO
+from biopython.Data.IUPACData import ambiguous_dna_values, ambiguous_rna_values
+from biopython.Seq import Seq, UnknownSeq, MutableSeq, translate
+from biopython.Data.CodonTable import TranslationError, CodonTable
 
 
 # This is just the standard table with less stop codons
@@ -711,7 +711,7 @@ class StringMethodTests(unittest.TestCase):
         self.assertEqual("", str(nuc.translate(to_stop=True)))
         self.assertEqual("O*ORR", str(nuc.translate(table=special_table)))
         self.assertEqual("*QWRR", str(nuc.translate(table=Chilodonella_uncinata_table)))
-        # These test the Bio.Seq.translate() function - move these?:
+        # These test the biopython.Seq.translate() function - move these?:
         self.assertEqual(
             "*QWRR", translate(str(nuc), table=Chilodonella_uncinata_table)
         )
@@ -776,7 +776,7 @@ class StringMethodTests(unittest.TestCase):
                             self.assertEqual(values, set("LI"))
                         else:
                             self.assertEqual(values, set(t))
-                        # TODO - Use the Bio.Data.IUPACData module for the
+                        # TODO - Use the biopython.Data.IUPACData module for the
                         # ambiguous protein mappings?
 
     def test_init_typeerror(self):

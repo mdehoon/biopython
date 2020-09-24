@@ -7,7 +7,7 @@
 
 import unittest
 
-from Bio.ExPASy import cellosaurus
+from biopython.ExPASy import cellosaurus
 
 
 class TestCellosaurus(unittest.TestCase):

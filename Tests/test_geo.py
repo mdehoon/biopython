@@ -7,7 +7,7 @@
 
 import unittest
 
-from Bio import Geo
+from biopython import Geo
 
 
 class TestGeo(unittest.TestCase):

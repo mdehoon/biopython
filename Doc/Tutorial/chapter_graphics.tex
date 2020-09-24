@@ -1,7 +1,7 @@
 \chapter{Graphics including GenomeDiagram}
 \label{chapter:graphics}
 
-The \verb|Bio.Graphics| module depends on the third party Python library
+The \verb|biopython.Graphics| module depends on the third party Python library
 \href{https://www.reportlab.com/}{ReportLab}.  Although focused on producing PDF files,
 ReportLab can also create encapsulated postscript (EPS) and (SVG) files.  In addition
 to these vector based images, provided certain further dependencies such as the
@@ -13,7 +13,7 @@ and PICT formats).
 \label{sec:genomediagram}
 \subsection{Introduction}
 
-The \verb|Bio.Graphics.GenomeDiagram| module was added to Biopython 1.50,
+The \verb|biopython.Graphics.GenomeDiagram| module was added to Biopython 1.50,
 having previously been available as a separate Python module dependent on Biopython.
 GenomeDiagram is described in the Bioinformatics journal publication by Pritchard et al. (2006) \cite{pritchard2006},
 which includes some examples images. There is a PDF copy of the old manual here,
@@ -70,8 +70,8 @@ included with the Biopython unit tests under the GenBank folder, or online
 \begin{minted}{python}
 from reportlab.lib import colors
 from reportlab.lib.units import cm
-from Bio.Graphics import GenomeDiagram
-from Bio import SeqIO
+from biopython.Graphics import GenomeDiagram
+from biopython import SeqIO
 
 record = SeqIO.read("NC_005816.gb", "genbank")
 \end{minted}
@@ -182,8 +182,8 @@ almost any order) and then combine them.
 \begin{minted}{python}
 from reportlab.lib import colors
 from reportlab.lib.units import cm
-from Bio.Graphics import GenomeDiagram
-from Bio import SeqIO
+from biopython.Graphics import GenomeDiagram
+from biopython import SeqIO
 
 record = SeqIO.read("NC_005816.gb", "genbank")
 
@@ -223,7 +223,7 @@ but just the coordinates for a feature you want to draw.  You have to create
 minimal \verb|SeqFeature| object, but this is easy:
 
 \begin{minted}{python}
-from Bio.SeqFeature import SeqFeature, FeatureLocation
+from biopython.SeqFeature import SeqFeature, FeatureLocation
 
 my_seq_feature = SeqFeature(FeatureLocation(50, 100), strand=+1)
 \end{minted}
@@ -233,8 +233,8 @@ reverse strand, and \texttt{None} for both.  Here is a short self contained
 example:
 
 \begin{minted}{python}
-from Bio.SeqFeature import SeqFeature, FeatureLocation
-from Bio.Graphics import GenomeDiagram
+from biopython.SeqFeature import SeqFeature, FeatureLocation
+from biopython.Graphics import GenomeDiagram
 from reportlab.lib.units import cm
 
 gdd = GenomeDiagram.Diagram("Test Diagram")
@@ -494,9 +494,9 @@ we'll use arrows for the genes, and overlay them with strand-less features
 \begin{minted}{python}
 from reportlab.lib import colors
 from reportlab.lib.units import cm
-from Bio.Graphics import GenomeDiagram
-from Bio import SeqIO
-from Bio.SeqFeature import SeqFeature, FeatureLocation
+from biopython.Graphics import GenomeDiagram
+from biopython import SeqIO
+from biopython.SeqFeature import SeqFeature, FeatureLocation
 
 record = SeqIO.read("NC_005816.gb", "genbank")
 
@@ -610,7 +610,7 @@ reverse complement to match the orientation of the first two phage (again
 preserving the features, see Section~\ref{sec:SeqRecord-reverse-complement}):
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 A_rec = SeqIO.read("NC_002703.gbk", "gb")
 B_rec = SeqIO.read("AF323668.gbk", "gb")
@@ -687,7 +687,7 @@ are given different start/end values to reflect their different lengths (this re
 Biopython 1.59 or later).
 
 \begin{minted}{python}
-from Bio.Graphics import GenomeDiagram
+from biopython.Graphics import GenomeDiagram
 
 name = "Proux Fig 6"
 gd_diagram = GenomeDiagram.Diagram(name)
@@ -845,7 +845,7 @@ included in the \texttt{Doc/examples} folder of the Biopython source code)
 to add cross links to the figure:
 
 \begin{minted}{python}
-from Bio.Graphics.GenomeDiagram import CrossLink
+from biopython.Graphics.GenomeDiagram import CrossLink
 from reportlab.lib import colors
 
 # Note it might have been clearer to assign the track numbers explicitly...
@@ -978,7 +978,7 @@ gdd = GDDiagram("An example")
 \end{minted}
 you could just switch the import statements like this:
 \begin{minted}{python}
-from Bio.Graphics.GenomeDiagram import FeatureSet as GDFeatureSet, Diagram as GDDiagram
+from biopython.Graphics.GenomeDiagram import FeatureSet as GDFeatureSet, Diagram as GDDiagram
 
 gdd = GDDiagram("An example")
 ...
@@ -986,14 +986,14 @@ gdd = GDDiagram("An example")
 and hopefully that should be enough.  In the long term you might want to
 switch to the new names, but you would have to change more of your code:
 \begin{minted}{python}
-from Bio.Graphics.GenomeDiagram import FeatureSet, Diagram
+from biopython.Graphics.GenomeDiagram import FeatureSet, Diagram
 
 gdd = Diagram("An example")
 ...
 \end{minted}
 or:
 \begin{minted}{python}
-from Bio.Graphics import GenomeDiagram
+from biopython.Graphics import GenomeDiagram
 
 gdd = GenomeDiagram.Diagram("An example")
 ...
@@ -1003,12 +1003,12 @@ If you run into difficulties, please ask on the Biopython mailing list for
 advice. One catch is that we have not included the old module
 \verb|GenomeDiagram.GDUtilities| yet.  This included a number of
 GC\% related functions, which will probably be merged under
-\verb|Bio.SeqUtils| later on.
+\verb|biopython.SeqUtils| later on.
 %TODO - Deal with GenomeDiagram.GDUtilities
 
 \section{Chromosomes}
 
-The \verb|Bio.Graphics.BasicChromosome| module allows drawing of chromosomes.
+The \verb|biopython.Graphics.BasicChromosome| module allows drawing of chromosomes.
 There is an example in Jupe \textit{et al.} (2012) \cite{jupe2012}
 (open access) using colors to highlight different gene families.
 
@@ -1033,13 +1033,13 @@ Here is a very simple example - for which we'll use \textit{Arabidopsis thaliana
 You can skip this bit, but first I downloaded the five sequenced chromosomes
 as five individual FASTA files from the NCBI's FTP site
 \url{ftp://ftp.ncbi.nlm.nih.gov/genomes/archive/old_refseq/Arabidopsis_thaliana/}
-and then parsed them with \verb|Bio.SeqIO| to find out their lengths.  You
+and then parsed them with \verb|biopython.SeqIO| to find out their lengths.  You
 could use the GenBank files for this (and the next example uses those for
 plotting features), but if all you want is the length it is faster to use the
 FASTA files for the whole chromosomes:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 entries = [
     ("Chr I", "CHR_I/NC_003070.fna"),
@@ -1058,7 +1058,7 @@ the following short demonstration of the \verb|BasicChromosome| module:
 
 \begin{minted}{python}
 from reportlab.lib.units import cm
-from Bio.Graphics import BasicChromosome
+from biopython.Graphics import BasicChromosome
 
 entries = [
     ("Chr I", 30432563),
@@ -1127,8 +1127,8 @@ and preserve the subdirectory names or edit the paths below:
 
 \begin{minted}{python}
 from reportlab.lib.units import cm
-from Bio import SeqIO
-from Bio.Graphics import BasicChromosome
+from biopython import SeqIO
+from biopython.Graphics import BasicChromosome
 
 entries = [
     ("Chr I", "CHR_I/NC_003070.gbk"),

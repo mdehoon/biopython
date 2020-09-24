@@ -7,7 +7,7 @@
 
 import sys
 
-from Bio import MissingExternalDependencyError
+from biopython import MissingExternalDependencyError
 from subprocess import getoutput
 
 
@@ -24,5 +24,5 @@ dnal_output = getoutput("dnal")
 for not_found in not_found_types:
     if not_found in dnal_output:
         raise MissingExternalDependencyError(
-            "Install Wise2 (dnal) if you want to use Bio.Wise."
+            "Install Wise2 (dnal) if you want to use biopython.Wise."
         )

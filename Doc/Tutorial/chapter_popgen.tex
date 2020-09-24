@@ -1,7 +1,7 @@
-\chapter{Bio.PopGen: Population genetics}
+\chapter{biopython.PopGen: Population genetics}
 \label{chapter:popgen}
 
-\verb|Bio.PopGen| is a Biopython module supporting population genetics,
+\verb|biopython.PopGen| is a Biopython module supporting population genetics,
 available in Biopython 1.44 onwards. The objective for the module is to
 support widely used data formats, applications and databases.
 
@@ -16,13 +16,13 @@ The GenePop file format is supported by a wide range of other population
 genetic software applications, thus making it a relevant format in the
 population genetics field.
 
-\verb|Bio.PopGen| provides a parser and generator of GenePop file format.
+\verb|biopython.PopGen| provides a parser and generator of GenePop file format.
 Utilities to manipulate the content of a record are also provided.
 Here is an example on how to read a GenePop file (you can find
 example GenePop data files in the Test/PopGen directory of Biopython):
 
 \begin{minted}{python}
-from Bio.PopGen import GenePop
+from biopython.PopGen import GenePop
 
 with open("example.gen") as handle:
     rec = GenePop.read(handle)
@@ -60,7 +60,7 @@ A few utility functions to manipulate GenePop records are made
 available, here is an example:
 
 \begin{minted}{python}
-from Bio.PopGen import GenePop
+from biopython.PopGen import GenePop
 
 # Imagine that you have loaded rec, as per the code snippet above...
 

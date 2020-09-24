@@ -14,9 +14,9 @@ documentation.
 from io import StringIO
 
 # biopython
-from Bio import SeqIO
-from Bio.Blast import NCBIWWW
-from Bio.Blast import NCBIXML
+from biopython import SeqIO
+from biopython.Blast import NCBIWWW
+from biopython.Blast import NCBIXML
 
 # first get the sequence we want to parse from a FASTA file
 f_record = next(SeqIO.parse("m_cold.fasta", "fasta"))

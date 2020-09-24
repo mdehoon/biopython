@@ -4,8 +4,8 @@
 # as part of this package.
 """Testing online code for fetching NCBI qblast.
 
-Uses Bio.Blast.NCBIWWW.qblast() to run some online blast queries, get XML
-blast results back, and then checks Bio.Blast.NCBIXML.parse() can read them.
+Uses biopython.Blast.NCBIWWW.qblast() to run some online blast queries, get XML
+blast results back, and then checks biopython.Blast.NCBIXML.parse() can read them.
 
 Goals:
     - Make sure that all retrieval is working as expected.
@@ -31,12 +31,12 @@ import warnings
 from urllib.error import HTTPError
 from io import BytesIO
 
-from Bio import MissingExternalDependencyError
-from Bio import BiopythonWarning
+from biopython import MissingExternalDependencyError
+from biopython import BiopythonWarning
 
 # We want to test these:
-from Bio.Blast import NCBIWWW
-from Bio.Blast import NCBIXML
+from biopython.Blast import NCBIWWW
+from biopython.Blast import NCBIXML
 
 import requires_internet
 

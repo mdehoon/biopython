@@ -1,30 +1,30 @@
 \chapter{Accessing NCBI's Entrez databases}
 \label{chapter:entrez}
 
-Entrez (\url{https://www.ncbi.nlm.nih.gov/Web/Search/entrezfs.html}) is a data retrieval system that provides users access to NCBI's databases such as PubMed, GenBank, GEO, and many others. You can access Entrez from a web browser to manually enter queries, or you can use Biopython's \verb+Bio.Entrez+ module for programmatic access to Entrez. The latter allows you for example to search PubMed or download GenBank records from within a Python script.
+Entrez (\url{https://www.ncbi.nlm.nih.gov/Web/Search/entrezfs.html}) is a data retrieval system that provides users access to NCBI's databases such as PubMed, GenBank, GEO, and many others. You can access Entrez from a web browser to manually enter queries, or you can use Biopython's \verb+biopython.Entrez+ module for programmatic access to Entrez. The latter allows you for example to search PubMed or download GenBank records from within a Python script.
 
-The \verb+Bio.Entrez+ module makes use of the Entrez Programming Utilities (also known as EUtils), consisting of eight tools that are described in detail on NCBI's page at \url{https://www.ncbi.nlm.nih.gov/books/NBK25501/}.
-Each of these tools corresponds to one Python function in the \verb+Bio.Entrez+ module, as described in the sections below. This module makes sure that the correct URL is used for the queries, and that NCBI's guidelines for responsible data access are being followed.
+The \verb+biopython.Entrez+ module makes use of the Entrez Programming Utilities (also known as EUtils), consisting of eight tools that are described in detail on NCBI's page at \url{https://www.ncbi.nlm.nih.gov/books/NBK25501/}.
+Each of these tools corresponds to one Python function in the \verb+biopython.Entrez+ module, as described in the sections below. This module makes sure that the correct URL is used for the queries, and that NCBI's guidelines for responsible data access are being followed.
 
 The output returned by the Entrez Programming Utilities is typically in XML format. To parse such output, you have several options:
 \begin{enumerate}
-  \item Use \verb+Bio.Entrez+'s parser to parse the XML output into a Python object;
+  \item Use \verb+biopython.Entrez+'s parser to parse the XML output into a Python object;
   \item Use one of the XML parsers available in Python's standard library;
   \item Read the XML output as raw text, and parse it by string searching and manipulation.
 \end{enumerate}
-See the Python documentation for a description of the XML parsers in Python's standard library. Here, we discuss the parser in Biopython's \verb+Bio.Entrez+ module. This parser can be used to parse data as provided through \verb+Bio.Entrez+'s programmatic access functions to Entrez, but can also be used to parse XML data from NCBI Entrez that are stored in a file. In the latter case, the XML file should be opened in binary mode (e.g. \verb+open("myfile.xml", "rb")+) for the XML parser in \verb+Bio.Entrez+ to work correctly.
+See the Python documentation for a description of the XML parsers in Python's standard library. Here, we discuss the parser in Biopython's \verb+biopython.Entrez+ module. This parser can be used to parse data as provided through \verb+biopython.Entrez+'s programmatic access functions to Entrez, but can also be used to parse XML data from NCBI Entrez that are stored in a file. In the latter case, the XML file should be opened in binary mode (e.g. \verb+open("myfile.xml", "rb")+) for the XML parser in \verb+biopython.Entrez+ to work correctly.
 
-NCBI uses DTD (Document Type Definition) files to describe the structure of the information contained in XML files. Most of the DTD files used by NCBI are included in the Biopython distribution. The \verb+Bio.Entrez+ parser makes use of the DTD files when parsing an XML file returned by NCBI Entrez.
+NCBI uses DTD (Document Type Definition) files to describe the structure of the information contained in XML files. Most of the DTD files used by NCBI are included in the Biopython distribution. The \verb+biopython.Entrez+ parser makes use of the DTD files when parsing an XML file returned by NCBI Entrez.
 
-Occasionally, you may find that the DTD file associated with a specific XML file is missing in the Biopython distribution. In particular, this may happen when NCBI updates its DTD files. If this happens, \verb+Entrez.read+ will show a warning message with the name and URL of the missing DTD file. The parser will proceed to access the missing DTD file through the internet, allowing the parsing of the XML file to continue.  However, the parser is much faster if the DTD file is available locally. For this purpose, please download the DTD file from the URL in the warning message and place it in the directory \verb+...site-packages/Bio/Entrez/DTDs+, containing the other DTD files.  If you don't have write access to this directory, you can also place the DTD file in \verb+~/.biopython/Bio/Entrez/DTDs+, where \verb+~+ represents your home directory. Since this directory is read before the directory \verb+...site-packages/Bio/Entrez/DTDs+, you can also put newer versions of DTD files there if the ones in \verb+...site-packages/Bio/Entrez/DTDs+ become outdated. Alternatively, if you installed Biopython from source, you can add the DTD file to the source code's \verb+Bio/Entrez/DTDs+ directory, and reinstall Biopython. This will install the new DTD file in the correct location together with the other DTD files.
+Occasionally, you may find that the DTD file associated with a specific XML file is missing in the Biopython distribution. In particular, this may happen when NCBI updates its DTD files. If this happens, \verb+Entrez.read+ will show a warning message with the name and URL of the missing DTD file. The parser will proceed to access the missing DTD file through the internet, allowing the parsing of the XML file to continue.  However, the parser is much faster if the DTD file is available locally. For this purpose, please download the DTD file from the URL in the warning message and place it in the directory \verb+...site-packages/biopython/Entrez/DTDs+, containing the other DTD files.  If you don't have write access to this directory, you can also place the DTD file in \verb+~/.biopython/biopython/Entrez/DTDs+, where \verb+~+ represents your home directory. Since this directory is read before the directory \verb+...site-packages/biopython/Entrez/DTDs+, you can also put newer versions of DTD files there if the ones in \verb+...site-packages/biopython/Entrez/DTDs+ become outdated. Alternatively, if you installed Biopython from source, you can add the DTD file to the source code's \verb+biopython/Entrez/DTDs+ directory, and reinstall Biopython. This will install the new DTD file in the correct location together with the other DTD files.
 
 The Entrez Programming Utilities can also generate output in other formats, such as the Fasta or GenBank file formats for sequence databases, or the MedLine format for the literature database, discussed in Section~\ref{sec:entrez-specialized-parsers}.
 
-The functions in \verb+Bio.Entrez+ for programmatic access to Entrez return data either in binary format or in text format, depending on the type of data requested. In most cases, these functions return data in text format by decoding the data obtained from NCBI Entrez to Python strings under the assumption that the encoding is UTF-8. However, XML data are returned in binary format. The reason for this is that the encoding is specified in the XML document itself, which means that we won't know the correct encoding to use until we start parsing the file. \verb+Bio.Entrez+'s parser therefore accepts data in binary format, extracts the encoding from the XML, and uses it to decode all text in the XML document to Python strings, ensuring that all text (in particular in languages other than English) are interpreted correctly. This is also the reason why you should open an XML file a binary mode when you want to use \verb+Bio.Entrez+'s parser to parse the file.
+The functions in \verb+biopython.Entrez+ for programmatic access to Entrez return data either in binary format or in text format, depending on the type of data requested. In most cases, these functions return data in text format by decoding the data obtained from NCBI Entrez to Python strings under the assumption that the encoding is UTF-8. However, XML data are returned in binary format. The reason for this is that the encoding is specified in the XML document itself, which means that we won't know the correct encoding to use until we start parsing the file. \verb+biopython.Entrez+'s parser therefore accepts data in binary format, extracts the encoding from the XML, and uses it to decode all text in the XML document to Python strings, ensuring that all text (in particular in languages other than English) are interpreted correctly. This is also the reason why you should open an XML file a binary mode when you want to use \verb+biopython.Entrez+'s parser to parse the file.
 
 \section{Entrez Guidelines}
 \label{sec:entrez-guidelines}
-Before using Biopython to access the NCBI's online resources (via \verb|Bio.Entrez| or some of the other modules), please read the
+Before using Biopython to access the NCBI's online resources (via \verb|biopython.Entrez| or some of the other modules), please read the
 \href{https://www.ncbi.nlm.nih.gov/books/NBK25497/}{NCBI's Entrez User Requirements}.
 If the NCBI finds you are abusing their systems, they can and will ban your access!
 
@@ -38,22 +38,22 @@ This is automatically enforced by Biopython.
 Include \verb|api_key="MyAPIkey"| in the argument list or set it as a module level variable:
 %DO NOT run this as a doctest, will set an invalid API key!
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> Entrez.api_key = "MyAPIkey"
 \end{minted}
 \item Use the optional email parameter so the NCBI can contact you if there is a problem.  You can either explicitly set this as a parameter with each call to Entrez (e.g. include \texttt{email="A.N.Other@example.com"} in the argument list), or you can set a global email address:
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> Entrez.email = "A.N.Other@example.com"
 \end{minted}
-\texttt{Bio.Entrez} will then use this email address with each call to Entrez.  The \texttt{example.com} address is a reserved domain name specifically for documentation (RFC 2606).  Please DO NOT use a random email -- it's better not to give an email at all. The email parameter has been mandatory since June 1, 2010. In case of excessive usage, NCBI will attempt to contact a user at the e-mail address provided prior to blocking access to the E-utilities.
+\texttt{biopython.Entrez} will then use this email address with each call to Entrez.  The \texttt{example.com} address is a reserved domain name specifically for documentation (RFC 2606).  Please DO NOT use a random email -- it's better not to give an email at all. The email parameter has been mandatory since June 1, 2010. In case of excessive usage, NCBI will attempt to contact a user at the e-mail address provided prior to blocking access to the E-utilities.
 \item If you are using Biopython within some larger software suite, use the tool parameter to specify this.  You can either explicitly set the tool name as a parameter with each call to Entrez (e.g. include \texttt{tool="MyLocalScript"} in the argument list), or you can set a global tool name:
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> Entrez.tool = "MyLocalScript"
 \end{minted}
 The tool parameter will default to Biopython.
@@ -69,7 +69,7 @@ EInfo provides field index term counts, last update, and available links for eac
 
 %doctest . internet
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> Entrez.email = "A.N.Other@example.com"  # Always tell NCBI who you are
 >>> handle = Entrez.einfo()
 >>> result = handle.read()
@@ -124,11 +124,11 @@ The variable \verb+result+ now contains a list of databases in XML format:
 </eInfoResult>
 \end{minted}
 
-Since this is a fairly simple XML file, we could extract the information it contains simply by string searching. Using \verb+Bio.Entrez+'s parser instead, we can directly parse this XML file into a Python object:
+Since this is a fairly simple XML file, we could extract the information it contains simply by string searching. Using \verb+biopython.Entrez+'s parser instead, we can directly parse this XML file into a Python object:
 
 %doctest . internet
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> handle = Entrez.einfo()
 >>> record = Entrez.read(handle)
 \end{minted}
@@ -154,7 +154,7 @@ For each of these databases, we can use EInfo again to obtain more information:
 
 %doctest . internet
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> Entrez.email = "A.N.Other@example.com"  # Always tell NCBI who you are
 >>> handle = Entrez.einfo(db="pubmed")
 >>> record = Entrez.read(handle)
@@ -197,11 +197,11 @@ familiar with a particular database.
 
 \section{ESearch: Searching the Entrez databases}
 \label{sec:entrez-esearch}
-To search any of these databases, we use \verb+Bio.Entrez.esearch()+. For example, let's search in PubMed for publications that include Biopython in their title:
+To search any of these databases, we use \verb+biopython.Entrez.esearch()+. For example, let's search in PubMed for publications that include Biopython in their title:
 
 %doctest . internet
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> Entrez.email = "A.N.Other@example.com"     # Always tell NCBI who you are
 >>> handle = Entrez.esearch(db="pubmed", term="biopython[title]", retmax="40" )
 >>> record = Entrez.read(handle)
@@ -254,7 +254,7 @@ ESearch has many useful options --- see the \href{https://www.ncbi.nlm.nih.gov/b
 \section{EPost: Uploading a list of identifiers}
 EPost uploads a list of UIs for use in subsequent search strategies; see the
 \href{https://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.EPost}{EPost help page} for more information. It is available from Biopython through
-the \verb+Bio.Entrez.epost()+ function.
+the \verb+biopython.Entrez.epost()+ function.
 
 To give an example of when this is useful, suppose you have a long list of IDs
 you want to download using EFetch (maybe sequences, maybe citations --
@@ -270,7 +270,7 @@ refer to this long list of IDs, and download the associated data with EFetch.
 
 Let's look at a simple example to see how EPost works -- uploading some PubMed identifiers:
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> Entrez.email = "A.N.Other@example.com"     # Always tell NCBI who you are
 >>> id_list = ["19304878", "18606172", "16403221", "16377612", "14871861", "14630660"]
 >>> print(Entrez.epost("pubmed", id=",".join(id_list)).read())
@@ -287,7 +287,7 @@ You would extract these values for use with another Entrez call such as EFetch:
 
 %doctest . internet
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> Entrez.email = "A.N.Other@example.com"     # Always tell NCBI who you are
 >>> id_list = ["19304878", "18606172", "16403221", "16377612", "14871861", "14630660"]
 >>> search_results = Entrez.read(Entrez.epost("pubmed", id=",".join(id_list)))
@@ -297,11 +297,11 @@ You would extract these values for use with another Entrez call such as EFetch:
 \noindent Section~\ref{sec:entrez-webenv} shows how to use the history feature.
 
 \section{ESummary: Retrieving summaries from primary IDs}
-ESummary retrieves document summaries from a list of primary IDs (see the  \href{https://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.ESummary}{ESummary help page} for more information). In Biopython, ESummary is available as \verb+Bio.Entrez.esummary()+. Using the search result above, we can for example find out more about the journal with ID 30367:
+ESummary retrieves document summaries from a list of primary IDs (see the  \href{https://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.ESummary}{ESummary help page} for more information). In Biopython, ESummary is available as \verb+biopython.Entrez.esummary()+. Using the search result above, we can for example find out more about the journal with ID 30367:
 
 %doctest . internet
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> Entrez.email = "A.N.Other@example.com"  # Always tell NCBI who you are
 >>> handle = Entrez.esummary(db="nlmcatalog", id="101660833")
 >>> record = Entrez.read(handle)
@@ -318,13 +318,13 @@ Title: IEEE transactions on computational imaging.
 EFetch is what you use when you want to retrieve a full record from Entrez.
 This covers several possible databases, as described on the main \href{https://www.ncbi.nlm.nih.gov/books/NBK3837/}{EFetch Help page}.
 
-For most of their databases, the NCBI support several different file formats. Requesting a specific file format from Entrez using \verb|Bio.Entrez.efetch()| requires specifying the \verb|rettype| and/or \verb|retmode| optional arguments.  The different combinations are described for each database type on the pages linked to on \href{https://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.EFetch}{NCBI efetch webpage}.
+For most of their databases, the NCBI support several different file formats. Requesting a specific file format from Entrez using \verb|biopython.Entrez.efetch()| requires specifying the \verb|rettype| and/or \verb|retmode| optional arguments.  The different combinations are described for each database type on the pages linked to on \href{https://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.EFetch}{NCBI efetch webpage}.
 
-One common usage is downloading sequences in the FASTA or GenBank/GenPept plain text formats (which can then be parsed with \verb|Bio.SeqIO|, see Sections~\ref{sec:SeqIO_GenBank_Online} and~\ref{sec:efetch}). From the \emph{Cypripedioideae} example above, we can download GenBank record EU490707 using \verb+Bio.Entrez.efetch+:
+One common usage is downloading sequences in the FASTA or GenBank/GenPept plain text formats (which can then be parsed with \verb|biopython.SeqIO|, see Sections~\ref{sec:SeqIO_GenBank_Online} and~\ref{sec:efetch}). From the \emph{Cypripedioideae} example above, we can download GenBank record EU490707 using \verb+biopython.Entrez.efetch+:
 
 %doctest . internet
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> Entrez.email = "A.N.Other@example.com"  # Always tell NCBI who you are
 >>> handle = Entrez.efetch(db="nucleotide", id="EU490707", rettype="gb", retmode="text")
 >>> print(handle.read())
@@ -414,12 +414,12 @@ plain text files, but now defaults to XML.
 
 Alternatively, you could for example use \verb+rettype="fasta"+ to get the Fasta-format; see the \href{https://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.EFetch}{EFetch Sequences Help page} for other options. Remember -- the available formats depend on which database you are downloading from - see the main \href{https://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.EFetch}{EFetch Help page}.
 
-If you fetch the record in one of the formats accepted by \verb+Bio.SeqIO+ (see Chapter~\ref{chapter:seqio}), you could directly parse it into a \verb+SeqRecord+:
+If you fetch the record in one of the formats accepted by \verb+biopython.SeqIO+ (see Chapter~\ref{chapter:seqio}), you could directly parse it into a \verb+SeqRecord+:
 
 %doctest . internet
 \begin{minted}{pycon}
->>> from Bio import SeqIO
->>> from Bio import Entrez
+>>> from biopython import SeqIO
+>>> from biopython import Entrez
 >>> Entrez.email = "A.N.Other@example.com"  # Always tell NCBI who you are
 >>> handle = Entrez.efetch(db="nucleotide", id="EU490707", rettype="gb", retmode="text")
 >>> record = SeqIO.read(handle, "genbank")
@@ -436,12 +436,12 @@ Selenipedium aequinoctiale maturase K (matK) gene, partial cds; chloroplast
 Seq('ATTTTTTACGAACCTGTGGAAATTTTTGGTTATGACAATAAATCTAGTTTAGTA...GAA', id='EU490707.1', name='EU490707', description='Selenipedium aequinoctiale maturase K (matK) gene, partial cds; chloroplast')
 \end{minted}
 
-Note that a more typical use would be to save the sequence data to a local file, and \emph{then} parse it with \verb|Bio.SeqIO|.  This can save you having to re-download the same file repeatedly while working on your script, and places less load on the NCBI's servers.  For example:
+Note that a more typical use would be to save the sequence data to a local file, and \emph{then} parse it with \verb|biopython.SeqIO|.  This can save you having to re-download the same file repeatedly while working on your script, and places less load on the NCBI's servers.  For example:
 
 \begin{minted}{python}
 import os
-from Bio import SeqIO
-from Bio import Entrez
+from biopython import SeqIO
+from biopython import Entrez
 
 Entrez.email = "A.N.Other@example.com"  # Always tell NCBI who you are
 filename = "EU490707.gbk"
@@ -461,11 +461,11 @@ record = SeqIO.read(filename, "genbank")
 print(record)
 \end{minted}
 
-To get the output in XML format, which you can parse using the \verb+Bio.Entrez.read()+ function, use \verb+retmode="xml"+:
+To get the output in XML format, which you can parse using the \verb+biopython.Entrez.read()+ function, use \verb+retmode="xml"+:
 
 %doctest . internet
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> Entrez.email = "A.N.Other@example.com"  # Always tell NCBI who you are
 >>> handle = Entrez.efetch(db="nucleotide", id="EU490707", retmode="xml")
 >>> record = Entrez.read(handle)
@@ -478,19 +478,19 @@ To get the output in XML format, which you can parse using the \verb+Bio.Entrez.
 
 So, that dealt with sequences. For examples of parsing file formats specific to the other databases (e.g. the \verb+MEDLINE+ format used in PubMed), see Section~\ref{sec:entrez-specialized-parsers}.
 
-If you want to perform a search with \verb|Bio.Entrez.esearch()|, and then download the records with \verb|Bio.Entrez.efetch()|, you should use the WebEnv history feature -- see Section~\ref{sec:entrez-webenv}.
+If you want to perform a search with \verb|biopython.Entrez.esearch()|, and then download the records with \verb|biopython.Entrez.efetch()|, you should use the WebEnv history feature -- see Section~\ref{sec:entrez-webenv}.
 
 \section{ELink: Searching for related items in NCBI Entrez}
 \label{sec:elink}
 
-ELink, available from Biopython as \verb+Bio.Entrez.elink()+, can be used to find related items in the NCBI Entrez databases. For example, you can us this to find nucleotide entries for an entry in the gene database,
+ELink, available from Biopython as \verb+biopython.Entrez.elink()+, can be used to find related items in the NCBI Entrez databases. For example, you can us this to find nucleotide entries for an entry in the gene database,
 and other cool stuff.
 
 Let's use ELink to find articles related to the Biopython application note published in \textit{Bioinformatics} in 2009. The PubMed ID of this article is 19304878:
 
 %doctest . internet
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> Entrez.email = "A.N.Other@example.com"  # Always tell NCBI who you are
 >>> pmid = "19304878"
 >>> record = Entrez.read(Entrez.elink(dbfrom="pubmed", id=pmid))
@@ -567,10 +567,10 @@ There is an entire sub-page just for the \href{https://eutils.ncbi.nlm.nih.gov/c
 \section{EGQuery: Global Query - counts for search terms}
 EGQuery provides counts for a search term in each of the Entrez databases (i.e. a global query). This is particularly useful to find out how many items your search terms would find in each database without actually performing lots of separate searches with ESearch (see the example in \ref{sec:entrez_example_genbank} below).
 
-In this example, we use \verb+Bio.Entrez.egquery()+ to obtain the counts for ``Biopython'':
+In this example, we use \verb+biopython.Entrez.egquery()+ to obtain the counts for ``Biopython'':
 
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> Entrez.email = "A.N.Other@example.com"  # Always tell NCBI who you are
 >>> handle = Entrez.egquery(term="biopython")
 >>> record = Entrez.read(handle)
@@ -585,11 +585,11 @@ journals 0
 See the \href{https://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.EGQuery}{EGQuery help page} for more information.
 
 \section{ESpell: Obtaining spelling suggestions}
-ESpell retrieves spelling suggestions. In this example, we use \verb+Bio.Entrez.espell()+ to obtain the correct spelling of Biopython:
+ESpell retrieves spelling suggestions. In this example, we use \verb+biopython.Entrez.espell()+ to obtain the correct spelling of Biopython:
 
 %doctest . internet
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> Entrez.email = "A.N.Other@example.com"  # Always tell NCBI who you are
 >>> handle = Entrez.espell(term="biopythooon")
 >>> record = Entrez.read(handle)
@@ -616,7 +616,7 @@ The resulting XML file has a size of 6.1 GB. Attempting \verb+Entrez.read+ on th
 The XML file \verb+Homo_sapiens.xml+ consists of a list of Entrez gene records, each corresponding to one Entrez gene in human. \verb+Entrez.parse+ retrieves these gene records one by one. You can then print out or store the relevant information in each record by iterating over the records. For example, this script iterates over the Entrez gene records and prints out the gene numbers and names for all current genes:
 
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> Entrez.email = "A.N.Other@example.com"  # Always tell NCBI who you are
 >>> handle = open("Homo_sapiens.xml", "b")
 >>> records = Entrez.parse(handle)
@@ -646,7 +646,7 @@ The XML file \verb+Homo_sapiens.xml+ consists of a list of Entrez gene records, 
 
 \section{HTML escape characters}
 
-Pubmed records may contain HTML tags to indicate e.g. subscripts, superscripts, or italic text, as well as mathematical symbols via MathML. By default, the \verb+Bio.Entrez+ parser treats all text as plain text without markup; for example, the fragment ``$P < 0.05$'' in the abstract of a Pubmed record, which is encoded as
+Pubmed records may contain HTML tags to indicate e.g. subscripts, superscripts, or italic text, as well as mathematical symbols via MathML. By default, the \verb+biopython.Entrez+ parser treats all text as plain text without markup; for example, the fragment ``$P < 0.05$'' in the abstract of a Pubmed record, which is encoded as
 \begin{minted}{text}
 <i>P</i> &lt; 0.05
 \end{minted}
@@ -654,7 +654,7 @@ in the XML returned by Entrez, is converted to the Python string
 \begin{minted}{text}
 '<i>P</i> < 0.05'
 \end{minted}
-by the \verb+Bio.Entrez+ parser. While this is more human-readable, it is not valid HTML due to the less-than sign, and makes further processing of the text e.g. by an HTML parser impractical. To ensure that all strings returned by the parser are valid HTML, call \verb+Entrez.read+ or \verb+Entrez.parse+ with the \verb+escape+ argument set to \verb+True+:
+by the \verb+biopython.Entrez+ parser. While this is more human-readable, it is not valid HTML due to the less-than sign, and makes further processing of the text e.g. by an HTML parser impractical. To ensure that all strings returned by the parser are valid HTML, call \verb+Entrez.read+ or \verb+Entrez.parse+ with the \verb+escape+ argument set to \verb+True+:
 \begin{minted}{pycon}
 >>> record = Entrez.read(handle, escape=True)
 \end{minted}
@@ -677,12 +677,12 @@ The first case occurs if, for example, you try to parse a Fasta file as if it we
 
 %doctest ../Tests/GenBank
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> handle = open("NC_005816.fna", "rb") # a Fasta file
 >>> record = Entrez.read(handle)
 Traceback (most recent call last):
   ...
-Bio.Entrez.Parser.NotXMLError: Failed to parse the XML data (syntax error: line 1, column 0). Please make sure that the input data are in XML format.
+biopython.Entrez.Parser.NotXMLError: Failed to parse the XML data (syntax error: line 1, column 0). Please make sure that the input data are in XML format.
 \end{minted}
 Here, the parser didn't find the \verb|<?xml ...| tag with which an XML file is supposed to start, and therefore decides (correctly) that the file is not an XML file.
 
@@ -710,7 +710,7 @@ which will generate the following traceback:
 >>> Entrez.read(handle)
 Traceback (most recent call last):
   ...
-Bio.Entrez.Parser.CorruptedXMLError: Failed to parse the XML data (no element found: line 16, column 0). Please make sure that the input data are not corrupted.
+biopython.Entrez.Parser.CorruptedXMLError: Failed to parse the XML data (no element found: line 16, column 0). Please make sure that the input data are not corrupted.
 \end{minted}
 Note that the error message tells you at what point in the XML file the error was detected.
 
@@ -748,18 +748,18 @@ In this file, for some reason the tag \verb|<DocsumList>| (and several others) a
 
 %doctest ../Tests/Entrez/
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> handle = open("einfo3.xml", "rb")
 >>> record = Entrez.read(handle)
 Traceback (most recent call last):
   ...
-Bio.Entrez.Parser.ValidationError: Failed to find tag 'DocsumList' in the DTD. To skip all tags that are not represented in the DTD, please call Bio.Entrez.read or Bio.Entrez.parse with validate=False.
+biopython.Entrez.Parser.ValidationError: Failed to find tag 'DocsumList' in the DTD. To skip all tags that are not represented in the DTD, please call biopython.Entrez.read or biopython.Entrez.parse with validate=False.
 \end{minted}
 Optionally, you can instruct the parser to skip such tags instead of raising a ValidationError. This is done by calling \verb|Entrez.read| or \verb|Entrez.parse| with the argument \verb|validate| equal to False:
 
 %doctest ../Tests/Entrez/
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> handle = open("einfo3.xml", "rb")
 >>> record = Entrez.read(handle, validate=False)
 >>> handle.close()
@@ -770,15 +770,15 @@ Of course, the information contained in the XML tags that are not in the DTD are
 \section{Specialized parsers}
 \label{sec:entrez-specialized-parsers}
 
-The \verb|Bio.Entrez.read()| function can parse most (if not all) XML output returned by Entrez. Entrez typically allows you to retrieve records in other formats, which may have some advantages compared to the XML format in terms of readability (or download size).
+The \verb|biopython.Entrez.read()| function can parse most (if not all) XML output returned by Entrez. Entrez typically allows you to retrieve records in other formats, which may have some advantages compared to the XML format in terms of readability (or download size).
 
-To request a specific file format from Entrez using \verb|Bio.Entrez.efetch()| requires specifying the \verb|rettype| and/or \verb|retmode| optional arguments.  The different combinations are described for each database type on the \href{https://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.EFetch}{NCBI efetch webpage}.
+To request a specific file format from Entrez using \verb|biopython.Entrez.efetch()| requires specifying the \verb|rettype| and/or \verb|retmode| optional arguments.  The different combinations are described for each database type on the \href{https://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.EFetch}{NCBI efetch webpage}.
 
-One obvious case is you may prefer to download sequences in the FASTA or GenBank/GenPept plain text formats (which can then be parsed with \verb|Bio.SeqIO|, see Sections~\ref{sec:SeqIO_GenBank_Online} and~\ref{sec:efetch}).  For the literature databases, Biopython contains a parser for the \verb+MEDLINE+ format used in PubMed.
+One obvious case is you may prefer to download sequences in the FASTA or GenBank/GenPept plain text formats (which can then be parsed with \verb|biopython.SeqIO|, see Sections~\ref{sec:SeqIO_GenBank_Online} and~\ref{sec:efetch}).  For the literature databases, Biopython contains a parser for the \verb+MEDLINE+ format used in PubMed.
 
 \subsection{Parsing Medline records}
 \label{sec:entrez-and-medline}
-You can find the Medline parser in \verb+Bio.Medline+. Suppose we want to parse the file \verb+pubmed_result1.txt+, containing one Medline record. You can find this file in Biopython's \verb+Tests\Medline+ directory. The file looks like this:
+You can find the Medline parser in \verb+biopython.Medline+. Suppose we want to parse the file \verb+pubmed_result1.txt+, containing one Medline record. You can find this file in Biopython's \verb+Tests\Medline+ directory. The file looks like this:
 
 \begin{minted}{text}
 PMID- 12230038
@@ -802,7 +802,7 @@ We first open the file and then parse it:
 
 %doctest ../Tests/Medline
 \begin{minted}{pycon}
->>> from Bio import Medline
+>>> from biopython import Medline
 >>> with open("pubmed_result1.txt") as handle:
 ...    record = Medline.read(handle)
 ...
@@ -835,7 +835,7 @@ To parse a file containing multiple Medline records, you can use the \verb+parse
 
 %doctest ../Tests/Medline
 \begin{minted}{pycon}
->>> from Bio import Medline
+>>> from biopython import Medline
 >>> with open("pubmed_result2.txt") as handle:
 ...     for record in Medline.parse(handle):
 ...         print(record["TI"])
@@ -846,23 +846,23 @@ Open source clustering software.
 PDB file parser and structure class implemented in Python.
 \end{minted}
 
-Instead of parsing Medline records stored in files, you can also parse Medline records downloaded by \verb+Bio.Entrez.efetch+. For example, let's look at all Medline records in PubMed related to Biopython:
+Instead of parsing Medline records stored in files, you can also parse Medline records downloaded by \verb+biopython.Entrez.efetch+. For example, let's look at all Medline records in PubMed related to Biopython:
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> Entrez.email = "A.N.Other@example.com"  # Always tell NCBI who you are
 >>> handle = Entrez.esearch(db="pubmed", term="biopython")
 >>> record = Entrez.read(handle)
 >>> record["IdList"]
 ['19304878', '18606172', '16403221', '16377612', '14871861', '14630660', '12230038']
 \end{minted}
-We now use \verb+Bio.Entrez.efetch+ to download these Medline records:
+We now use \verb+biopython.Entrez.efetch+ to download these Medline records:
 \begin{minted}{pycon}
 >>> idlist = record["IdList"]
 >>> handle = Entrez.efetch(db="pubmed", id=idlist, rettype="medline", retmode="text")
 \end{minted}
-Here, we specify \verb+rettype="medline", retmode="text"+ to obtain the Medline records in plain-text Medline format. Now we use \verb+Bio.Medline+ to parse these records:
+Here, we specify \verb+rettype="medline", retmode="text"+ to obtain the Medline records in plain-text Medline format. Now we use \verb+biopython.Medline+ to parse these records:
 \begin{minted}{pycon}
->>> from Bio import Medline
+>>> from biopython import Medline
 >>> records = Medline.parse(handle)
 >>> for record in records:
 ...     print(record["AU"])
@@ -901,14 +901,14 @@ as illustrated in Section~\ref{sec:entrez-webenv}.
 
 GEO (\href{https://www.ncbi.nlm.nih.gov/geo/}{Gene Expression Omnibus})
 is a data repository of high-throughput gene expression and hybridization
-array data. The \verb|Bio.Geo| module can be used to parse GEO-formatted
+array data. The \verb|biopython.Geo| module can be used to parse GEO-formatted
 data.
 
 The following code fragment shows how to parse the example GEO file
 \verb|GSE16.txt| into a record and print the record:
 
 \begin{minted}{pycon}
->>> from Bio import Geo
+>>> from biopython import Geo
 >>> handle = open("GSE16.txt")
 >>> records = Geo.parse(handle)
 >>> for record in records:
@@ -919,7 +919,7 @@ You can search the ``gds'' database (GEO datasets) with ESearch:
 
 %doctest . internet
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> Entrez.email = "A.N.Other@example.com"  # Always tell NCBI who you are
 >>> handle = Entrez.esearch(db="gds", term="GSE16")
 >>> record = Entrez.read(handle)
@@ -984,9 +984,9 @@ SEQUENCE    ACC=AU099534.1; NID=g13550663; CLONE=HSI08034; END=5'; LID=8800; SEQ
 
 This particular record shows the set of transcripts (shown in the \verb+SEQUENCE+ lines) that originate from the human gene NAT2, encoding en N-acetyltransferase. The \verb+PROTSIM+ lines show proteins with significant similarity to NAT2, whereas the \verb+STS+ lines show the corresponding sequence-tagged sites in the genome.
 
-To parse UniGene files, use the \verb+Bio.UniGene+ module:
+To parse UniGene files, use the \verb+biopython.UniGene+ module:
 \begin{minted}{pycon}
->>> from Bio import UniGene
+>>> from biopython import UniGene
 >>> input = open("myunigenefile.data")
 >>> record = UniGene.read(input)
 \end{minted}
@@ -1022,10 +1022,10 @@ Specialized objects are returned for the \verb+STS+, \verb+PROTSIM+, and \verb+S
 \end{minted}
 and similarly for the \verb+PROTSIM+ and \verb+SEQUENCE+ lines.
 
-To parse a file containing more than one UniGene record, use the \verb+parse+ function in \verb+Bio.UniGene+:
+To parse a file containing more than one UniGene record, use the \verb+parse+ function in \verb+biopython.UniGene+:
 
 \begin{minted}{pycon}
->>> from Bio import UniGene
+>>> from biopython import UniGene
 >>> input = open("unigenerecords.data")
 >>> records = UniGene.parse(input)
 >>> for record in records:
@@ -1035,7 +1035,7 @@ To parse a file containing more than one UniGene record, use the \verb+parse+ fu
 \section{Using a proxy}
 
 Normally you won't have to worry about using a proxy, but if this is an issue
-on your network here is how to deal with it.  Internally, \verb|Bio.Entrez|
+on your network here is how to deal with it.  Internally, \verb|biopython.Entrez|
 uses the standard Python library \verb|urllib| for accessing the NCBI servers.
 This will check an environment variable called \verb|http_proxy| to configure
 any simple proxy automatically.  Unfortunately this module does not support
@@ -1065,7 +1065,7 @@ If you are in the medical field or interested in human issues (and many times ev
 In this example, we will query PubMed for all articles having to do with orchids (see section~\ref{sec:orchids} for our motivation). We first check how many of such articles there are:
 
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> Entrez.email = "A.N.Other@example.com"  # Always tell NCBI who you are
 >>> handle = Entrez.egquery(term="orchid")
 >>> record = Entrez.read(handle)
@@ -1075,11 +1075,11 @@ In this example, we will query PubMed for all articles having to do with orchids
 463
 \end{minted}
 
-Now we use the \verb+Bio.Entrez.efetch+ function to download the PubMed IDs of these 463 articles:
+Now we use the \verb+biopython.Entrez.efetch+ function to download the PubMed IDs of these 463 articles:
 
 %doctest . internet
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> Entrez.email = "A.N.Other@example.com"  # Always tell NCBI who you are
 >>> handle = Entrez.esearch(db="pubmed", term="orchid", retmax=463)
 >>> record = Entrez.read(handle)
@@ -1095,11 +1095,11 @@ This returns a Python list containing all of the PubMed IDs of articles related 
 ...
 \end{minted}
 
-Now that we've got them, we obviously want to get the corresponding Medline records and extract the information from them. Here, we'll download the Medline records in the Medline flat-file format, and use the \verb+Bio.Medline+ module to parse them:
+Now that we've got them, we obviously want to get the corresponding Medline records and extract the information from them. Here, we'll download the Medline records in the Medline flat-file format, and use the \verb+biopython.Medline+ module to parse them:
 
 %cont-doctest
 \begin{minted}{pycon}
->>> from Bio import Medline
+>>> from biopython import Medline
 >>> handle = Entrez.efetch(db="pubmed", id=idlist, rettype="medline",
 ...                        retmode="text")
 >>> records = Medline.parse(handle)
@@ -1155,7 +1155,7 @@ Here we'll show a simple example of performing a remote Entrez query. In section
 
 First, we use EGQuery to find out the number of results we will get before actually downloading them.  EGQuery will tell us how many search results were found in each of the databases, but for this example we are only interested in nucleotides:
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> Entrez.email = "A.N.Other@example.com"  # Always tell NCBI who you are
 >>> handle = Entrez.egquery(term="Cypripedioideae")
 >>> record = Entrez.read(handle)
@@ -1170,7 +1170,7 @@ Let's use the \verb+retmax+ argument to restrict the maximum number of records r
 
 %doctest . internet
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> Entrez.email = "A.N.Other@example.com"  # Always tell NCBI who you are
 >>> handle = Entrez.esearch(db="nucleotide", term="Cypripedioideae", retmax=814, idtype="acc")
 >>> record = Entrez.read(handle)
@@ -1245,13 +1245,13 @@ You could use this to quickly set up searches -- but for heavy usage, see Sectio
 
 The GenBank record format is a very popular method of holding information about sequences, sequence features, and other associated sequence information. The format is a good way to get information from the NCBI databases at \url{https://www.ncbi.nlm.nih.gov/}.
 
-In this example we'll show how to query the NCBI databases,to retrieve the records from the query, and then parse them using \verb+Bio.SeqIO+  - something touched on in Section~\ref{sec:SeqIO_GenBank_Online}.
+In this example we'll show how to query the NCBI databases,to retrieve the records from the query, and then parse them using \verb+biopython.SeqIO+  - something touched on in Section~\ref{sec:SeqIO_GenBank_Online}.
 For simplicity, this example \emph{does not} take advantage of the WebEnv history feature -- see Section~\ref{sec:entrez-webenv} for this.
 
 First, we want to make a query and find out the ids of the records to retrieve. Here we'll do a quick search for one of our favorite organisms, \emph{Opuntia} (prickly-pear cacti). We can do quick search and get back the GIs (GenBank identifiers) for all of the corresponding records. First we check how many records there are:
 
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> Entrez.email = "A.N.Other@example.com"  # Always tell NCBI who you are
 >>> handle = Entrez.egquery(term="Opuntia AND rpl16")
 >>> record = Entrez.read(handle)
@@ -1298,10 +1298,10 @@ REFERENCE   1  (bases 1 to 892)
 ...
 \end{minted}
 
-In this case, we are just getting the raw records. To get the records in a more Python-friendly form, we can use \verb+Bio.SeqIO+ to parse the GenBank data into \verb|SeqRecord| objects, including \verb|SeqFeature| objects (see Chapter~\ref{chapter:seqio}):
+In this case, we are just getting the raw records. To get the records in a more Python-friendly form, we can use \verb+biopython.SeqIO+ to parse the GenBank data into \verb|SeqRecord| objects, including \verb|SeqFeature| objects (see Chapter~\ref{chapter:seqio}):
 
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> handle = Entrez.efetch(db="nuccore", id=gi_str, rettype="gb", retmode="text")
 >>> records = SeqIO.parse(handle, "gb")
 \end{minted}
@@ -1333,7 +1333,7 @@ Staying with a plant example, let's now find the lineage of the Cypripedioideae 
 
 %doctest . internet
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> Entrez.email = "A.N.Other@example.com"  # Always tell NCBI who you are
 >>> handle = Entrez.esearch(db="Taxonomy", term="Cypripedioideae")
 >>> record = Entrez.read(handle)
@@ -1384,19 +1384,19 @@ to the session (instead of the identifiers).
 Suppose we want to search and download all the \textit{Opuntia} rpl16
 nucleotide sequences, and store them in a FASTA file.  As shown in
 Section~\ref{sec:entrez-search-fetch-genbank}, we can naively combine
-\verb|Bio.Entrez.esearch()| to get a list of Accession numbers, and then call
-\verb|Bio.Entrez.efetch()| to download them all.
+\verb|biopython.Entrez.esearch()| to get a list of Accession numbers, and then call
+\verb|biopython.Entrez.efetch()| to download them all.
 
 However, the approved approach is to run the search with the history
 feature.  Then, we can fetch the results by reference to the search
 results - which the NCBI can anticipate and cache.
 
-To do this, call \verb|Bio.Entrez.esearch()| as normal, but with the
+To do this, call \verb|biopython.Entrez.esearch()| as normal, but with the
 additional argument of \verb|usehistory="y"|,
 
 %doctest . internet
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> Entrez.email = "history.user@example.com"  # Always tell NCBI who you are
 >>> search_handle = Entrez.esearch(db="nucleotide",term="Opuntia[orgn] and rpl16",
 ...                                usehistory="y", idtype="acc")
@@ -1424,7 +1424,7 @@ True
 >>> query_key = search_results["QueryKey"]
 \end{minted}
 
-Having stored these values in variables \texttt{session\_cookie} and \texttt{query\_key} we can use them as parameters to \verb|Bio.Entrez.efetch()| instead of giving the GI numbers as identifiers.
+Having stored these values in variables \texttt{session\_cookie} and \texttt{query\_key} we can use them as parameters to \verb|biopython.Entrez.efetch()| instead of giving the GI numbers as identifiers.
 
 While for small searches you might be OK downloading everything at once, it is better to download in batches.  You use the \texttt{retstart} and \texttt{retmax} parameters to specify which range of search results you want returned (starting entry using zero-based counting, and maximum number of results to return). Note that if Biopython encounters a transient failure like a HTTP 500 response when communicating with NCBI, it will automatically try again a couple of times.
 For example,
@@ -1460,7 +1460,7 @@ out_handle.close()
 Here is another history example, searching for papers published in the last year about the \textit{Opuntia}, and then downloading them into a file in MedLine format:
 
 \begin{minted}{python}
-from Bio import Entrez
+from biopython import Entrez
 
 Entrez.email = "history.user@example.com"
 search_results = Entrez.read(
@@ -1491,7 +1491,7 @@ for start in range(0, count, batch_size):
 out_handle.close()
 \end{minted}
 
-\noindent At the time of writing, this gave 28 matches - but because this is a date dependent search, this will of course vary.  As described in Section~\ref{sec:entrez-and-medline} above, you can then use \verb|Bio.Medline| to parse the saved records.
+\noindent At the time of writing, this gave 28 matches - but because this is a date dependent search, this will of course vary.  As described in Section~\ref{sec:entrez-and-medline} above, you can then use \verb|biopython.Medline| to parse the saved records.
 
 \subsection{Searching for citations}
 \label{sec:elink-citations}
@@ -1502,7 +1502,7 @@ Unfortunately this only covers journals indexed for PubMed Central
 Let's try this for the Biopython PDB parser paper, PubMed ID 14630660:
 
 \begin{minted}{pycon}
->>> from Bio import Entrez
+>>> from biopython import Entrez
 >>> Entrez.email = "A.N.Other@example.com"  # Always tell NCBI who you are
 >>> pmid = "14630660"
 >>> results = Entrez.read(Entrez.elink(dbfrom="pubmed", db="pmc",

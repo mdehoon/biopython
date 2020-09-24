@@ -11,17 +11,17 @@ import os
 import unittest
 
 # Biopython
-from Bio.Graphics.ColorSpiral import ColorSpiral
+from biopython.Graphics.ColorSpiral import ColorSpiral
 
 # Do we have ReportLab?  Raise error if not present.
-from Bio import MissingExternalDependencyError
+from biopython import MissingExternalDependencyError
 
 try:
     from reportlab.pdfgen.canvas import Canvas
     from reportlab.lib.pagesizes import A4
 except ImportError:
     raise MissingExternalDependencyError(
-        "Install reportlab if you want to use Bio.Graphics."
+        "Install reportlab if you want to use biopython.Graphics."
     ) from None
 
 # Do we have PIL?
@@ -34,9 +34,9 @@ except ImportError:
     ) from None
 
 
-# Biopython Bio.KEGG.KGML
-from Bio.KEGG.KGML.KGML_parser import read
-from Bio.Graphics.KGML_vis import KGMLCanvas
+# Biopython biopython.KEGG.KGML
+from biopython.KEGG.KGML.KGML_parser import read
+from biopython.Graphics.KGML_vis import KGMLCanvas
 
 # test_KGML_graphics module
 from test_KGML_graphics import PathwayData

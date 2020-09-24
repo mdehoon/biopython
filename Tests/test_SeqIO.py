@@ -15,14 +15,14 @@ import warnings
 from io import StringIO
 from io import BytesIO
 
-from Bio import BiopythonWarning, BiopythonParserWarning
-from Bio import SeqIO
-from Bio import AlignIO
-from Bio.AlignIO import PhylipIO
-from Bio.PDB.PDBExceptions import PDBConstructionWarning
-from Bio.Seq import Seq, UnknownSeq
-from Bio.Align import MultipleSeqAlignment
-from Bio import StreamModeError
+from biopython import BiopythonWarning, BiopythonParserWarning
+from biopython import SeqIO
+from biopython import AlignIO
+from biopython.AlignIO import PhylipIO
+from biopython.PDB.PDBExceptions import PDBConstructionWarning
+from biopython.Seq import Seq, UnknownSeq
+from biopython.Align import MultipleSeqAlignment
+from biopython import StreamModeError
 
 
 # TODO - Check that desired warnings are issued. Used to do that by capturing
@@ -52,7 +52,7 @@ test_write_read_alignment_formats.remove("fastq-sanger")  # an alias for fastq
 
 
 class SeqIOTestBaseClass(unittest.TestCase):
-    """Base class for Bio.SeqIO unit tests."""
+    """Base class for biopython.SeqIO unit tests."""
 
     modes = {}
 
@@ -589,7 +589,7 @@ class TestSeqIO(SeqIOTestBaseClass):
                     self.assertEqual(seq, expected_sequences[i])
                     self.assertEqual(length, expected_lengths[i])
 
-            # Check Bio.SeqIO.read(...)
+            # Check biopython.SeqIO.read(...)
             if t_count == 1:
                 record = SeqIO.read(t_filename, format=t_format)
                 self.assertIsInstance(record, Seq)

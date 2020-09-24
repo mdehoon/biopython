@@ -5,15 +5,15 @@
 # Please see the LICENSE file that should have been included as part of this
 # package.
 
-"""Testing online code for Bio.motifs (weblogo etc)."""
+"""Testing online code for biopython.motifs (weblogo etc)."""
 import os
 import unittest
 
 # We want to test these:
-from Bio import motifs
+from biopython import motifs
 
 # In order to check any sequences returned
-from Bio.Seq import Seq
+from biopython.Seq import Seq
 
 import requires_internet
 
@@ -21,7 +21,7 @@ requires_internet.check()
 
 
 class TestotifWeblogo(unittest.TestCase):
-    """Tests Bio.motifs online code."""
+    """Tests biopython.motifs online code."""
 
     def check(self, seqs_as_strs, alpha):
         # Using Seq objects:
@@ -32,19 +32,19 @@ class TestotifWeblogo(unittest.TestCase):
         m.weblogo(os.devnull)
 
     def test_dna(self):
-        """Test Bio.motifs.weblogo with a DNA sequence."""
+        """Test biopython.motifs.weblogo with a DNA sequence."""
         self.check(
             ["TACAA", "TACGC", "TACAC", "TACCC", "AACCC", "AATGC", "AATGC"], "GATCBDSW"
         )
 
     def test_rna(self):
-        """Test Bio.motifs.weblogo with an RNA sequence."""
+        """Test biopython.motifs.weblogo with an RNA sequence."""
         self.check(
             ["UACAA", "UACGC", "UACAC", "UACCC", "AACCC", "AAUGC", "AAUGC"], "GAUC"
         )
 
     def test_protein(self):
-        """Test Bio.motifs.weblogo with a protein sequence."""
+        """Test biopython.motifs.weblogo with a protein sequence."""
         self.check(
             ["ACDEG", "AYCRN", "HYLID", "AYHEL", "ACDEH", "AYYRN", "HYIID"],
             "ACDEFGHIKLMNPQRSTVWYBXZJUO",

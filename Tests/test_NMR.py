@@ -4,14 +4,14 @@
 # choice of the "Biopython License Agreement" or the "BSD 3-Clause License".
 # Please see the LICENSE file that should have been included as part of this
 # package.
-"""Unit tests for the Bio.NMR Module."""
+"""Unit tests for the biopython.NMR Module."""
 
 import unittest
 import tempfile
 import os
 
-from Bio.NMR import xpktools
-from Bio.NMR import NOEtools
+from biopython.NMR import xpktools
+from biopython.NMR import NOEtools
 
 
 class NmrTests(unittest.TestCase):

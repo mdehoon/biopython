@@ -8,9 +8,9 @@
 import unittest
 from io import StringIO
 
-from Bio import SeqIO
-from Bio.Seq import Seq
-from Bio.SeqFeature import SeqFeature, FeatureLocation
+from biopython import SeqIO
+from biopython.Seq import Seq
+from biopython.SeqFeature import SeqFeature, FeatureLocation
 
 
 from seq_tests_common import compare_record

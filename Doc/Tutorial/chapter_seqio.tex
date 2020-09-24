@@ -1,11 +1,11 @@
 \chapter{Sequence Input/Output}
 \label{chapter:seqio}
 
-In this chapter we'll discuss in more detail the \verb|Bio.SeqIO| module, which was briefly introduced in Chapter~\ref{chapter:quick_start} and also used in Chapter~\ref{chapter:seq_annot}. This aims to provide a simple interface for working with assorted sequence file formats in a uniform way.
-See also the \verb|Bio.SeqIO| wiki page (\url{http://biopython.org/wiki/SeqIO}), and the built in documentation (also \href{http://biopython.org/docs/\bpversion/api/Bio.SeqIO.html}{online}):
+In this chapter we'll discuss in more detail the \verb|biopython.SeqIO| module, which was briefly introduced in Chapter~\ref{chapter:quick_start} and also used in Chapter~\ref{chapter:seq_annot}. This aims to provide a simple interface for working with assorted sequence file formats in a uniform way.
+See also the \verb|biopython.SeqIO| wiki page (\url{http://biopython.org/wiki/SeqIO}), and the built in documentation (also \href{http://biopython.org/docs/\bpversion/api/biopython.SeqIO.html}{online}):
 
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> help(SeqIO)
 ...
 \end{minted}
@@ -15,25 +15,25 @@ Note that when dealing with very large FASTA or FASTQ files, the overhead of wor
 In this case consider the low-level \verb|SimpleFastaParser| and \verb|FastqGeneralIterator| parsers which return just a tuple of strings for each record (see Section~\ref{sec:low-level-fasta-fastq}).
 
 \section{Parsing or Reading Sequences}
-\label{sec:Bio.SeqIO-input}
+\label{sec:biopython.SeqIO-input}
 
-The workhorse function \verb|Bio.SeqIO.parse()| is used to read in sequence data as SeqRecord objects.  This function expects two arguments:
+The workhorse function \verb|biopython.SeqIO.parse()| is used to read in sequence data as SeqRecord objects.  This function expects two arguments:
 
 \begin{enumerate}
 \item The first argument is a \textit{handle} to read the data from, or a filename. A handle is typically a file opened for reading, but could be the output from a command line program, or data downloaded from the internet (see Section~\ref{sec:SeqIO_Online}).  See Section~\ref{sec:appendix-handles} for more about handles.
 \item The second argument is a lower case string specifying sequence format -- we don't try and guess the file format for you!  See \url{http://biopython.org/wiki/SeqIO} for a full listing of supported formats.
 \end{enumerate}
 
-The \verb|Bio.SeqIO.parse()| function returns an \textit{iterator} which gives \verb|SeqRecord| objects.  Iterators are typically used in a for loop as shown below.
+The \verb|biopython.SeqIO.parse()| function returns an \textit{iterator} which gives \verb|SeqRecord| objects.  Iterators are typically used in a for loop as shown below.
 
-Sometimes you'll find yourself dealing with files which contain only a single record.  For this situation use the function \verb|Bio.SeqIO.read()| which takes the same arguments.  Provided there is one and only one record in the file, this is returned as a \verb|SeqRecord| object.  Otherwise an exception is raised.
+Sometimes you'll find yourself dealing with files which contain only a single record.  For this situation use the function \verb|biopython.SeqIO.read()| which takes the same arguments.  Provided there is one and only one record in the file, this is returned as a \verb|SeqRecord| object.  Otherwise an exception is raised.
 
 \subsection{Reading Sequence Files}
 
-In general \verb|Bio.SeqIO.parse()| is used to read in sequence files as \verb|SeqRecord| objects, and is typically used with a for loop like this:
+In general \verb|biopython.SeqIO.parse()| is used to read in sequence files as \verb|SeqRecord| objects, and is typically used with a for loop like this:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 for seq_record in SeqIO.parse("ls_orchid.fasta", "fasta"):
     print(seq_record.id)
@@ -44,7 +44,7 @@ for seq_record in SeqIO.parse("ls_orchid.fasta", "fasta"):
 The above example is repeated from the introduction in Section~\ref{sec:sequence-parsing}, and will load the orchid DNA sequences in the FASTA format file \href{https://raw.githubusercontent.com/biopython/biopython/master/Doc/examples/ls_orchid.fasta}{ls\_orchid.fasta}.  If instead you wanted to load a GenBank format file like \href{https://raw.githubusercontent.com/biopython/biopython/master/Doc/examples/ls_orchid.gbk}{ls\_orchid.gbk} then all you need to do is change the filename and the format string:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 for seq_record in SeqIO.parse("ls_orchid.gbk", "genbank"):
     print(seq_record.id)
@@ -52,14 +52,14 @@ for seq_record in SeqIO.parse("ls_orchid.gbk", "genbank"):
     print(len(seq_record))
 \end{minted}
 
-Similarly, if you wanted to read in a file in another file format, then assuming \verb|Bio.SeqIO.parse()| supports it you would just need to change the format string as appropriate, for example ``swiss'' for SwissProt files or ``embl'' for EMBL text files. There is a full listing on the wiki page (\url{http://biopython.org/wiki/SeqIO}) and in the built in documentation (also \href{http://biopython.org/docs/\bpversion/api/Bio.SeqIO.html}{online}).
+Similarly, if you wanted to read in a file in another file format, then assuming \verb|biopython.SeqIO.parse()| supports it you would just need to change the format string as appropriate, for example ``swiss'' for SwissProt files or ``embl'' for EMBL text files. There is a full listing on the wiki page (\url{http://biopython.org/wiki/SeqIO}) and in the built in documentation (also \href{http://biopython.org/docs/\bpversion/api/biopython.SeqIO.html}{online}).
 
 Another very common way to use a Python iterator is within a list comprehension (or
 a generator expression).  For example, if all you wanted to extract from the file was
 a list of the record identifiers we can easily do this with the following list comprehension:
 
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> identifiers = [seq_record.id for seq_record in SeqIO.parse("ls_orchid.gbk", "genbank")]
 >>> identifiers
 ['Z78533.1', 'Z78532.1', 'Z78531.1', 'Z78530.1', 'Z78529.1', 'Z78527.1', ..., 'Z78439.1']
@@ -73,12 +73,12 @@ comprehension like this in Section~\ref{sec:sequence-parsing-plus-pylab}
 
 In the above examples, we have usually used a for loop to iterate over all the records one by one.  You can use the for loop with all sorts of Python objects (including lists, tuples and strings) which support the iteration interface.
 
-The object returned by \verb|Bio.SeqIO| is actually an iterator which returns \verb|SeqRecord| objects.  You get to see each record in turn, but once and only once.  The plus point is that an iterator can save you memory when dealing with large files.
+The object returned by \verb|biopython.SeqIO| is actually an iterator which returns \verb|SeqRecord| objects.  You get to see each record in turn, but once and only once.  The plus point is that an iterator can save you memory when dealing with large files.
 
 Instead of using a for loop, can also use the \verb|next()| function on an iterator to step through the entries, like this:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 record_iterator = SeqIO.parse("ls_orchid.fasta", "fasta")
 
@@ -96,21 +96,21 @@ Note that if you try to use \verb|next()| and there are no more results, you'll 
 One special case to consider is when your sequence files have multiple records, but you only want the first one.  In this situation the following code is very concise:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 first_record = next(SeqIO.parse("ls_orchid.gbk", "genbank"))
 \end{minted}
 
 A word of warning here -- using the \verb|next()| function like this will silently ignore any additional records in the file.
-If your files have \textit{one and only one} record, like some of the online examples later in this chapter, or a GenBank file for a single chromosome, then use the new \verb|Bio.SeqIO.read()| function instead.
+If your files have \textit{one and only one} record, like some of the online examples later in this chapter, or a GenBank file for a single chromosome, then use the new \verb|biopython.SeqIO.read()| function instead.
 This will check there are no extra unexpected records present.
 
 \subsection{Getting a list of the records in a sequence file}
 
-In the previous section we talked about the fact that \verb|Bio.SeqIO.parse()| gives you a \verb|SeqRecord| iterator, and that you get the records one by one.  Very often you need to be able to access the records in any order. The Python \verb|list| data type is perfect for this, and we can turn the record iterator into a list of \verb|SeqRecord| objects using the built-in Python function \verb|list()| like so:
+In the previous section we talked about the fact that \verb|biopython.SeqIO.parse()| gives you a \verb|SeqRecord| iterator, and that you get the records one by one.  Very often you need to be able to access the records in any order. The Python \verb|list| data type is perfect for this, and we can turn the record iterator into a list of \verb|SeqRecord| objects using the built-in Python function \verb|list()| like so:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 records = list(SeqIO.parse("ls_orchid.gbk", "genbank"))
 
@@ -151,7 +151,7 @@ The \verb|SeqRecord| object and its annotation structures are described more ful
 Chapter~\ref{chapter:seq_annot}.  As an example of how annotations are stored, we'll look at the output from parsing the first record in the GenBank file \href{https://raw.githubusercontent.com/biopython/biopython/master/Doc/examples/ls_orchid.gbk}{ls\_orchid.gbk}.
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 record_iterator = SeqIO.parse("ls_orchid.gbk", "genbank")
 first_record = next(record_iterator)
@@ -217,7 +217,7 @@ the two fields are identical.
 Now let's go through all the records, building up a list of the species each orchid sequence is from:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 all_species = []
 for seq_record in SeqIO.parse("ls_orchid.gbk", "genbank"):
@@ -228,7 +228,7 @@ print(all_species)
 Another way of writing this code is to use a list comprehension:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 all_species = [
     seq_record.annotations["organism"]
@@ -258,7 +258,7 @@ AATCCGGAGGACCGGTGTACTCAGCTCACCGGGGGCATTGCTCCCGTGGTGACCCTGATTTGTTGTTGGG
 You can check by hand, but for every record the species name is in the description line as the second word.  This means if we break up each record's \verb|.description| at the spaces, then the species is there as field number one (field zero is the record identifier).  That means we can do this:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 all_species = []
 for seq_record in SeqIO.parse("ls_orchid.fasta", "fasta"):
@@ -275,7 +275,7 @@ print(all_species)
 The concise alternative using list comprehensions would be:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 all_species == [
     seq_record.description.split()[1]
@@ -296,7 +296,7 @@ of a \verb|SeqRecord| can be modified directly, for example:
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> record_iterator = SeqIO.parse("ls_orchid.fasta", "fasta")
 >>> first_record = next(record_iterator)
 >>> first_record.id
@@ -314,7 +314,7 @@ the desired \verb|description|:
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> record_iterator = SeqIO.parse("ls_orchid.fasta", "fasta")
 >>> first_record = next(record_iterator)
 >>> first_record.id = "new_id"
@@ -329,18 +329,18 @@ GACCCTGATTTGTTGTTGGGCCGCCTCGGGAGCGTCCATGGCGGGT
 \section{Parsing sequences from compressed files}
 \label{sec:SeqIO_compressed}
 In the previous section, we looked at parsing sequence data from a file.
-Instead of using a filename, you can give \verb|Bio.SeqIO| a handle
+Instead of using a filename, you can give \verb|biopython.SeqIO| a handle
 (see Section~\ref{sec:appendix-handles}), and in this section
 we'll use handles to parse sequence from compressed files.
 
-As you'll have seen above, we can use \verb|Bio.SeqIO.read()| or
-\verb|Bio.SeqIO.parse()| with a filename - for instance this quick
+As you'll have seen above, we can use \verb|biopython.SeqIO.read()| or
+\verb|biopython.SeqIO.parse()| with a filename - for instance this quick
 example calculates the total length of the sequences in a multiple
 record GenBank file using a generator expression:
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> print(sum(len(r) for r in SeqIO.parse("ls_orchid.gbk", "gb")))
 67518
 \end{minted}
@@ -351,7 +351,7 @@ to close the handle automatically:
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> with open("ls_orchid.gbk") as handle:
 ...     print(sum(len(r) for r in SeqIO.parse(handle, "gb")))
 67518
@@ -362,7 +362,7 @@ Or, the old fashioned way where you manually close the handle:
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> handle = open("ls_orchid.gbk")
 >>> print(sum(len(r) for r in SeqIO.parse(handle, "gb")))
 67518
@@ -376,7 +376,7 @@ the compressed file for reading - which gives us a handle object:
 %doctest examples
 \begin{minted}{pycon}
 >>> import gzip
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> with gzip.open("ls_orchid.gbk.gz", "rt") as handle:
 ...     print(sum(len(r) for r in SeqIO.parse(handle, "gb")))
 ...
@@ -388,7 +388,7 @@ Similarly if we had a bzip2 compressed file:
 %doctest examples
 \begin{minted}{pycon}
 >>> import bz2
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> with bz2.open("ls_orchid.gbk.bz2", "rt") as handle:
 ...     print(sum(len(r) for r in SeqIO.parse(handle, "gb")))
 ...
@@ -404,7 +404,7 @@ Section~\ref{sec:SeqIO-index-bgzf}.
 \label{sec:SeqIO_Online}
 In the previous sections, we looked at parsing sequence data from a file
 (using a filename or handle), and from compressed files (using a handle).
-Here we'll use \verb|Bio.SeqIO| with another type of handle, a network
+Here we'll use \verb|biopython.SeqIO| with another type of handle, a network
 connection, to download and parse sequences from the internet.
 
 Note that just because you \emph{can} download sequence data and parse it into
@@ -421,11 +421,11 @@ sequences from GenBank using their GI numbers.
 First of all, let's fetch just one record.  If you don't care about the
 annotations and features downloading a FASTA file is a good choice as these
 are compact.  Now remember, when you expect the handle to contain one and
-only one record, use the \verb|Bio.SeqIO.read()| function:
+only one record, use the \verb|biopython.SeqIO.read()| function:
 
 \begin{minted}{python}
-from Bio import Entrez
-from Bio import SeqIO
+from biopython import Entrez
+from biopython import SeqIO
 
 Entrez.email = "A.N.Other@example.com"
 with Entrez.efetch(
@@ -448,11 +448,11 @@ return types of ``gb'' (or ``gp'' for proteins) as described on
 \href{https://www.ncbi.nlm.nih.gov/books/NBK3837/}
 {EFetch for Sequence and other Molecular Biology Databases}.
 As a result, in Biopython 1.50 onwards, we support ``gb'' as an
-alias for ``genbank'' in \verb|Bio.SeqIO|.
+alias for ``genbank'' in \verb|biopython.SeqIO|.
 
 \begin{minted}{python}
-from Bio import Entrez
-from Bio import SeqIO
+from biopython import Entrez
+from biopython import SeqIO
 
 Entrez.email = "A.N.Other@example.com"
 with Entrez.efetch(
@@ -471,11 +471,11 @@ AF191665.1 with 3 features
 \noindent Notice this time we have three features.
 
 Now let's fetch several records.  This time the handle contains multiple records,
-so we must use the \verb|Bio.SeqIO.parse()| function:
+so we must use the \verb|biopython.SeqIO.parse()| function:
 
 \begin{minted}{python}
-from Bio import Entrez
-from Bio import SeqIO
+from biopython import Entrez
+from biopython import SeqIO
 
 Entrez.email = "A.N.Other@example.com"
 with Entrez.efetch(
@@ -504,18 +504,18 @@ AF191663.1 Opuntia bradtiana rpl16 gene; chloroplast gene for...
 Sequence length 899, 3 features, from: chloroplast Opuntia bradtianaa
 \end{minted}
 
-See Chapter~\ref{chapter:entrez} for more about the \verb|Bio.Entrez| module, and make sure to read about the NCBI guidelines for using Entrez (Section~\ref{sec:entrez-guidelines}).
+See Chapter~\ref{chapter:entrez} for more about the \verb|biopython.Entrez| module, and make sure to read about the NCBI guidelines for using Entrez (Section~\ref{sec:entrez-guidelines}).
 
 \subsection{Parsing SwissProt sequences from the net}
 \label{sec:SeqIO_ExPASy_and_SwissProt}
 Now let's use a handle to download a SwissProt file from ExPASy,
 something covered in more depth in Chapter~\ref{chapter:uniprot}.
 As mentioned above, when you expect the handle to contain one and only one record,
-use the \verb|Bio.SeqIO.read()| function:
+use the \verb|biopython.SeqIO.read()| function:
 
 \begin{minted}{python}
-from Bio import ExPASy
-from Bio import SeqIO
+from biopython import ExPASy
+from biopython import SeqIO
 
 with ExPASy.get_sprot_raw("O23729") as handle:
     seq_record = SeqIO.read(handle, "swiss")
@@ -540,19 +540,19 @@ Length 394
 
 \section{Sequence files as Dictionaries}
 
-We're now going to introduce three related functions in the \verb|Bio.SeqIO|
+We're now going to introduce three related functions in the \verb|biopython.SeqIO|
 module which allow dictionary like random access to a multi-sequence file.
 There is a trade off here between flexibility and memory usage. In summary:
 \begin{itemize}
-\item \verb|Bio.SeqIO.to_dict()| is the most flexible but also the most
+\item \verb|biopython.SeqIO.to_dict()| is the most flexible but also the most
 memory demanding option (see Section~\ref{sec:seqio_todict}). This is basically
 a helper function to build a normal Python \verb|dictionary| with each entry
 held as a \verb|SeqRecord| object in memory, allowing you to modify the
 records.
-\item \verb|Bio.SeqIO.index()| is a useful middle ground, acting like a
+\item \verb|biopython.SeqIO.index()| is a useful middle ground, acting like a
 read only dictionary and parsing sequences into \verb|SeqRecord| objects
 on demand (see Section~\ref{sec:SeqIO-index}).
-\item \verb|Bio.SeqIO.index_db()| also acts like a read only dictionary
+\item \verb|biopython.SeqIO.index_db()| also acts like a read only dictionary
 but stores the identifiers and file offsets in a file on disk (as an
 SQLite3 database), meaning it has very low memory requirements (see
 Section~\ref{sec:SeqIO-index-db}), but will be a little bit slower.
@@ -570,17 +570,17 @@ where you only need to access certain elements of the file, and makes for a nice
 quick 'n dirty database. For dealing with larger files where memory becomes a
 problem, see Section~\ref{sec:SeqIO-index} below.
 
-You can use the function \verb|Bio.SeqIO.to_dict()| to make a SeqRecord dictionary
+You can use the function \verb|biopython.SeqIO.to_dict()| to make a SeqRecord dictionary
 (in memory).  By default this will use each record's identifier (i.e. the \verb|.id|
 attribute) as the key.  Let's try this using our GenBank file:
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> orchid_dict = SeqIO.to_dict(SeqIO.parse("ls_orchid.gbk", "genbank"))
 \end{minted}
 
-There is just one required argument for \verb|Bio.SeqIO.to_dict()|, a list or
+There is just one required argument for \verb|biopython.SeqIO.to_dict()|, a list or
 generator giving \verb|SeqRecord| objects. Here we have just used the output
 from the \verb|SeqIO.parse| function. As the name suggests, this returns a
 Python dictionary.
@@ -621,7 +621,7 @@ Seq('CGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTGTTGAGATCACAT...GGT', id='Z78475.1
 
 So, it is very easy to create an in memory ``database'' of our GenBank records.  Next we'll try this for the FASTA file instead.
 
-Note that those of you with prior Python experience should all be able to construct a dictionary like this ``by hand''.  However, typical dictionary construction methods will not deal with the case of repeated keys very nicely.  Using the \verb|Bio.SeqIO.to_dict()| will explicitly check for duplicate keys, and raise an exception if any are found.
+Note that those of you with prior Python experience should all be able to construct a dictionary like this ``by hand''.  However, typical dictionary construction methods will not deal with the case of repeated keys very nicely.  Using the \verb|biopython.SeqIO.to_dict()| will explicitly check for duplicate keys, and raise an exception if any are found.
 
 \subsubsection{Specifying the dictionary keys}
 \label{sec:seqio-todict-functionkey}
@@ -629,7 +629,7 @@ Note that those of you with prior Python experience should all be able to constr
 Using the same code as above, but for the FASTA file instead:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 orchid_dict = SeqIO.to_dict(SeqIO.parse("ls_orchid.fasta", "fasta"))
 print(orchid_dict.keys())
@@ -660,7 +660,7 @@ def get_accession(record):
 \noindent Then we can give this function to the \verb|SeqIO.to_dict()| function to use in building the dictionary:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 orchid_dict = SeqIO.to_dict(
     SeqIO.parse("ls_orchid.fasta", "fasta"), key_function=get_accession
@@ -684,8 +684,8 @@ To give another example of working with dictionaries of \verb|SeqRecord| objects
 Once again, working with the orchids GenBank file:
 
 \begin{minted}{python}
-from Bio import SeqIO
-from Bio.SeqUtils.CheckSum import seguid
+from biopython import SeqIO
+from biopython.SeqUtils.CheckSum import seguid
 
 for record in SeqIO.parse("ls_orchid.gbk", "genbank"):
     print(record.id, seguid(record.seq))
@@ -700,12 +700,12 @@ Z78532.1 MN/s0q9zDoCVEEc+k/IFwCNF2pY
 Z78439.1 H+JfaShya/4yyAj7IbMqgNkxdxQ
 \end{minted}
 
-Now, recall the \verb|Bio.SeqIO.to_dict()| function's \verb|key_function| argument expects a function which turns a \verb|SeqRecord| into a string.  We can't use the \verb|seguid()| function directly because it expects to be given a \verb|Seq| object (or a string).  However, we can use Python's \verb|lambda| feature to create a ``one off'' function to give to \verb|Bio.SeqIO.to_dict()| instead:
+Now, recall the \verb|biopython.SeqIO.to_dict()| function's \verb|key_function| argument expects a function which turns a \verb|SeqRecord| into a string.  We can't use the \verb|seguid()| function directly because it expects to be given a \verb|Seq| object (or a string).  However, we can use Python's \verb|lambda| feature to create a ``one off'' function to give to \verb|biopython.SeqIO.to_dict()| instead:
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio import SeqIO
->>> from Bio.SeqUtils.CheckSum import seguid
+>>> from biopython import SeqIO
+>>> from biopython.SeqUtils.CheckSum import seguid
 >>> seguid_dict = SeqIO.to_dict(SeqIO.parse("ls_orchid.gbk", "genbank"),
 ...                             lambda seq : seguid(seq))
 >>> record = seguid_dict["MN/s0q9zDoCVEEc+k/IFwCNF2pY"]
@@ -722,12 +722,12 @@ C.californicum 5.8S rRNA gene and ITS1 and ITS2 DNA
 \label{sec:SeqIO-index}
 
 As the previous couple of examples tried to illustrate, using
-\verb|Bio.SeqIO.to_dict()| is very flexible. However, because it holds
+\verb|biopython.SeqIO.to_dict()| is very flexible. However, because it holds
 everything in memory, the size of file you can work with is limited by your
 computer's RAM. In general, this will only work on small to medium files.
 
 For larger files you should consider
-\verb|Bio.SeqIO.index()|, which works a little differently. Although
+\verb|biopython.SeqIO.index()|, which works a little differently. Although
 it still returns a dictionary like object, this does \emph{not} keep
 \emph{everything} in memory. Instead, it just records where each record
 is within the file -- when you ask for a particular record, it then parses
@@ -737,7 +737,7 @@ As an example, let's use the same GenBank file as before:
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> orchid_dict = SeqIO.index("ls_orchid.gbk", "genbank")
 >>> len(orchid_dict)
 94
@@ -758,10 +758,10 @@ Seq('CGTAACAAGGTTTCCGTAGGTGAACCTGCGGAAGGATCATTGTTGAGATCACAT...GGT', id='Z78475.1
 >>> orchid_dict.close()
 \end{minted}
 
-\noindent Note that \verb|Bio.SeqIO.index()| won't take a handle,
+\noindent Note that \verb|biopython.SeqIO.index()| won't take a handle,
 but only a filename. There are good reasons for this, but it is a little
 technical. The second argument is the file format (a lower case string as
-used in the other \verb|Bio.SeqIO| functions). You can use many other
+used in the other \verb|biopython.SeqIO| functions). You can use many other
 simple file formats, including FASTA and FASTQ files (see the example in
 Section~\ref{sec:fastq-indexing}). However, alignment
 formats like PHYLIP or Clustal are not supported. Finally as an optional
@@ -771,7 +771,7 @@ Here is the same example using the FASTA file - all we change is the
 filename and the format name:
 
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> orchid_dict = SeqIO.index("ls_orchid.fasta", "fasta")
 >>> len(orchid_dict)
 94
@@ -784,7 +784,7 @@ filename and the format name:
 \label{sec:seqio-index-functionkey}
 
 Suppose you want to use the same keys as before? Much like with the
-\verb|Bio.SeqIO.to_dict()| example in Section~\ref{sec:seqio-todict-functionkey},
+\verb|biopython.SeqIO.to_dict()| example in Section~\ref{sec:seqio-todict-functionkey},
 you'll need to write a tiny function to map from the FASTA identifier
 (as a string) to the key you want:
 
@@ -799,11 +799,11 @@ def get_acc(identifier):
     return parts[3]
 \end{minted}
 
-\noindent Then we can give this function to the \verb|Bio.SeqIO.index()|
+\noindent Then we can give this function to the \verb|biopython.SeqIO.index()|
 function to use in building the dictionary:
 
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> orchid_dict = SeqIO.index("ls_orchid.fasta", "fasta", key_function=get_acc)
 >>> print(orchid_dict.keys())
 ['Z78484.1', 'Z78464.1', 'Z78455.1', 'Z78442.1', 'Z78532.1', 'Z78453.1', ..., 'Z78471.1']
@@ -814,7 +814,7 @@ function to use in building the dictionary:
 \subsubsection{Getting the raw data for a record}
 \label{sec:seqio-index-getraw}
 
-The dictionary-like object from \verb|Bio.SeqIO.index()| gives you each
+The dictionary-like object from \verb|biopython.SeqIO.index()| gives you each
 entry as a \verb|SeqRecord| object. However, it is sometimes useful to
 be able to get the original raw data straight from the file. For this
 use the \verb|get_raw()| method which takes a
@@ -822,7 +822,7 @@ single argument (the record identifier) and returns a bytes string
 (extracted from the file without modification).
 
 A motivating example is extracting a subset of a records from a large
-file where either \verb|Bio.SeqIO.write()| does not (yet) support the
+file where either \verb|biopython.SeqIO.write()| does not (yet) support the
 output file format (e.g. the plain text SwissProt file format) or
 where you need to preserve the text exactly (e.g. GenBank or EMBL
 output from Biopython does not yet preserve every last bit of
@@ -835,7 +835,7 @@ and uncompressed it as the file \verb|uniprot_sprot.dat|, and you
 want to extract just a few records from it:
 
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> uniprot = SeqIO.index("uniprot_sprot.dat", "swiss")
 >>> with open("selected.dat", "wb") as out_handle:
 ...     for acc in ["P33487", "P19801", "P13689", "Q8JZQ5", "Q9TRC7"]:
@@ -853,13 +853,13 @@ loading everything into memory at once).
 \subsection{Sequence files as Dictionaries -- Database indexed files}
 \label{sec:SeqIO-index-db}
 
-Biopython 1.57 introduced an alternative, \verb|Bio.SeqIO.index_db()|, which
+Biopython 1.57 introduced an alternative, \verb|biopython.SeqIO.index_db()|, which
 can work on even extremely large files since it stores the record information
 as a file on disk (using an SQLite3 database) rather than in memory. Also,
 you can index multiple files together (providing all the record identifiers
 are unique).
 
-The \verb|Bio.SeqIO.index()| function takes three required arguments:
+The \verb|biopython.SeqIO.index()| function takes three required arguments:
 \begin{itemize}
 \item Index filename, we suggest using something ending \texttt{.idx}.
 This index file is actually an SQLite3 database.
@@ -902,7 +902,7 @@ Now, in Python, index these GenBank files as follows:
 
 \begin{minted}{pycon}
 >>> import glob
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> files = glob.glob("gbvrl*.seq")
 >>> print("%i files to index" % len(files))
 4
@@ -927,7 +927,7 @@ Equine encephalosis virus NS3 gene, complete cds, isolate: Kimron1.
 
 \subsubsection{Getting the raw data for a record}
 
-Just as with the \verb|Bio.SeqIO.index()| function discussed above in
+Just as with the \verb|biopython.SeqIO.index()| function discussed above in
 Section~\ref{sec:seqio-index-getraw}, the dictionary like object also lets you
 get at the raw bytes of each record:
 
@@ -959,16 +959,16 @@ the BAM file format, \href{https://www.htslib.org/}{samtools}, and
 To create a BGZF compressed file you can use the command line tool \verb|bgzip|
 which comes with samtools. In our examples we use a filename extension
 \verb|*.bgz|, so they can be distinguished from normal gzipped files (named
-\verb|*.gz|). You can also use the \verb|Bio.bgzf| module to read and write
+\verb|*.gz|). You can also use the \verb|biopython.bgzf| module to read and write
 BGZF files from within Python.
 
-The \verb|Bio.SeqIO.index()| and \verb|Bio.SeqIO.index_db()| can both be
+The \verb|biopython.SeqIO.index()| and \verb|biopython.SeqIO.index_db()| can both be
 used with BGZF compressed files. For example, if you started with an
 uncompressed GenBank file:
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> orchid_dict = SeqIO.index("ls_orchid.gbk", "genbank")
 >>> len(orchid_dict)
 94
@@ -987,7 +987,7 @@ You can use the compressed file in exactly the same way:
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> orchid_dict = SeqIO.index("ls_orchid.gbk.bgz", "genbank")
 >>> len(orchid_dict)
 94
@@ -999,7 +999,7 @@ or:
 
 %Don't use doctest as would have to clean up the *.idx file
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> orchid_dict = SeqIO.index_db("ls_orchid.gbk.bgz.idx", "ls_orchid.gbk.bgz", "genbank")
 >>> len(orchid_dict)
 94
@@ -1014,23 +1014,23 @@ that you can't use the same index file for the uncompressed and compressed files
 
 So, which of these methods should you use and why? It depends on what you are
 trying to do (and how much data you are dealing with). However, in general
-picking \verb|Bio.SeqIO.index()| is a good starting point. If you are dealing
+picking \verb|biopython.SeqIO.index()| is a good starting point. If you are dealing
 with millions of records, multiple files, or repeated analyses, then look at
-\verb|Bio.SeqIO.index_db()|.
+\verb|biopython.SeqIO.index_db()|.
 
-Reasons to choose \verb|Bio.SeqIO.to_dict()| over either
-\verb|Bio.SeqIO.index()| or \verb|Bio.SeqIO.index_db()| boil down to a need
+Reasons to choose \verb|biopython.SeqIO.to_dict()| over either
+\verb|biopython.SeqIO.index()| or \verb|biopython.SeqIO.index_db()| boil down to a need
 for flexibility despite its high memory needs. The advantage of storing the
 \verb|SeqRecord| objects in memory is they can be changed, added to, or
 removed at will. In addition to the downside of high memory consumption,
 indexing can also take longer because all the records must be fully parsed.
 
-Both \verb|Bio.SeqIO.index()| and \verb|Bio.SeqIO.index_db()| only parse
+Both \verb|biopython.SeqIO.index()| and \verb|biopython.SeqIO.index_db()| only parse
 records on demand. When indexing, they scan the file once looking for the
 start of each record and do as little work as possible to extract the
 identifier.
 
-Reasons to choose \verb|Bio.SeqIO.index()| over \verb|Bio.SeqIO.index_db()|
+Reasons to choose \verb|biopython.SeqIO.index()| over \verb|biopython.SeqIO.index_db()|
 include:
 \begin{itemize}
 \item Faster to build the index (more noticeable in simple file formats)
@@ -1042,12 +1042,12 @@ tuple of strings, or a frozen set) not just strings.
 sequence file being indexed has changed.
 \end{itemize}
 
-Reasons to choose \verb|Bio.SeqIO.index_db()| over \verb|Bio.SeqIO.index()|
+Reasons to choose \verb|biopython.SeqIO.index_db()| over \verb|biopython.SeqIO.index()|
 include:
 \begin{itemize}
 \item Not memory limited -- this is already important with files from second
 generation sequencing where 10s of millions of sequences are common, and
-using \verb|Bio.SeqIO.index()| can require more than 4GB of RAM and therefore
+using \verb|biopython.SeqIO.index()| can require more than 4GB of RAM and therefore
 a 64bit version of Python.
 \item Because the index is kept on disk, it can be reused. Although building
 the index database file takes longer, if you have a script which will be
@@ -1060,13 +1060,13 @@ formats the length of each record is stored as well as its offset.
 \section{Writing Sequence Files}
 \label{sec:writing-sequence-files}
 
-We've talked about using \verb|Bio.SeqIO.parse()| for sequence input (reading files), and now we'll look at \verb|Bio.SeqIO.write()| which is for sequence output (writing files).  This is a function taking three arguments: some \verb|SeqRecord| objects, a handle or filename to write to, and a sequence format.
+We've talked about using \verb|biopython.SeqIO.parse()| for sequence input (reading files), and now we'll look at \verb|biopython.SeqIO.write()| which is for sequence output (writing files).  This is a function taking three arguments: some \verb|SeqRecord| objects, a handle or filename to write to, and a sequence format.
 
 Here is an example, where we start by creating a few \verb|SeqRecord| objects the hard way (by hand, rather than by loading them from a file):
 
 \begin{minted}{python}
-from Bio.Seq import Seq
-from Bio.SeqRecord import SeqRecord
+from biopython.Seq import Seq
+from biopython.SeqRecord import SeqRecord
 
 rec1 = SeqRecord(
     Seq(
@@ -1108,7 +1108,7 @@ my_records = [rec1, rec2, rec3]
 \noindent Now we have a list of \verb|SeqRecord| objects, we'll write them to a FASTA format file:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 SeqIO.write(my_records, "my_example.faa", "fasta")
 \end{minted}
@@ -1134,17 +1134,17 @@ IAHPGGPAILDQVELKLGLKQEKLKATRKVLSNYGNMSSACVLFILDEMRKASAKEGLGT
 TGEGLEWGVLFGFGPGLTVETVVLHSVAT
 \end{minted}
 
-Suppose you wanted to know how many records the \verb|Bio.SeqIO.write()| function wrote to the handle?
-If your records were in a list you could just use \verb|len(my_records)|, however you can't do that when your records come from a generator/iterator.  The \verb|Bio.SeqIO.write()| function returns the number of \verb|SeqRecord| objects written to the file.
+Suppose you wanted to know how many records the \verb|biopython.SeqIO.write()| function wrote to the handle?
+If your records were in a list you could just use \verb|len(my_records)|, however you can't do that when your records come from a generator/iterator.  The \verb|biopython.SeqIO.write()| function returns the number of \verb|SeqRecord| objects written to the file.
 
-\emph{Note} - If you tell the \verb|Bio.SeqIO.write()| function to write to a file that already exists, the old file will be overwritten without any warning.
+\emph{Note} - If you tell the \verb|biopython.SeqIO.write()| function to write to a file that already exists, the old file will be overwritten without any warning.
 
 \subsection{Round trips}
 
 Some people like their parsers to be ``round-tripable'', meaning if you read in
 a file and write it back out again it is unchanged. This requires that the parser
 must extract enough information to reproduce the original file \emph{exactly}.
-\verb|Bio.SeqIO| does \emph{not} aim to do this.
+\verb|biopython.SeqIO| does \emph{not} aim to do this.
 
 As a trivial example, any line wrapping of the sequence data in FASTA files is
 allowed. An identical \verb|SeqRecord| would be given from parsing the following
@@ -1170,18 +1170,18 @@ last bit of annotation (e.g. GenBank and EMBL).
 
 Occasionally preserving the original layout (with any quirks it may have) is
 important. See Section~\ref{sec:seqio-index-getraw} about the \verb|get_raw()|
-method of the \verb|Bio.SeqIO.index()| dictionary-like object for one potential
+method of the \verb|biopython.SeqIO.index()| dictionary-like object for one potential
 solution.
 
 \subsection{Converting between sequence file formats}
 \label{sec:SeqIO-conversion}
 
-In previous example we used a list of \verb|SeqRecord| objects as input to the \verb|Bio.SeqIO.write()| function, but it will also accept a \verb|SeqRecord| iterator like we get from \verb|Bio.SeqIO.parse()| -- this lets us do file conversion by combining these two functions.
+In previous example we used a list of \verb|SeqRecord| objects as input to the \verb|biopython.SeqIO.write()| function, but it will also accept a \verb|SeqRecord| iterator like we get from \verb|biopython.SeqIO.parse()| -- this lets us do file conversion by combining these two functions.
 
 For this example we'll read in the GenBank format file \href{https://raw.githubusercontent.com/biopython/biopython/master/Doc/examples/ls_orchid.gbk}{ls\_orchid.gbk} and write it out in FASTA format:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 records = SeqIO.parse("ls_orchid.gbk", "genbank")
 count = SeqIO.write(records, "my_example.fasta", "fasta")
@@ -1192,18 +1192,18 @@ Still, that is a little bit complicated. So, because file conversion is such a
 common task, there is a helper function letting you replace that with just:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 count = SeqIO.convert("ls_orchid.gbk", "genbank", "my_example.fasta", "fasta")
 print("Converted %i records" % count)
 \end{minted}
 
-The \verb|Bio.SeqIO.convert()| function will take handles \emph{or} filenames.
+The \verb|biopython.SeqIO.convert()| function will take handles \emph{or} filenames.
 Watch out though -- if the output file already exists, it will overwrite it!
 To find out more, see the built in help:
 
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> help(SeqIO.convert)
 ...
 \end{minted}
@@ -1216,7 +1216,7 @@ file into a FASTA file, you can't do the reverse. See also
 Sections~\ref{sec:SeqIO-fastq-conversion} and~\ref{sec:SeqIO-fasta-qual-conversion}
 in the cookbook chapter which looks at inter-converting between different FASTQ formats.
 
-Finally, as an added incentive for using the \verb|Bio.SeqIO.convert()| function
+Finally, as an added incentive for using the \verb|biopython.SeqIO.convert()| function
 (on top of the fact your code will be shorter), doing it this way may also be
 faster! The reason for this is the convert function can take advantage of
 several file format specific optimisations and tricks.
@@ -1226,12 +1226,12 @@ several file format specific optimisations and tricks.
 
 Suppose you had a file of nucleotide sequences, and you wanted to turn it into a file containing their reverse complement sequences.  This time a little bit of work is required to transform the \verb|SeqRecord| objects we get from our input file into something suitable for saving to our output file.
 
-To start with, we'll use \verb|Bio.SeqIO.parse()| to load some nucleotide
+To start with, we'll use \verb|biopython.SeqIO.parse()| to load some nucleotide
 sequences from a file, then print out their reverse complements using
 the \verb|Seq| object's built in \verb|.reverse_complement()| method (see Section~\ref{sec:seq-reverse-complement}):
 
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> for record in SeqIO.parse("ls_orchid.gbk", "genbank"):
 ...     print(record.id)
 ...     print(record.seq.reverse_complement())
@@ -1244,7 +1244,7 @@ This is an excellent place to demonstrate the power of list comprehensions which
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> records = [rec.reverse_complement(id="rc_"+rec.id, description = "reverse complement") \
 ...            for rec in SeqIO.parse("ls_orchid.fasta", "fasta")]
 >>> len(records)
@@ -1273,7 +1273,7 @@ As a complete example:
 
 %not a doctest as would have to remove the output file
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> records = (rec.reverse_complement(id="rc_"+rec.id, description = "reverse complement") \
 ...            for rec in SeqIO.parse("ls_orchid.fasta", "fasta") if len(rec)<700)
 >>> SeqIO.write(records, "rev_comp.fasta", "fasta")
@@ -1284,13 +1284,13 @@ There is a related example in Section~\ref{sec:SeqIO-translate}, translating eac
 record in a FASTA file from nucleotides to amino acids.
 
 \subsection{Getting your SeqRecord objects as formatted strings}
-\label{sec:Bio.SeqIO-and-StringIO}
-Suppose that you don't really want to write your records to a file or handle -- instead you want a string containing the records in a particular file format.  The \verb|Bio.SeqIO| interface is based on handles, but Python has a useful built in module which provides a string based handle.
+\label{sec:biopython.SeqIO-and-StringIO}
+Suppose that you don't really want to write your records to a file or handle -- instead you want a string containing the records in a particular file format.  The \verb|biopython.SeqIO| interface is based on handles, but Python has a useful built in module which provides a string based handle.
 
 For an example of how you might use this, let's load in a bunch of \verb|SeqRecord| objects from our orchids GenBank file, and create a string containing the records in FASTA format:
 
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 from io import StringIO
 
 records = SeqIO.parse("ls_orchid.gbk", "genbank")
@@ -1304,16 +1304,16 @@ This isn't entirely straightforward the first time you see it!  On the bright si
 
 Note that although we don't encourage it, you \emph{can} use the \verb|format()| method to write to a file, for example something like this:
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 with open("ls_orchid_long.tab", "w") as out_handle:
     for record in SeqIO.parse("ls_orchid.gbk", "genbank"):
         if len(record) > 100:
             out_handle.write(record.format("tab"))
 \end{minted}
-\noindent While this style of code will work for a simple sequential file format like FASTA or the simple tab separated format used here, it will \emph{not} work for more complex or interlaced file formats.  This is why we still recommend using \verb|Bio.SeqIO.write()|, as in the following example:
+\noindent While this style of code will work for a simple sequential file format like FASTA or the simple tab separated format used here, it will \emph{not} work for more complex or interlaced file formats.  This is why we still recommend using \verb|biopython.SeqIO.write()|, as in the following example:
 \begin{minted}{python}
-from Bio import SeqIO
+from biopython import SeqIO
 
 records = (rec for rec in SeqIO.parse("ls_orchid.gbk", "genbank") if len(rec) > 100)
 SeqIO.write(records, "ls_orchid.tab", "tab")
@@ -1326,13 +1326,13 @@ multiple calls to the \verb|SeqRecord.format(...)| method.
 
 Working with the low-level \verb|SimpleFastaParser| or
 \verb|FastqGeneralIterator| is often more practical than
-\verb|Bio.SeqIO.parse| when dealing with large high-throughput FASTA
+\verb|biopython.SeqIO.parse| when dealing with large high-throughput FASTA
 or FASTQ sequencing files where speed matters.
 As noted in the introduction to this chapter, the file-format neutral
-\verb|Bio.SeqIO| interface has the overhead of creating many objects
+\verb|biopython.SeqIO| interface has the overhead of creating many objects
 even for simple formats like FASTA.
 
-When parsing FASTA files, internally \verb|Bio.SeqIO.parse()| calls
+When parsing FASTA files, internally \verb|biopython.SeqIO.parse()| calls
 the low-level \verb|SimpleFastaParser| with the file handle.
 You can use this directly - it iterates over the file handle returning
 each record as a tuple of two strings, the title line (everything after
@@ -1340,7 +1340,7 @@ the \verb|>| character) and the sequence (as a plain string):
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio.SeqIO.FastaIO import SimpleFastaParser
+>>> from biopython.SeqIO.FastaIO import SimpleFastaParser
 >>> count = 0
 >>> total_len = 0
 >>> with open("ls_orchid.fasta") as in_handle:
@@ -1362,14 +1362,14 @@ out_handle.write(">%s\n%s\n" % (title, seq))
 ...
 \end{minted}
 
-Likewise, when parsing FASTQ files, internally \verb|Bio.SeqIO.parse()|
+Likewise, when parsing FASTQ files, internally \verb|biopython.SeqIO.parse()|
 calls the low-level \verb|FastqGeneralIterator| with the file handle.
 If you don't need the quality scores turned into integers,
 or can work with them as ASCII strings this is ideal:
 
 %doctest ../Tests/Quality
 \begin{minted}{pycon}
->>> from Bio.SeqIO.QualityIO import FastqGeneralIterator
+>>> from biopython.SeqIO.QualityIO import FastqGeneralIterator
 >>> count = 0
 >>> total_len = 0
 >>> with open("example.fastq") as in_handle:

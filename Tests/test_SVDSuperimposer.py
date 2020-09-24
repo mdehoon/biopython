@@ -14,13 +14,13 @@ try:
     from numpy import around
     from numpy.linalg import svd, det  # Missing in PyPy 2.0 numpypy
 except ImportError:
-    from Bio import MissingPythonDependencyError
+    from biopython import MissingPythonDependencyError
 
     raise MissingPythonDependencyError(
-        "Install NumPy if you want to use Bio.SVDSuperimposer."
+        "Install NumPy if you want to use biopython.SVDSuperimposer."
     ) from None
 
-from Bio.SVDSuperimposer import SVDSuperimposer
+from biopython.SVDSuperimposer import SVDSuperimposer
 
 
 class SVDSuperimposerTest(unittest.TestCase):

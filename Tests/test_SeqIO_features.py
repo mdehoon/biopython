@@ -3,7 +3,7 @@
 # license.  Please see the LICENSE file that should have been included
 # as part of this package.
 
-"""SeqFeature related tests for Seq objects from Bio.SeqIO.
+"""SeqFeature related tests for Seq objects from biopython.SeqIO.
 
 Initially this takes matched tests of GenBank and FASTA files from the NCBI
 and confirms they are consistent using our different parsers.
@@ -13,13 +13,13 @@ import os
 import unittest
 from io import StringIO
 
-from Bio import SeqIO
-from Bio.Data.CodonTable import TranslationError
-from Bio.Seq import Seq, UnknownSeq, MutableSeq, reverse_complement
-from Bio.SeqFeature import SeqFeature, FeatureLocation, CompoundLocation
-from Bio.SeqFeature import ExactPosition, BeforePosition, AfterPosition
-from Bio.SeqFeature import OneOfPosition, WithinPosition, UnknownPosition
-from Bio.SeqIO.InsdcIO import _insdc_location_string
+from biopython import SeqIO
+from biopython.Data.CodonTable import TranslationError
+from biopython.Seq import Seq, UnknownSeq, MutableSeq, reverse_complement
+from biopython.SeqFeature import SeqFeature, FeatureLocation, CompoundLocation
+from biopython.SeqFeature import ExactPosition, BeforePosition, AfterPosition
+from biopython.SeqFeature import OneOfPosition, WithinPosition, UnknownPosition
+from biopython.SeqIO.InsdcIO import _insdc_location_string
 
 
 def _get_location_string(feature, record_length):

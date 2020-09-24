@@ -10,7 +10,7 @@
 # Please see the LICENSE file that should have been included as part of this
 # package.
 
-"""Unit tests for the Bio.PDB module."""
+"""Unit tests for the biopython.PDB module."""
 
 from copy import deepcopy
 import os
@@ -29,15 +29,15 @@ try:
 
     del svd, det
 except ImportError:
-    from Bio import MissingPythonDependencyError
+    from biopython import MissingPythonDependencyError
 
     raise MissingPythonDependencyError(
-        "Install NumPy if you want to use Bio.PDB."
+        "Install NumPy if you want to use biopython.PDB."
     ) from None
 
-from Bio import BiopythonWarning
-from Bio.Seq import Seq
-from Bio.PDB import (
+from biopython import BiopythonWarning
+from biopython.Seq import Seq
+from biopython.PDB import (
     PDBParser,
     PPBuilder,
     CaPPBuilder,
@@ -46,15 +46,15 @@ from Bio.PDB import (
     MMCIFParser,
     MMCIFIO,
 )
-from Bio.PDB.MMCIF2Dict import MMCIF2Dict
-from Bio.PDB import HSExposureCA, HSExposureCB, ExposureCN
-from Bio.PDB.PDBExceptions import PDBConstructionException, PDBConstructionWarning
-from Bio.PDB import rotmat, Vector
-from Bio.PDB import Residue, Atom
-from Bio.PDB import make_dssp_dict
-from Bio.PDB import DSSP
-from Bio.PDB.NACCESS import process_asa_data, process_rsa_data
-from Bio.PDB.ResidueDepth import _get_atom_radius
+from biopython.PDB.MMCIF2Dict import MMCIF2Dict
+from biopython.PDB import HSExposureCA, HSExposureCB, ExposureCN
+from biopython.PDB.PDBExceptions import PDBConstructionException, PDBConstructionWarning
+from biopython.PDB import rotmat, Vector
+from biopython.PDB import Residue, Atom
+from biopython.PDB import make_dssp_dict
+from biopython.PDB import DSSP
+from biopython.PDB.NACCESS import process_asa_data, process_rsa_data
+from biopython.PDB.ResidueDepth import _get_atom_radius
 
 
 # NB: the 'A_' prefix ensures this test case is run first
@@ -128,7 +128,7 @@ class A_ExceptionTest(unittest.TestCase):
             structure = permissive.get_structure("test", "PDB/occupancy.pdb")
             self.assertEqual(len(w), 3, w)
         atoms = structure[0]["A"][(" ", 152, " ")]
-        # Blank occupancy behavior set in Bio/PDB/PDBParser
+        # Blank occupancy behavior set in biopython/PDB/PDBParser
         self.assertEqual(atoms["N"].get_occupancy(), None)
         self.assertEqual(atoms["CA"].get_occupancy(), 1.0)
         self.assertEqual(atoms["C"].get_occupancy(), 0.0)
@@ -1231,7 +1231,7 @@ class WriteTest(unittest.TestCase):
 
 
 class Exposure(unittest.TestCase):
-    """Testing Bio.PDB.HSExposure."""
+    """Testing biopython.PDB.HSExposure."""
 
     def setUp(self):
         pdb_filename = "PDB/a_structure.pdb"

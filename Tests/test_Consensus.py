@@ -3,20 +3,20 @@
 # license. Please see the LICENSE file that should have been included
 # as part of this package.
 
-"""Unit tests for the Bio.Phylo.Consensus module."""
+"""Unit tests for the biopython.Phylo.Consensus module."""
 
 import os
 import unittest
 import tempfile
 
 # from io import StringIO
-from Bio import AlignIO
-from Bio import Phylo
-from Bio.Phylo import BaseTree
-from Bio.Phylo.TreeConstruction import DistanceCalculator
-from Bio.Phylo.TreeConstruction import DistanceTreeConstructor
-from Bio.Phylo import Consensus
-from Bio.Phylo.Consensus import _BitString
+from biopython import AlignIO
+from biopython import Phylo
+from biopython.Phylo import BaseTree
+from biopython.Phylo.TreeConstruction import DistanceCalculator
+from biopython.Phylo.TreeConstruction import DistanceTreeConstructor
+from biopython.Phylo import Consensus
+from biopython.Phylo.Consensus import _BitString
 
 
 temp_dir = tempfile.mkdtemp()

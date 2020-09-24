@@ -14,17 +14,17 @@ tools, each with its own statistics, conventions, and output format. Imagine how
 daunting it would be when you need to work with multiple sequences using
 multiple search tools.
 
-We know this too well ourselves, which is why we created the \verb|Bio.SearchIO|
-submodule in Biopython. \verb|Bio.SearchIO| allows you to extract information
+We know this too well ourselves, which is why we created the \verb|biopython.SearchIO|
+submodule in Biopython. \verb|biopython.SearchIO| allows you to extract information
 from your search results in a convenient way, while also dealing with the
 different standards and conventions used by different search tools.
 The name \verb|SearchIO| is a homage to BioPerl's module of the same name.
 
-In this chapter, we'll go through the main features of \verb|Bio.SearchIO| to
+In this chapter, we'll go through the main features of \verb|biopython.SearchIO| to
 show what it can do for you. We'll use two popular search tools along the way:
 BLAST and BLAT. They are used merely for illustrative purposes, and you should
 be able to adapt the workflow to any other search tools supported by
-\verb|Bio.SearchIO| in a breeze. You're very welcome to follow along with the
+\verb|biopython.SearchIO| in a breeze. You're very welcome to follow along with the
 search output files we'll be using. The BLAST output file can be downloaded
 \href{https://github.com/biopython/biopython/blob/master/Doc/examples/my_blast.xml}{here},
 and the BLAT output file
@@ -41,10 +41,10 @@ The BLAST result is an XML file generated using \verb|blastn| against the NCBI
 \verb|refseq_rna| database. For BLAT, the sequence database was the February 2009
 \verb|hg19| human genome draft and the output format is PSL.
 
-We'll start from an introduction to the \verb|Bio.SearchIO| object model. The
+We'll start from an introduction to the \verb|biopython.SearchIO| object model. The
 model is the representation of your search results, thus it is core to
-\verb|Bio.SearchIO| itself. After that, we'll check out the main functions in
-\verb|Bio.SearchIO| that you may often use.
+\verb|biopython.SearchIO| itself. After that, we'll check out the main functions in
+\verb|biopython.SearchIO| that you may often use.
 
 Now that we're all set, let's go to the first step: introducing the core
 object model.
@@ -69,7 +69,7 @@ HMMER do not do this.
 \end{itemize}
 
 Realizing this generality, we decided use it as base for creating the
-\verb|Bio.SearchIO| object model. The object model consists of a nested
+\verb|biopython.SearchIO| object model. The object model consists of a nested
 hierarchy of Python objects, each one representing one concept outlined above.
 These objects are:
 
@@ -93,11 +93,11 @@ These objects are:
 \end{itemize}
 
 These four objects are the ones you will interact with when you use
-\verb|Bio.SearchIO|. They are created using one of the main \verb|Bio.SearchIO|
+\verb|biopython.SearchIO|. They are created using one of the main \verb|biopython.SearchIO|
 methods: \verb|read|, \verb|parse|, \verb|index|, or \verb|index_db|. The
 details of these methods are provided in later sections. For this section, we'll
 only be using read and parse. These functions behave similarly to their
-\verb|Bio.SeqIO| and \verb|Bio.AlignIO| counterparts:
+\verb|biopython.SeqIO| and \verb|biopython.AlignIO| counterparts:
 
 \begin{itemize}
 \item \verb|read| is used for search output files with a single query and
@@ -106,7 +106,7 @@ only be using read and parse. These functions behave similarly to their
     returns a generator that yields \verb|QueryResult| objects
 \end{itemize}
 
-With that settled, let's start probing each \verb|Bio.SearchIO| object,
+With that settled, let's start probing each \verb|biopython.SearchIO| object,
 beginning with \verb|QueryResult|.
 
 \subsection{QueryResult}
@@ -117,7 +117,7 @@ more Hit objects. Let's see what it looks like using the BLAST file we have:
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio import SearchIO
+>>> from biopython import SearchIO
 >>> blast_qresult = SearchIO.read("my_blast.xml", "blast-xml")
 >>> print(blast_qresult)
 Program: blastn (2.2.27+)
@@ -175,7 +175,7 @@ there's already some useful information. By invoking \verb|print| on the
 \item A quick overview of the resulting hits. For our query sequence, there are
     100 potential hits (numbered 0--99 in the table). For each hit, we can also see
     how many HSPs it contains, its ID, and a snippet of its description. Notice
-    here that \verb|Bio.SearchIO| truncates the hit table overview, by showing
+    here that \verb|biopython.SearchIO| truncates the hit table overview, by showing
     only hits numbered 0--29, and then 97--99.
 \end{itemize}
 
@@ -201,7 +201,7 @@ caused by the genuine program and target database differences between our BLAST
 and BLAT searches:
 
 \begin{itemize}
-\item The program name and version. \verb|Bio.SearchIO| knows that the program
+\item The program name and version. \verb|biopython.SearchIO| knows that the program
     is BLAT, but in the output file there is no information regarding the
     program version so it defaults to `<unknown version>'.
 \item The query ID, description, and its sequence length. Notice here that these
@@ -235,9 +235,9 @@ blat <unknown version>
 
 For a complete list of accessible attributes, you can check each format-specific
 documentation. Here are the ones
-\href{http://biopython.org/docs/\bpversion/api/Bio.SearchIO.BlastIO.html}{for BLAST}
+\href{http://biopython.org/docs/\bpversion/api/biopython.SearchIO.BlastIO.html}{for BLAST}
 and for
-\href{http://biopython.org/docs/\bpversion/api/Bio.SearchIO.BlatIO.html}{BLAT}.
+\href{http://biopython.org/docs/\bpversion/api/biopython.SearchIO.BlatIO.html}{BLAT}.
 
 Having looked at using \verb|print| on \verb|QueryResult| objects, let's drill
 down deeper. What exactly is a \verb|QueryResult|? In terms of Python objects,
@@ -388,7 +388,7 @@ not the default behavior of \verb|QueryResult.sort|, however, which is why we
 needed to set the \verb|in_place| flag to \verb|True| explicitly.
 
 At this point, you've known enough about \verb|QueryResult| objects to make it
-work for you. But before we go on to the next object in the \verb|Bio.SearchIO|
+work for you. But before we go on to the next object in the \verb|biopython.SearchIO|
 model, let's take a look at two more sets of methods that could make it even
 easier to work with \verb|QueryResult| objects: the \verb|filter| and \verb|map|
 methods.
@@ -468,7 +468,7 @@ objects instead of \verb|Hit| objects.
 \label{sec:searchio-hit}
 
 \verb|Hit| objects represent all query results from a single database entry.
-They are the second-level container in the \verb|Bio.SearchIO| object hierarchy.
+They are the second-level container in the \verb|biopython.SearchIO| object hierarchy.
 You've seen that they are contained by \verb|QueryResult| objects, but they
 themselves contain \verb|HSP| objects.
 
@@ -476,7 +476,7 @@ Let's see what they look like, beginning with our BLAST search:
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio import SearchIO
+>>> from biopython import SearchIO
 >>> blast_qresult = SearchIO.read("my_blast.xml", "blast-xml")
 >>> blast_hit = blast_qresult[3]    # fourth hit from the query result
 >>> print(blast_hit)
@@ -550,7 +550,7 @@ There are some differences worth explaining, though:
 \item What about the span column? The span values is meant to display the
     complete alignment length, which consists of all residues and any gaps that
     may be present. The PSL format do not have this information readily available
-    and \verb|Bio.SearchIO| does not attempt to try guess what it is, so we get a
+    and \verb|biopython.SearchIO| does not attempt to try guess what it is, so we get a
     `?' similar to the e-value and bit score columns.
 \end{itemize}
 
@@ -633,7 +633,7 @@ BLAST HSP first:
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio import SearchIO
+>>> from biopython import SearchIO
 >>> blast_qresult = SearchIO.read("my_blast.xml", "blast-xml")
 >>> blast_hsp = blast_qresult[0][0]    # first hit, first hsp
 >>> print(blast_hsp)
@@ -693,7 +693,7 @@ details. Here are some examples:
 \end{minted}
 
 Check out the \verb|HSP|
-\href{http://biopython.org/docs/\bpversion/api/Bio.SearchIO.html#module-Bio.SearchIO#module-Bio.SearchIO}{documentation}
+\href{http://biopython.org/docs/\bpversion/api/biopython.SearchIO.html#module-biopython.SearchIO#module-biopython.SearchIO}{documentation}
 for a full list of these predefined properties.
 
 Furthermore, each sequence search tool usually computes its own statistics /
@@ -711,7 +711,7 @@ accessed like so:
 
 These details are format-specific; they may not be present in other formats.
 To see which details are available for a given sequence search tool, you
-should check the format's documentation in \verb|Bio.SearchIO|. Alternatively,
+should check the format's documentation in \verb|biopython.SearchIO|. Alternatively,
 you may also use \verb|.__dict__.keys()| for a quick list of what's available:
 
 \begin{minted}{pycon}
@@ -768,7 +768,7 @@ and descriptions and the sequence coordinates. Values for evalue and bitscore is
 `?' as BLAT HSPs do not have these attributes. But The biggest difference here
 is that you don't see any sequence alignments displayed. If you look closer, PSL
 formats themselves do not have any hit or query sequences, so
-\verb|Bio.SearchIO| won't create any sequence or alignment objects. What happens
+\verb|biopython.SearchIO| won't create any sequence or alignment objects. What happens
 if you try to access \verb|HSP.query|, \verb|HSP.hit|, or \verb|HSP.aln|?
 You'll get the default values for these attributes, which is \verb|None|:
 
@@ -784,7 +784,7 @@ True
 
 This does not affect other attributes, though. For example, you can still
 access the length of the query or hit alignment. Despite not displaying any
-attributes, the PSL format still have this information so \verb|Bio.SearchIO|
+attributes, the PSL format still have this information so \verb|biopython.SearchIO|
 can extract them:
 
 %cont-doctest
@@ -812,7 +812,7 @@ essentially alignment fragments that may have some intervening sequence between
 them.
 
 Let's take a look at a BLAT HSP that contains multiple blocks to see how
-\verb|Bio.SearchIO| deals with this:
+\verb|biopython.SearchIO| deals with this:
 
 %cont-doctest
 \begin{minted}{pycon}
@@ -835,7 +835,7 @@ descriptions, the coordinates, and the quick statistics are similar to what
 you've seen before. But the fragments detail is all different. Instead of
 showing `Fragments: 1', we now have a table with two data rows.
 
-This is how \verb|Bio.SearchIO| deals with HSPs having multiple fragments. As
+This is how \verb|biopython.SearchIO| deals with HSPs having multiple fragments. As
 mentioned before, an HSP alignment may be separated by intervening sequences
 into fragments. The intervening sequences are not part of the query-hit match,
 so they should not be considered part of query nor hit sequence. However, they
@@ -870,7 +870,7 @@ All these attributes are accessible from the HSP directly, by the way:
 \end{minted}
 
 Most of these attributes are not readily available from the PSL file we have,
-but \verb|Bio.SearchIO| calculates them for you on the fly when you parse the
+but \verb|biopython.SearchIO| calculates them for you on the fly when you parse the
 PSL file. All it needs are the start and end coordinates of each fragment.
 
 What about the \verb|query|, \verb|hit|, and \verb|aln| attributes? If the
@@ -880,7 +880,7 @@ However, you can use their \verb|*_all| counterparts: \verb|query_all|,
 \verb|hit_all|, and \verb|aln_all|. These properties will return a list containing
 \verb|SeqRecord| or \verb|MultipleSeqAlignment| objects from each of the HSP
 fragment. There are other attributes that behave similarly, i.e. they only work
-for HSPs with one fragment. Check out the \verb|HSP| \href{http://biopython.org/docs/\bpversion/api/Bio.SearchIO.html#module-Bio.SearchIO}{documentation}
+for HSPs with one fragment. Check out the \verb|HSP| \href{http://biopython.org/docs/\bpversion/api/biopython.SearchIO.html#module-biopython.SearchIO}{documentation}
 for a full list.
 
 Finally, to check whether you have multiple fragments or not, you can use the
@@ -919,7 +919,7 @@ These attributes are readily shown when you invoke \verb|print| on an
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio import SearchIO
+>>> from biopython import SearchIO
 >>> blast_qresult = SearchIO.read("my_blast.xml", "blast-xml")
 >>> blast_frag = blast_qresult[0][0][0]    # first hit, first hsp, first fragment
 >>> print(blast_frag)
@@ -965,7 +965,7 @@ Seq('CCCTCTACAGGGAAGCGCTTTCTGTTGTCTGAAAGAAAAGAAAGTGCTTCCTTT...GGG', id='gi|26220
 \label{sec:searchio-standards}
 
 Before we move on to the main functions, there is something you ought to know
-about the standards \verb|Bio.SearchIO| uses. If you've worked with multiple
+about the standards \verb|biopython.SearchIO| uses. If you've worked with multiple
 sequence search tools, you might have had to deal with the many different ways
 each program deals with things like sequence coordinates. It might not have been
 a pleasant experience as these search tools usually have their own standards.
@@ -975,7 +975,7 @@ coordinates if the strand is minus, while others don't. In short, these often
 creates unnecessary mess must be dealt with.
 
 We realize this problem ourselves and we intend to address it in
-\verb|Bio.SearchIO|. After all, one of the goals of \verb|Bio.SearchIO| is to
+\verb|biopython.SearchIO|. After all, one of the goals of \verb|biopython.SearchIO| is to
 create a common, easy to use interface to deal with various search output files.
 This means creating standards that extend beyond the object model you just saw.
 
@@ -985,17 +985,17 @@ creating something entirely new here; just adopting a standard we think is best
 for a Python programmer (it is Biopython, after all).
 
 There are three implicit standards that you can expect when working with
-\verb|Bio.SearchIO|:
+\verb|biopython.SearchIO|:
 
 \begin{itemize}
-\item The first one pertains to sequence coordinates. In \verb|Bio.SearchIO|,
+\item The first one pertains to sequence coordinates. In \verb|biopython.SearchIO|,
     all sequence coordinates follows Python's coordinate style: zero-based and
     half open. For example, if in a BLAST XML output file the start and end
     coordinates of an HSP are 10 and 28, they would become 9 and 28 in
-    \verb|Bio.SearchIO|. The start coordinate becomes 9 because Python indices
+    \verb|biopython.SearchIO|. The start coordinate becomes 9 because Python indices
     start from zero, while the end coordinate remains 28 as Python slices omit
     the last item in an interval.
-\item The second is on sequence coordinate orders. In \verb|Bio.SearchIO|, start
+\item The second is on sequence coordinate orders. In \verb|biopython.SearchIO|, start
     coordinates are always less than or equal to end coordinates. This isn't
     always the case with all sequence search tools, as some of them have larger
     start coordinates when the sequence strand is minus.
@@ -1006,8 +1006,8 @@ There are three implicit standards that you can expect when working with
     \verb|None|.
 \end{itemize}
 
-Note that these standards only exist in \verb|Bio.SearchIO| objects. If you
-write \verb|Bio.SearchIO| objects into an output format, \verb|Bio.SearchIO|
+Note that these standards only exist in \verb|biopython.SearchIO| objects. If you
+write \verb|biopython.SearchIO| objects into an output format, \verb|biopython.SearchIO|
 will use the format's standard for the output. It does not force its standard
 over to your output file.
 
@@ -1015,14 +1015,14 @@ over to your output file.
 \label{sec:searchio-input}
 
 There are two functions you can use for reading search output files into
-\verb|Bio.SearchIO| objects: \verb|read| and \verb|parse|. They're essentially
+\verb|biopython.SearchIO| objects: \verb|read| and \verb|parse|. They're essentially
 similar to \verb|read| and \verb|parse| functions in other submodules like
-\verb|Bio.SeqIO| or \verb|Bio.AlignIO|. In both cases, you need to supply the
+\verb|biopython.SeqIO| or \verb|biopython.AlignIO|. In both cases, you need to supply the
 search output file name and the file format name, both as Python strings. You
-can check the documentation for a list of format names \verb|Bio.SearchIO|
+can check the documentation for a list of format names \verb|biopython.SearchIO|
 recognizes.
 
-\verb|Bio.SearchIO.read| is used for reading search output files with only one
+\verb|biopython.SearchIO.read| is used for reading search output files with only one
 query and returns a \verb|QueryResult| object. You've seen \verb|read| used in
 our previous examples. What you haven't seen is that \verb|read| may also accept
 additional keyword arguments, depending on the file format.
@@ -1034,7 +1034,7 @@ in it:
 
 %doctest ../Tests/Blast
 \begin{minted}{pycon}
->>> from Bio import SearchIO
+>>> from biopython import SearchIO
 >>> qresult = SearchIO.read("tab_2226_tblastn_003.txt", "blast-tab")
 >>> qresult
 QueryResult(id='gi|16080617|ref|NP_391444.1|', 3 hits)
@@ -1047,14 +1047,14 @@ These keyword arguments differs among file formats. Check the format
 documentation to see if it has keyword arguments that modifies its parser's
 behavior.
 
-As for the \verb|Bio.SearchIO.parse|, it is used for reading search output
+As for the \verb|biopython.SearchIO.parse|, it is used for reading search output
 files with any number of queries. The function returns a generator object that
 yields a \verb|QueryResult| object in each iteration. Like
-\verb|Bio.SearchIO.read|, it also accepts format-specific keyword arguments:
+\verb|biopython.SearchIO.read|, it also accepts format-specific keyword arguments:
 
 %doctest ../Tests/Blast
 \begin{minted}{pycon}
->>> from Bio import SearchIO
+>>> from biopython import SearchIO
 >>> qresults = SearchIO.parse("tab_2226_tblastn_001.txt", "blast-tab")
 >>> for qresult in qresults:
 ...     print(qresult.id)
@@ -1073,14 +1073,14 @@ gi|11464971:4-101
 
 Sometimes, you're handed a search output file containing hundreds or thousands
 of queries that you need to parse. You can of course use
-\verb|Bio.SearchIO.parse| for this file, but that would be grossly inefficient
+\verb|biopython.SearchIO.parse| for this file, but that would be grossly inefficient
 if you need to access only a few of the queries. This is because \verb|parse|
 will parse all queries it sees before it fetches your query of interest.
 
 In this case, the ideal choice would be to index the file using
-\verb|Bio.SearchIO.index| or \verb|Bio.SearchIO.index_db|. If the names sound
+\verb|biopython.SearchIO.index| or \verb|biopython.SearchIO.index_db|. If the names sound
 familiar, it's because you've seen them before in  Section~\ref{sec:SeqIO-index}.
-These functions also behave similarly to their \verb|Bio.SeqIO| counterparts,
+These functions also behave similarly to their \verb|biopython.SeqIO| counterparts,
 with the addition of format-specific keyword arguments.
 
 Here are some examples. You can use \verb|index| with just the filename and
@@ -1088,7 +1088,7 @@ format name:
 
 %doctest ../Tests/Blast
 \begin{minted}{pycon}
->>> from Bio import SearchIO
+>>> from biopython import SearchIO
 >>> idx = SearchIO.index("tab_2226_tblastn_001.txt", "blast-tab")
 >>> sorted(idx.keys())
 ['gi|11464971:4-101', 'gi|16080617|ref|NP_391444.1|']
@@ -1109,7 +1109,7 @@ QueryResult(id='gi|16080617|ref|NP_391444.1|', 3 hits)
 >>> idx.close()
 \end{minted}
 
-Or with the \verb|key_function| argument, as in \verb|Bio.SeqIO|:
+Or with the \verb|key_function| argument, as in \verb|biopython.SeqIO|:
 
 %cont-doctest
 \begin{minted}{pycon}
@@ -1122,14 +1122,14 @@ QueryResult(id='gi|16080617|ref|NP_391444.1|', 3 hits)
 >>> idx.close()
 \end{minted}
 
-\verb|Bio.SearchIO.index_db| works like as \verb|index|, only it writes the
+\verb|biopython.SearchIO.index_db| works like as \verb|index|, only it writes the
 query offsets into an SQLite database file.
 
 \section{Writing and converting search output files}
 \label{sec:searchio-write}
 
 It is occasionally useful to be able to manipulate search results from an output
-file and write it again to a new file. \verb|Bio.SearchIO| provides a
+file and write it again to a new file. \verb|biopython.SearchIO| provides a
 \verb|write| function that lets you do exactly this. It takes as its arguments
 an iterable returning \verb|QueryResult| objects, the output filename to write
 to, the format name to write to, and optionally some format-specific keyword
@@ -1138,7 +1138,7 @@ arguments. It returns a four-item tuple, which denotes the number or
 were written.
 
 \begin{minted}{pycon}
->>> from Bio import SearchIO
+>>> from biopython import SearchIO
 >>> qresults = SearchIO.parse("mirna.xml", "blast-xml")     # read XML file
 >>> SearchIO.write(qresults, "results.tab", "blast-tab")    # write to tabular file
 (3, 239, 277, 277)
@@ -1155,14 +1155,14 @@ write to PSL, though.
 
 Like \verb|read|, \verb|parse|, \verb|index|, and \verb|index_db|, \verb|write|
 also accepts format-specific keyword arguments. Check out the documentation for
-a complete list of formats \verb|Bio.SearchIO| can write to and their arguments.
+a complete list of formats \verb|biopython.SearchIO| can write to and their arguments.
 
-Finally, \verb|Bio.SearchIO| also provides a \verb|convert| function, which is
-simply a shortcut for \verb|Bio.SearchIO.parse| and \verb|Bio.SearchIO.write|.
+Finally, \verb|biopython.SearchIO| also provides a \verb|convert| function, which is
+simply a shortcut for \verb|biopython.SearchIO.parse| and \verb|biopython.SearchIO.write|.
 Using the convert function, our example above would be:
 
 \begin{minted}{pycon}
->>> from Bio import SearchIO
+>>> from biopython import SearchIO
 >>> SearchIO.convert("mirna.xml", "blast-xml", "results.tab", "blast-tab")
 (3, 239, 277, 277)
 \end{minted}

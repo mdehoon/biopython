@@ -6,8 +6,8 @@
 
 import unittest
 
-from Bio import SeqIO
-from Bio.Sequencing import Phd
+from biopython import SeqIO
+from biopython.Sequencing import Phd
 
 
 class PhdTestOne(unittest.TestCase):

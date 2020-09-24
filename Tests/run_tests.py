@@ -57,60 +57,60 @@ VERBOSITY = 0
 
 # Bio.Alphabet has been removed from Biopython. Importing it will raise an
 # informative ImportError.
-EXCLUDE_DOCTEST_MODULES = ["Bio.Alphabet"]
+EXCLUDE_DOCTEST_MODULES = ["biopython.Alphabet"]
 
 # Exclude modules with online activity
 # They are not excluded by default, use --offline to exclude them
 ONLINE_DOCTEST_MODULES = [
-    "Bio.Entrez",
-    "Bio.ExPASy",
-    "Bio.TogoWS",
+    "biopython.Entrez",
+    "biopython.ExPASy",
+    "biopython.TogoWS",
 ]
 
 # Silently ignore any doctests for modules requiring numpy!
 if numpy is None:
     EXCLUDE_DOCTEST_MODULES.extend(
         [
-            "Bio.Affy.CelFile",
-            "Bio.Align",
-            "Bio.Align.substitution_matrices",
-            "Bio.Cluster",
-            "Bio.kNN",
-            "Bio.LogisticRegression",
-            "Bio.MarkovModel",
-            "Bio.MaxEntropy",
-            "Bio.NaiveBayes",
-            "Bio.PDB.Chain",
-            "Bio.PDB.Dice",
-            "Bio.PDB.HSExposure",
-            "Bio.PDB.MMCIF2Dict",
-            "Bio.PDB.MMCIFParser",
-            "Bio.PDB.mmtf.DefaultParser",
-            "Bio.PDB.mmtf",
-            "Bio.PDB.Model",
-            "Bio.PDB.NACCESS",
-            "Bio.PDB.NeighborSearch",
-            "Bio.PDB.parse_pdb_header",
-            "Bio.PDB.PDBExceptions",
-            "Bio.PDB.PDBList",
-            "Bio.PDB.PDBParser",
-            "Bio.PDB.Polypeptide",
-            "Bio.PDB.PSEA",
-            "Bio.PDB.QCPSuperimposer",
-            "Bio.PDB.Residue",
-            "Bio.PDB.Selection",
-            "Bio.PDB.StructureAlignment",
-            "Bio.PDB.StructureBuilder",
-            "Bio.PDB.Structure",
-            "Bio.PDB.Superimposer",
-            "Bio.PDB.Vector",
-            "Bio.phenotype",
-            "Bio.phenotype.parse",
-            "Bio.phenotype.phen_micro",
-            "Bio.phenotype.pm_fitting",
-            "Bio.SeqIO.PdbIO",
-            "Bio.Statistics.lowess",
-            "Bio.SVDSuperimposer",
+            "biopython.Affy.CelFile",
+            "biopython.Align",
+            "biopython.Align.substitution_matrices",
+            "biopython.Cluster",
+            "biopython.kNN",
+            "biopython.LogisticRegression",
+            "biopython.MarkovModel",
+            "biopython.MaxEntropy",
+            "biopython.NaiveBayes",
+            "biopython.PDB.Chain",
+            "biopython.PDB.Dice",
+            "biopython.PDB.HSExposure",
+            "biopython.PDB.MMCIF2Dict",
+            "biopython.PDB.MMCIFParser",
+            "biopython.PDB.mmtf.DefaultParser",
+            "biopython.PDB.mmtf",
+            "biopython.PDB.Model",
+            "biopython.PDB.NACCESS",
+            "biopython.PDB.NeighborSearch",
+            "biopython.PDB.parse_pdb_header",
+            "biopython.PDB.PDBExceptions",
+            "biopython.PDB.PDBList",
+            "biopython.PDB.PDBParser",
+            "biopython.PDB.Polypeptide",
+            "biopython.PDB.PSEA",
+            "biopython.PDB.QCPSuperimposer",
+            "biopython.PDB.Residue",
+            "biopython.PDB.Selection",
+            "biopython.PDB.StructureAlignment",
+            "biopython.PDB.StructureBuilder",
+            "biopython.PDB.Structure",
+            "biopython.PDB.Superimposer",
+            "biopython.PDB.Vector",
+            "biopython.phenotype",
+            "biopython.phenotype.parse",
+            "biopython.phenotype.phen_micro",
+            "biopython.phenotype.pm_fitting",
+            "biopython.SeqIO.PdbIO",
+            "biopython.Statistics.lowess",
+            "biopython.SVDSuperimposer",
         ]
     )
 
@@ -121,8 +121,8 @@ try:
     del sqlite3
 except ImportError:
     # May be missing on self-compiled Python
-    EXCLUDE_DOCTEST_MODULES.append("Bio.SeqIO")
-    EXCLUDE_DOCTEST_MODULES.append("Bio.SearchIO")
+    EXCLUDE_DOCTEST_MODULES.append("biopython.SeqIO")
+    EXCLUDE_DOCTEST_MODULES.append("biopython.SearchIO")
 
 
 def find_modules(path):
@@ -145,7 +145,7 @@ def main(argv):
     # ../build/lib.*
     # ..
     # Q. Why this order?
-    # A. To find the C modules (which are in ../build/lib.*/Bio)
+    # A. To find the C modules (which are in ../build/lib.*/biopython)
     # Q. Then, why ".."?
     # A. Because Martel may not be in ../build/lib.*
     test_path = sys.path[0] or "."
@@ -253,8 +253,8 @@ class TestRunner(unittest.TextTestRunner):
         unittest.TextTestRunner.__init__(self, stream, verbosity=verbosity)
 
     def runTest(self, name):
-        from Bio import MissingPythonDependencyError
-        from Bio import MissingExternalDependencyError
+        from biopython import MissingPythonDependencyError
+        from biopython import MissingExternalDependencyError
 
         result = self._makeResult()
         output = StringIO()
@@ -278,11 +278,11 @@ class TestRunner(unittest.TextTestRunner):
                     # Instead this is a list of error messages as strings
                     for msg in loader.errors:
                         if (
-                            "Bio.MissingExternalDependencyError: " in msg
-                            or "Bio.MissingPythonDependencyError: " in msg
+                            "biopython.MissingExternalDependencyError: " in msg
+                            or "biopython.MissingPythonDependencyError: " in msg
                         ):
                             # Remove the traceback etc
-                            msg = msg[msg.find("Bio.Missing") :]
+                            msg = msg[msg.find("biopython.Missing") :]
                             msg = msg[msg.find("Error: ") :]
                             sys.stderr.write("skipping. %s\n" % msg)
                             return True

@@ -8,8 +8,8 @@
 import os
 import unittest
 
-from Bio.Seq import Seq
-from Bio import SeqIO
+from biopython.Seq import Seq
+from biopython import SeqIO
 
 from seq_tests_common import compare_reference, compare_record
 

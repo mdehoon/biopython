@@ -3,7 +3,7 @@
 # license. Please see the LICENSE file that should have been included
 # as part of this package.
 
-"""Unit tests for Bio.Phylo.Applications wrappers."""
+"""Unit tests for biopython.Phylo.Applications wrappers."""
 
 import sys
 import os
@@ -11,9 +11,9 @@ import unittest
 
 from subprocess import getoutput
 
-from Bio import Phylo
-from Bio.Phylo.Applications import PhymlCommandline
-from Bio import MissingExternalDependencyError
+from biopython import Phylo
+from biopython.Phylo.Applications import PhymlCommandline
+from biopython import MissingExternalDependencyError
 
 # Try to avoid problems when the OS is in another language
 os.environ["LANG"] = "C"
@@ -30,7 +30,7 @@ if "20" in output and "PhyML" in output:
 if not phyml_exe:
     raise MissingExternalDependencyError(
         "Couldn't find the PhyML software. Install PhyML 3.0 or later if you want "
-        "to use the Bio.Phylo.Applications wrapper."
+        "to use the biopython.Phylo.Applications wrapper."
     )
 
 

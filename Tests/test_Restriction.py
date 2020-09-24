@@ -6,9 +6,9 @@
 """Testing code for Restriction enzyme classes of Biopython."""
 import unittest
 
-from Bio.Restriction import Analysis, Restriction, RestrictionBatch
-from Bio.Restriction import CommOnly, NonComm, AllEnzymes
-from Bio.Restriction import (
+from biopython.Restriction import Analysis, Restriction, RestrictionBatch
+from biopython.Restriction import CommOnly, NonComm, AllEnzymes
+from biopython.Restriction import (
     Acc65I,
     Asp718I,
     BamHI,
@@ -25,9 +25,9 @@ from Bio.Restriction import (
     SnaI,
     SphI,
 )
-from Bio.Restriction import FormattedSeq
-from Bio.Seq import Seq, MutableSeq
-from Bio import BiopythonWarning
+from biopython.Restriction import FormattedSeq
+from biopython.Seq import Seq, MutableSeq
+from biopython import BiopythonWarning
 
 
 class SequenceTesting(unittest.TestCase):

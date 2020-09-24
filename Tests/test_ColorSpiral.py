@@ -13,19 +13,19 @@ import unittest
 from cmath import rect
 
 # Do we have ReportLab?  Raise error if not present.
-from Bio import MissingPythonDependencyError
+from biopython import MissingPythonDependencyError
 
 try:
     from reportlab.pdfgen.canvas import Canvas
     from reportlab.lib.pagesizes import A4
 except ImportError:
     raise MissingPythonDependencyError(
-        "Install reportlab if you want to use Bio.Graphics."
+        "Install reportlab if you want to use biopython.Graphics."
     ) from None
 
 
-# Biopython Bio.Graphics.ColorSpiral
-from Bio.Graphics.ColorSpiral import ColorSpiral, get_colors, get_color_dict
+# Biopython biopython.Graphics.ColorSpiral
+from biopython.Graphics.ColorSpiral import ColorSpiral, get_colors, get_color_dict
 
 
 class SpiralTest(unittest.TestCase):

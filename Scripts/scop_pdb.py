@@ -12,7 +12,7 @@ import sys
 
 from urllib.request import urlretrieve as _urlretrieve
 
-from Bio.SCOP import Raf, Cla
+from biopython.SCOP import Raf, Cla
 
 
 def usage():

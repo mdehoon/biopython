@@ -17,11 +17,11 @@ import unittest
 import tempfile
 import sys
 from io import StringIO
-from Bio.Align import MultipleSeqAlignment
-from Bio.AlignIO.NexusIO import NexusIterator, NexusWriter
-from Bio.Nexus import Nexus, Trees
-from Bio.Seq import Seq
-from Bio import SeqIO
+from biopython.Align import MultipleSeqAlignment
+from biopython.AlignIO.NexusIO import NexusIterator, NexusWriter
+from biopython.Nexus import Nexus, Trees
+from biopython.Seq import Seq
+from biopython import SeqIO
 
 
 class OldSelfTests(unittest.TestCase):
@@ -56,7 +56,7 @@ class OldSelfTests(unittest.TestCase):
         """Taxa and chr blocks, over 9 codings, 2 character without states."""
         nexus6 = Nexus.Nexus()
         # TODO: Implement continuous datatype:
-        # Bio.Nexus.Nexus.NexusError: Unsupported datatype: continuous
+        # biopython.Nexus.Nexus.NexusError: Unsupported datatype: continuous
         self.assertRaises(
             Nexus.NexusError,
             nexus6.read,
@@ -83,7 +83,7 @@ class NexusTest1(unittest.TestCase):
         os.remove(filename)
 
     def test_write_with_dups(self):
-        # see issue: biopython/Bio/Nexus/Nexus.py _unique_label() eval error #633
+        # see issue: biopython/biopython/Nexus/Nexus.py _unique_label() eval error #633
         records = [
                 Seq("ATGCTGCTGAT", id="foo", annotations={"molecule_type": "DNA"}
             )

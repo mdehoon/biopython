@@ -78,7 +78,7 @@ Let's calculate the logistic regression model from these data:
 %NOTE - can't use this as a doctest in case NumPy is missing (Jython).
 %Also the ... are missing but that means the user can copy/paste the example.
 \begin{minted}{pycon}
->>> from Bio import LogisticRegression
+>>> from biopython import LogisticRegression
 >>> xs = [[-53, -200.78],
           [117, -267.14],
           [57, -163.47],
@@ -282,14 +282,14 @@ Trevor Hastie, Robert Tibshirani, and Jerome Friedman: \textit{The Elements of S
 
 The $k$-nearest neighbors method is a supervised learning approach that does not need to fit a model to the data. Instead, data points are classified based on the categories of the $k$ nearest neighbors in the training data set.
 
-In Biopython, the $k$-nearest neighbors method is available in \verb+Bio.kNN+. To illustrate the use of the $k$-nearest neighbor method in Biopython, we will use the same operon data set as in section \ref{sec:LogisticRegression}.
+In Biopython, the $k$-nearest neighbors method is available in \verb+biopython.kNN+. To illustrate the use of the $k$-nearest neighbor method in Biopython, we will use the same operon data set as in section \ref{sec:LogisticRegression}.
 
 \subsection{Initializing a $k$-nearest neighbors model}
 
 Using the data in Table \ref{table:training}, we create and initialize a $k$-nearest neighbors model as follows:
 
 \begin{minted}{pycon}
->>> from Bio import kNN
+>>> from biopython import kNN
 >>> k = 3
 >>> model = kNN.train(xs, ys, k)
 \end{minted}
@@ -406,12 +406,12 @@ The leave-one-out analysis shows that $k$-nearest neighbors model is correct for
 
 \section{Na\"ive Bayes}
 
-This section will describe the \verb|Bio.NaiveBayes| module.
+This section will describe the \verb|biopython.NaiveBayes| module.
 
 \section{Maximum Entropy}
 
-This section will describe the \verb|Bio.MaximumEntropy| module.
+This section will describe the \verb|biopython.MaximumEntropy| module.
 
 \section{Markov Models}
 
-This section will describe the \verb|Bio.MarkovModel| and/or \verb|Bio.HMM.MarkovModel| modules.
+This section will describe the \verb|biopython.MarkovModel| and/or \verb|biopython.HMM.MarkovModel| modules.

@@ -10,8 +10,8 @@ import os
 import os.path
 import itertools
 
-from Bio.Phylo.PAML import codeml
-from Bio.Phylo.PAML._paml import PamlError
+from biopython.Phylo.PAML import codeml
+from biopython.Phylo.PAML._paml import PamlError
 
 
 # Some constants to assist with testing:

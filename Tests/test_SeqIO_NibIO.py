@@ -3,8 +3,8 @@
 import unittest
 
 from io import BytesIO
-from Bio import SeqIO
-from Bio.Seq import Seq
+from biopython import SeqIO
+from biopython.Seq import Seq
 
 
 class TestNibReaderWriter(unittest.TestCase):

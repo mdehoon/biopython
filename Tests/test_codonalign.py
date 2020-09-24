@@ -3,23 +3,23 @@
 # license. Please see the LICENSE file that should have been included
 # as part of this package.
 
-"""Unit tests for the Bio.codonalign modules."""
+"""Unit tests for the biopython.codonalign modules."""
 
 import warnings
 import tempfile
 import unittest
 
-from Bio import BiopythonWarning, BiopythonExperimentalWarning
-from Bio import SeqIO
-from Bio import AlignIO
-from Bio.Seq import Seq
-from Bio.Align import MultipleSeqAlignment
-from Bio.Data import CodonTable
+from biopython import BiopythonWarning, BiopythonExperimentalWarning
+from biopython import SeqIO
+from biopython import AlignIO
+from biopython.Seq import Seq
+from biopython.Align import MultipleSeqAlignment
+from biopython.Data import CodonTable
 
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", BiopythonExperimentalWarning)
-    from Bio import codonalign
+    from biopython import codonalign
 
 
 TEST_ALIGN_FILE1 = [("codonalign/nucl1.fa", "codonalign/pro1.aln"), "parse"]
@@ -272,7 +272,7 @@ class Test_dn_ds(unittest.TestCase):
         self.aln = aln
 
     def test_dn_ds(self):
-        from Bio.codonalign.codonseq import cal_dn_ds
+        from biopython.codonalign.codonseq import cal_dn_ds
 
         codon_seq1 = self.aln[0]
         codon_seq2 = self.aln[1]

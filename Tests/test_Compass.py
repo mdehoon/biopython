@@ -9,7 +9,7 @@
 import os
 import unittest
 
-from Bio import Compass
+from biopython import Compass
 
 
 class CompassTest(unittest.TestCase):

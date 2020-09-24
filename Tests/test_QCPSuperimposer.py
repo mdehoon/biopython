@@ -13,19 +13,19 @@ try:
     from numpy import around
     from numpy import array_equal
 except ImportError:
-    from Bio import MissingPythonDependencyError
+    from biopython import MissingPythonDependencyError
 
     raise MissingPythonDependencyError(
-        "Install NumPy if you want to use Bio.QCPSuperimposer."
+        "Install NumPy if you want to use biopython.QCPSuperimposer."
     ) from None
 
 try:
-    from Bio.PDB.QCPSuperimposer import QCPSuperimposer
+    from biopython.PDB.QCPSuperimposer import QCPSuperimposer
 except ImportError:
-    from Bio import MissingExternalDependencyError
+    from biopython import MissingExternalDependencyError
 
     raise MissingExternalDependencyError(
-        "C module in Bio.PDB.QCPSuperimposer not compiled"
+        "C module in biopython.PDB.QCPSuperimposer not compiled"
     ) from None
 
 
@@ -155,7 +155,7 @@ class QCPSuperimposerTest(unittest.TestCase):
         calc_rms = 0.003
         self.assertEqual(float("%.3f" % self.sup.get_rms()), calc_rms)
 
-    # Old test from Bio/PDB/QCPSuperimposer/__init__.py
+    # Old test from biopython/PDB/QCPSuperimposer/__init__.py
 
     def test_oldTest(self):
         x = array(

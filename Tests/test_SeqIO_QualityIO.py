@@ -3,7 +3,7 @@
 # license.  Please see the LICENSE file that should have been included
 # as part of this package.
 
-"""Additional unit tests for Bio.SeqIO.QualityIO (covering FASTQ and QUAL)."""
+"""Additional unit tests for biopython.SeqIO.QualityIO (covering FASTQ and QUAL)."""
 
 
 import os
@@ -13,11 +13,11 @@ import warnings
 from io import StringIO
 from io import BytesIO
 
-from Bio import BiopythonWarning, BiopythonParserWarning
-from Bio.SeqIO import QualityIO
-from Bio import SeqIO
-from Bio.Seq import Seq, UnknownSeq, MutableSeq
-from Bio.Data.IUPACData import ambiguous_dna_letters, ambiguous_rna_letters
+from biopython import BiopythonWarning, BiopythonParserWarning
+from biopython.SeqIO import QualityIO
+from biopython import SeqIO
+from biopython.Seq import Seq, UnknownSeq, MutableSeq
+from biopython.Data.IUPACData import ambiguous_dna_letters, ambiguous_rna_letters
 
 from test_SeqIO import SeqIOTestBaseClass, SeqIOConverterTestBaseClass
 

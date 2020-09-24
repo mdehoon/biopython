@@ -7,21 +7,21 @@
 # choice of the "Biopython License Agreement" or the "BSD 3-Clause License".
 # Please see the LICENSE file that should have been included as part of this
 # package.
-"""Unit tests for the Bio.PDB.Superimposer module."""
+"""Unit tests for the biopython.PDB.Superimposer module."""
 
 import unittest
 
 try:
     import numpy
 except ImportError:
-    from Bio import MissingPythonDependencyError
+    from biopython import MissingPythonDependencyError
 
     raise MissingPythonDependencyError(
-        "Install NumPy if you want to use Bio.PDB."
+        "Install NumPy if you want to use biopython.PDB."
     ) from None
 
-from Bio.PDB import Superimposer, Selection
-from Bio.PDB import PDBParser
+from biopython.PDB import Superimposer, Selection
+from biopython.PDB import PDBParser
 
 
 class SuperimposerTests(unittest.TestCase):

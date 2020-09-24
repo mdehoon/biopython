@@ -3,13 +3,13 @@
 # This code is part of the Biopython distribution and governed by its
 # license.  Please see the LICENSE file that should have been included
 # as part of this package.
-"""Tests for Bio.AlignIO.EmbossIO module."""
+"""Tests for biopython.AlignIO.EmbossIO module."""
 
 import unittest
 
 from io import StringIO
 
-from Bio.AlignIO.EmbossIO import EmbossIterator
+from biopython.AlignIO.EmbossIO import EmbossIterator
 
 # http://emboss.sourceforge.net/docs/themes/alnformats/align.simple
 simple_example = """\

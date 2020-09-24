@@ -10,7 +10,7 @@ This test requires the mini DOM file 'testDom.txt'
 
 import unittest
 
-from Bio.SCOP import Dom
+from biopython.SCOP import Dom
 
 
 class DomTests(unittest.TestCase):

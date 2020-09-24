@@ -4,7 +4,7 @@
 # Please see the LICENSE file that should have been included as part of this
 # package.
 
-"""Tests for the vector code in Bio.PDB."""
+"""Tests for the vector code in biopython.PDB."""
 
 import unittest
 
@@ -12,15 +12,15 @@ try:
     import numpy
     from numpy.random import random
 except ImportError:
-    from Bio import MissingPythonDependencyError
+    from biopython import MissingPythonDependencyError
 
     raise MissingPythonDependencyError(
-        "Install NumPy if you want to use Bio.PDB."
+        "Install NumPy if you want to use biopython.PDB."
     ) from None
 
-from Bio.PDB.vectors import Vector
-from Bio.PDB import rotmat, refmat, calc_angle, calc_dihedral, rotaxis, m2rotaxis
-from Bio.PDB.vectors import get_spherical_coordinates, coord_space, homog_trans_mtx
+from biopython.PDB.vectors import Vector
+from biopython.PDB import rotmat, refmat, calc_angle, calc_dihedral, rotaxis, m2rotaxis
+from biopython.PDB.vectors import get_spherical_coordinates, coord_space, homog_trans_mtx
 
 
 class VectorTests(unittest.TestCase):

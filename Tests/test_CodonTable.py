@@ -9,8 +9,8 @@
 
 import unittest
 
-from Bio.Data import IUPACData
-from Bio.Data.CodonTable import (
+from biopython.Data import IUPACData
+from biopython.Data.CodonTable import (
     generic_by_id,
     generic_by_name,
     ambiguous_generic_by_id,
@@ -24,8 +24,8 @@ from Bio.Data.CodonTable import (
     unambiguous_dna_by_id,
     unambiguous_dna_by_name,
 )
-from Bio.Data.CodonTable import list_ambiguous_codons, list_possible_proteins
-from Bio.Data.CodonTable import TranslationError
+from biopython.Data.CodonTable import list_ambiguous_codons, list_possible_proteins
+from biopython.Data.CodonTable import TranslationError
 
 exception_list = []
 ids = list(unambiguous_dna_by_id)

@@ -3,22 +3,22 @@
 # license. Please see the LICENSE file that should have been included
 # as part of this package.
 
-"""Unit tests for Bio.Phylo functions with external dependencies."""
+"""Unit tests for biopython.Phylo functions with external dependencies."""
 
 
 import unittest
 
 from io import StringIO
-from Bio import Phylo
+from biopython import Phylo
 
 # Check for any missing dependencies at the top level so we can skip
-from Bio import MissingExternalDependencyError
+from biopython import MissingExternalDependencyError
 
 try:
     import networkx
 except ImportError:
     raise MissingExternalDependencyError(
-        "Install networkx if you wish to use it with Bio.Phylo"
+        "Install networkx if you wish to use it with biopython.Phylo"
     ) from None
 
 # Example PhyloXML file

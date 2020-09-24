@@ -7,13 +7,13 @@
 # license. Please see the LICENSE file that should have been included
 # as part of this package.
 
-"""Unit tests for the PQR parser in Bio.PDB module."""
-from Bio.PDB.PDBParser import PDBParser
+"""Unit tests for the PQR parser in biopython.PDB module."""
+from biopython.PDB.PDBParser import PDBParser
 import unittest
 import warnings
 from io import StringIO
-from Bio.PDB.PDBExceptions import PDBConstructionException, PDBConstructionWarning
-from Bio.PDB.PDBIO import PDBIO
+from biopython.PDB.PDBExceptions import PDBConstructionException, PDBConstructionWarning
+from biopython.PDB.PDBIO import PDBIO
 
 import tempfile
 import os

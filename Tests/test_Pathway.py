@@ -10,9 +10,9 @@
 import unittest
 
 # modules to be tested
-from Bio.Pathway import Reaction
-from Bio.Pathway.Rep.Graph import Graph
-from Bio.Pathway.Rep.MultiGraph import MultiGraph
+from biopython.Pathway import Reaction
+from biopython.Pathway.Rep.Graph import Graph
+from biopython.Pathway.Rep.MultiGraph import MultiGraph
 
 
 class GraphTestCase(unittest.TestCase):

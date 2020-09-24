@@ -2,13 +2,13 @@
 # This code is part of the Biopython distribution and governed by its
 # license.  Please see the LICENSE file that should have been included
 # as part of this package.
-"""Unittests for Bio.Align.Applications interface for TCOFFEE."""
+"""Unittests for biopython.Align.Applications interface for TCOFFEE."""
 
 import sys
 import os
 import unittest
-from Bio import AlignIO, SeqIO, MissingExternalDependencyError
-from Bio.Align.Applications import TCoffeeCommandline
+from biopython import AlignIO, SeqIO, MissingExternalDependencyError
+from biopython.Align.Applications import TCoffeeCommandline
 
 # Try to avoid problems when the OS is in another language
 os.environ["LANG"] = "C"
@@ -26,7 +26,7 @@ else:
 
 if not t_coffee_exe:
     raise MissingExternalDependencyError(
-        "Install TCOFFEE if you want to use the Bio.Align.Applications wrapper."
+        "Install TCOFFEE if you want to use the biopython.Align.Applications wrapper."
     )
 
 

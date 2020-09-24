@@ -20,8 +20,8 @@ It runs as a standalone application.
 import tkinter as tk
 import tkinter.ttk as ttk
 
-from Bio.Seq import translate, transcribe, back_transcribe
-from Bio.Data import CodonTable
+from biopython.Seq import translate, transcribe, back_transcribe
+from biopython.Data import CodonTable
 
 
 main_window = tk.Tk()

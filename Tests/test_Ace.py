@@ -9,7 +9,7 @@
 
 import unittest
 
-from Bio.Sequencing import Ace
+from biopython.Sequencing import Ace
 
 
 class AceTestOne(unittest.TestCase):

@@ -4,7 +4,7 @@
 
 """Tests for UniGene module."""
 
-from Bio import UniGene
+from biopython import UniGene
 import unittest
 
 

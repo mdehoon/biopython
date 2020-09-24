@@ -12,7 +12,7 @@ import shutil
 import unittest
 from zipfile import ZipFile
 
-from Bio import SeqIO, MissingExternalDependencyError
+from biopython import SeqIO, MissingExternalDependencyError
 from urllib.request import urlopen, HTTPError
 import requires_internet
 

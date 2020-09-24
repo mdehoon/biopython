@@ -8,8 +8,8 @@
 import unittest
 import os
 import sys
-from Bio.Phylo.PAML import codeml, baseml, yn00
-from Bio import MissingExternalDependencyError
+from biopython.Phylo.PAML import codeml, baseml, yn00
+from biopython import MissingExternalDependencyError
 
 
 def is_exe(filepath):
@@ -54,7 +54,7 @@ else:
 for binary in binaries:
     if which(binary) is None:
         raise MissingExternalDependencyError(
-            "Install PAML if you want to use the Bio.Phylo.PAML wrapper."
+            "Install PAML if you want to use the biopython.Phylo.PAML wrapper."
         )
 
 

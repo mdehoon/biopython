@@ -2,14 +2,14 @@
 # This code is part of the Biopython distribution and governed by its
 # license.  Please see the LICENSE file that should have been included
 # as part of this package.
-"""Unittests for Bio.Align.Applications interface for PROBCONS."""
+"""Unittests for biopython.Align.Applications interface for PROBCONS."""
 
 import sys
 import os
 import unittest
 from io import StringIO
-from Bio import AlignIO, SeqIO, MissingExternalDependencyError
-from Bio.Align.Applications import ProbconsCommandline
+from biopython import AlignIO, SeqIO, MissingExternalDependencyError
+from biopython.Align.Applications import ProbconsCommandline
 
 # Try to avoid problems when the OS is in another language
 os.environ["LANG"] = "C"
@@ -27,7 +27,7 @@ else:
 
 if not probcons_exe:
     raise MissingExternalDependencyError(
-        "Install PROBCONS if you want to use the Bio.Align.Applications wrapper."
+        "Install PROBCONS if you want to use the biopython.Align.Applications wrapper."
     )
 
 

@@ -3,11 +3,11 @@
 # license.  Please see the LICENSE file that should have been included
 # as part of this package.
 
-"""Testing online code in Bio.SCOP module."""
+"""Testing online code in biopython.SCOP module."""
 
 import unittest
 
-from Bio import SCOP
+from biopython import SCOP
 
 import requires_internet
 

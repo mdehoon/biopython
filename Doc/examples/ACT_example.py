@@ -11,9 +11,9 @@ import os
 from reportlab.lib import colors
 from reportlab.lib.units import cm
 
-from Bio.Graphics.GenomeDiagram import Diagram, CrossLink
-from Bio.SeqFeature import SeqFeature, FeatureLocation
-from Bio import SeqIO
+from biopython.Graphics.GenomeDiagram import Diagram, CrossLink
+from biopython.SeqFeature import SeqFeature, FeatureLocation
+from biopython import SeqIO
 
 # Modify this line to point at the Artemis/ACT example data which is online at:
 # https://github.com/sanger-pathogens/Artemis/tree/master/etc

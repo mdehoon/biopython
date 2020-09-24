@@ -8,20 +8,20 @@
 # choice of the "Biopython License Agreement" or the "BSD 3-Clause License".
 # Please see the LICENSE file that should have been included as part of this
 # package.
-"""Unit tests for the Bio.PDB.MMCIF2Dict module."""
+"""Unit tests for the biopython.PDB.MMCIF2Dict module."""
 
 import unittest
 
 try:
     import numpy
 except ImportError:
-    from Bio import MissingPythonDependencyError
+    from biopython import MissingPythonDependencyError
 
     raise MissingPythonDependencyError(
-        "Install NumPy if you want to use Bio.PDB."
+        "Install NumPy if you want to use biopython.PDB."
     ) from None
 
-from Bio.PDB.MMCIF2Dict import MMCIF2Dict
+from biopython.PDB.MMCIF2Dict import MMCIF2Dict
 
 import io
 import textwrap

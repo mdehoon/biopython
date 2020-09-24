@@ -8,7 +8,7 @@
 import os
 import unittest
 
-from Bio.SearchIO import parse
+from biopython.SearchIO import parse
 
 
 # test case files are in the Blast directory

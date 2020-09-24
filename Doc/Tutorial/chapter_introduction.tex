@@ -93,10 +93,10 @@ file for other options.
   In addition, please cite any publications from the following list if appropriate, in particular as a reference for specific modules within Biopython (more information can be found on our website):
   \begin{itemize}
     \item For the official project announcement: \cite[Chapman and Chang, 2000]{chapman2000};
-    \item For \verb+Bio.PDB+: \cite[Hamelryck and Manderick, 2003]{hamelryck2003a};
-    \item For \verb+Bio.Cluster+: \cite[De Hoon \textit{et al.}, 2004]{dehoon2004};
-    \item For \verb+Bio.Graphics.GenomeDiagram+: \cite[Pritchard \textit{et al.}, 2006]{pritchard2006};
-    \item For \verb+Bio.Phylo+ and \verb+Bio.Phylo.PAML+: \cite[Talevich \textit{et al.}, 2012]{talevich2012};
+    \item For \verb+biopython.PDB+: \cite[Hamelryck and Manderick, 2003]{hamelryck2003a};
+    \item For \verb+biopython.Cluster+: \cite[De Hoon \textit{et al.}, 2004]{dehoon2004};
+    \item For \verb+biopython.Graphics.GenomeDiagram+: \cite[Pritchard \textit{et al.}, 2006]{pritchard2006};
+    \item For \verb+biopython.Phylo+ and \verb+biopython.Phylo.PAML+: \cite[Talevich \textit{et al.}, 2012]{talevich2012};
     \item For the FASTQ file format as supported in Biopython, BioPerl, BioRuby, BioJava, and EMBOSS: \cite[Cock \textit{et al.}, 2010]{cock2010}.
   \end{itemize}
 
@@ -146,11 +146,11 @@ file for other options.
   \item \emph{How do I find out what version of Biopython I have installed?} \\
   Use this:
 \begin{minted}{pycon}
->>> import Bio
->>> print(Bio.__version__)
+>>> import biopython
+>>> print(biopython.__version__)
 ...
 \end{minted}
-  If the ``\verb|import Bio|'' line fails, Biopython is not installed.
+  If the ``\verb|import biopython|'' line fails, Biopython is not installed.
   Note that those are double underscores before and after version.
   If the second line fails, your version is \emph{very} out of date.
 
@@ -185,52 +185,52 @@ file for other options.
   If you still need to support old versions of Biopython, use these
   explicit forms to avoid problems. See Section~\ref{sec:seq-comparison}.
 
-  \item \emph{What file formats do} \verb|Bio.SeqIO| \emph{and} \verb|Bio.AlignIO| \emph{read and write?} \\
-  Check the built in docstrings (\texttt{from Bio import SeqIO}, then \texttt{help(SeqIO)}), or see \url{http://biopython.org/wiki/SeqIO} and \url{http://biopython.org/wiki/AlignIO} on the wiki for the latest listing.
+  \item \emph{What file formats do} \verb|biopython.SeqIO| \emph{and} \verb|biopython.AlignIO| \emph{read and write?} \\
+  Check the built in docstrings (\texttt{from biopython import SeqIO}, then \texttt{help(SeqIO)}), or see \url{http://biopython.org/wiki/SeqIO} and \url{http://biopython.org/wiki/AlignIO} on the wiki for the latest listing.
 
-  \item \emph{Why won't the } \verb|Bio.SeqIO| \emph{and} \verb|Bio.AlignIO| \emph{functions} \verb|parse|\emph{,} \verb|read| \emph{and} \verb|write| \emph{take filenames? They insist on handles!} \\
+  \item \emph{Why won't the } \verb|biopython.SeqIO| \emph{and} \verb|biopython.AlignIO| \emph{functions} \verb|parse|\emph{,} \verb|read| \emph{and} \verb|write| \emph{take filenames? They insist on handles!} \\
   You need Biopython 1.54 or later, or just use handles explicitly (see Section~\ref{sec:appendix-handles}).
   It is especially important to remember to close output handles explicitly after writing your data.
 
-  \item \emph{Why won't the } \verb|Bio.SeqIO.write()| \emph{and} \verb|Bio.AlignIO.write()| \emph{functions accept a single record or alignment? They insist on a list or iterator!} \\
+  \item \emph{Why won't the } \verb|biopython.SeqIO.write()| \emph{and} \verb|biopython.AlignIO.write()| \emph{functions accept a single record or alignment? They insist on a list or iterator!} \\
   You need Biopython 1.54 or later, or just wrap the item with \verb|[...]| to create a list of one element.
 
   \item \emph{Why doesn't} \verb|str(...)| \emph{give me the full sequence of a} \verb|Seq| \emph{object?} \\
   You need Biopython 1.45 or later.
 
-  \item \emph{Why doesn't} \verb|Bio.Blast| \emph{work with the latest plain text NCBI blast output?} \\
+  \item \emph{Why doesn't} \verb|biopython.Blast| \emph{work with the latest plain text NCBI blast output?} \\
   The NCBI keep tweaking the plain text output from the BLAST tools, and keeping our parser up to date is/was an ongoing struggle.
   If you aren't using the latest version of Biopython, you could try upgrading.
   However, we (and the NCBI) recommend you use the XML output instead, which is designed to be read by a computer program.
 
-  \item \emph{Why has my script using} \verb|Bio.Entrez.efetch()| \emph{stopped working?} \\
+  \item \emph{Why has my script using} \verb|biopython.Entrez.efetch()| \emph{stopped working?} \\
   This could be due to NCBI changes in February 2012 introducing EFetch 2.0.
   First, they changed the default return modes - you probably want to add \verb|retmode="text"| to
   your call.
   Second, they are now stricter about how to provide a list of IDs -- Biopython 1.59 onwards
   turns a list into a comma separated string automatically.
 
-  \item \emph{Why doesn't} \verb|Bio.Blast.NCBIWWW.qblast()| \emph{give the same results as the NCBI BLAST website?} \\
+  \item \emph{Why doesn't} \verb|biopython.Blast.NCBIWWW.qblast()| \emph{give the same results as the NCBI BLAST website?} \\
   You need to specify the same options -- the NCBI often adjust the default settings on the website,
   and they do not match the QBLAST defaults anymore. Check things like the gap penalties and expectation threshold.
 
   \item \emph{Why can't I add} \verb|SeqRecord| \emph{objects together?} \\
   You need Biopython 1.53 or later.
 
-  \item \emph{Why doesn't} \verb|Bio.SeqIO.index_db()| \emph{work? The module imports fine but there is no \texttt{index\_db} function!} \\
+  \item \emph{Why doesn't} \verb|biopython.SeqIO.index_db()| \emph{work? The module imports fine but there is no \texttt{index\_db} function!} \\
   You need Biopython 1.57 or later (and a Python with SQLite3 support).
 
-  \item \emph{Where is the} \verb|MultipleSeqAlignment| \emph{object? The} \verb|Bio.Align| \emph{module imports fine but this class isn't there!} \\
-  You need Biopython 1.54 or later. Alternatively, the older \verb|Bio.Align.Generic.Alignment| class supports some of its functionality, but using this is now discouraged.
+  \item \emph{Where is the} \verb|MultipleSeqAlignment| \emph{object? The} \verb|biopython.Align| \emph{module imports fine but this class isn't there!} \\
+  You need Biopython 1.54 or later. Alternatively, the older \verb|biopython.Align.Generic.Alignment| class supports some of its functionality, but using this is now discouraged.
 
   \item \emph{Why can't I run command line tools directly from the application wrappers?} \\
   You need Biopython 1.55 or later. Alternatively, use the Python \verb|subprocess| module directly.
 
   \item \emph{I looked in a directory for code, but I couldn't find the code that does something. Where's it hidden?} \\
-  One thing to know is that we put code in \verb|__init__.py| files. If you are not used to looking for code in this file this can be confusing. The reason we do this is to make the imports easier for users. For instance, instead of having to do a ``repetitive'' import like \verb|from Bio.GenBank import GenBank|, you can just use \verb|from Bio import GenBank|.
+  One thing to know is that we put code in \verb|__init__.py| files. If you are not used to looking for code in this file this can be confusing. The reason we do this is to make the imports easier for users. For instance, instead of having to do a ``repetitive'' import like \verb|from biopython.GenBank import GenBank|, you can just use \verb|from biopython import GenBank|.
 
-  \item \emph{Why doesn't} \verb|Bio.Fasta| \emph{work?} \\
-  We deprecated the \verb|Bio.Fasta| module in Biopython 1.51 (August 2009) and removed it in Biopython 1.55 (August 2010). There is a brief example showing how to convert old code to use \verb|Bio.SeqIO| instead in the \href{https://github.com/biopython/biopython/blob/master/DEPRECATED.rst}{DEPRECATED.rst} file.
+  \item \emph{Why doesn't} \verb|biopython.Fasta| \emph{work?} \\
+  We deprecated the \verb|biopython.Fasta| module in Biopython 1.51 (August 2009) and removed it in Biopython 1.55 (August 2010). There is a brief example showing how to convert old code to use \verb|biopython.SeqIO| instead in the \href{https://github.com/biopython/biopython/blob/master/DEPRECATED.rst}{DEPRECATED.rst} file.
 
 \end{enumerate}
 

@@ -3,16 +3,16 @@
 # license.  Please see the LICENSE file that should have been included
 # as part of this package.
 
-"""Testing Bio.ExPASy online code."""
+"""Testing biopython.ExPASy online code."""
 
 import unittest
 
 # We want to test these:
-from Bio import ExPASy
+from biopython import ExPASy
 
 # In order to check any records returned
-from Bio.ExPASy import Prodoc
-from Bio.ExPASy import Prosite
+from biopython.ExPASy import Prodoc
+from biopython.ExPASy import Prosite
 
 import requires_internet
 

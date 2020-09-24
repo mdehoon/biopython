@@ -8,8 +8,8 @@
 
 import os
 import unittest
-from Bio.PopGen import GenePop
-from Bio.PopGen.GenePop import FileParser
+from biopython.PopGen import GenePop
+from biopython.PopGen.GenePop import FileParser
 import tempfile
 
 

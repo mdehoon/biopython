@@ -14,13 +14,13 @@ try:
     from numpy import array
     import numpy.testing
 except ImportError:
-    from Bio import MissingPythonDependencyError
+    from biopython import MissingPythonDependencyError
 
     raise MissingPythonDependencyError(
-        "Install NumPy if you want to use Bio.Affy.CelFile"
+        "Install NumPy if you want to use biopython.Affy.CelFile"
     ) from None
 
-from Bio.Affy import CelFile
+from biopython.Affy import CelFile
 
 
 class AffyTest(unittest.TestCase):

@@ -9,7 +9,7 @@
 #
 # %doctest
 # \begin{minted}{pycon}
-# >>> from Bio.Seq import Seq
+# >>> from biopython.Seq import Seq
 # >>> s = Seq("ACGT")
 # >>> len(s)
 # 4
@@ -57,7 +57,7 @@ import sys
 import warnings
 
 
-from Bio import BiopythonExperimentalWarning, MissingExternalDependencyError
+from biopython import BiopythonExperimentalWarning, MissingExternalDependencyError
 
 # This is the same mechanism used for run_tests.py --offline
 # to skip tests requiring the network.
@@ -92,7 +92,7 @@ else:
     tutorial_base = os.path.abspath("../Doc/")
     tutorial = os.path.join(tutorial_base, "Tutorial.tex")
 if not os.path.isfile(tutorial):
-    from Bio import MissingExternalDependencyError
+    from biopython import MissingExternalDependencyError
 
     raise MissingExternalDependencyError("Could not find ../Doc/Tutorial.tex file")
 

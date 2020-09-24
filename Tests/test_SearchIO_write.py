@@ -8,7 +8,7 @@
 import os
 import unittest
 
-from Bio import SearchIO
+from biopython import SearchIO
 
 from search_tests_common import compare_search_obj
 

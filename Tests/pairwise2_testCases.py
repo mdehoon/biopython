@@ -15,9 +15,9 @@ with or without complementing C extensions.
 import unittest
 import warnings
 
-from Bio import BiopythonWarning
-from Bio import pairwise2
-from Bio.Align import substitution_matrices
+from biopython import BiopythonWarning
+from biopython import pairwise2
+from biopython.Align import substitution_matrices
 
 
 class TestPairwiseErrorConditions(unittest.TestCase):

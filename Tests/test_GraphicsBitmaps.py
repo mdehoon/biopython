@@ -7,7 +7,7 @@
 """Test for bitmap output via ReportLab (requires an extra dependency).
 
 The primary purpose of this is to flag if renderPM is missing, but also
-to check Bio.Graphics can make a bitmap (e.g. PNG).
+to check biopython.Graphics can make a bitmap (e.g. PNG).
 
 The example itself is essentially a repeat from test_GraphicsGeneral.py.
 """
@@ -16,8 +16,8 @@ import os
 import random
 import unittest
 
-from Bio import MissingExternalDependencyError
-from Bio import MissingPythonDependencyError
+from biopython import MissingExternalDependencyError
+from biopython import MissingPythonDependencyError
 
 try:
     # Skip the test if reportlab is not installed
@@ -26,7 +26,7 @@ try:
     del r
 except Exception:
     raise MissingPythonDependencyError(
-        "Install ReportLab if you want to use Bio.Graphics."
+        "Install ReportLab if you want to use biopython.Graphics."
     ) from None
 try:
     # Skip the test if reportlab is not installed
@@ -36,7 +36,7 @@ try:
 except Exception:
     raise MissingPythonDependencyError(
         "Install ReportLab's renderPM module if you want to create bitmaps with "
-        "Bio.Graphics."
+        "biopython.Graphics."
     ) from None
 try:
     # Skip the test if PIL is not installed
@@ -49,13 +49,13 @@ try:
 except Exception:
     raise MissingPythonDependencyError(
         "Install Pillow or its predecessor PIL (Python Imaging Library) "
-        "if you want to create bitmaps with Bio.Graphics."
+        "if you want to create bitmaps with biopython.Graphics."
     ) from None
 
 from reportlab.graphics.renderPM import RenderPMError
 
 # the stuff we're testing
-from Bio.Graphics.Comparative import ComparativeScatterPlot
+from biopython.Graphics.Comparative import ComparativeScatterPlot
 
 # We're not really using the unittest framework, because we need to
 # raise the dependency error BEFORE the invidual tests in order that
@@ -107,7 +107,7 @@ def real_test():
             # is run? That way it can be skipped in run_tests.py
             raise MissingExternalDependencyError(
                 "Check the fonts needed by ReportLab if you want "
-                "bitmaps from Bio.Graphics\n" + str(err)
+                "bitmaps from biopython.Graphics\n" + str(err)
             ) from None
         else:
             raise

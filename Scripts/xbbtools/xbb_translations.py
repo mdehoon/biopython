@@ -14,8 +14,8 @@
 
 import time
 
-from Bio.Seq import Seq, reverse_complement, translate
-from Bio.SeqUtils import GC
+from biopython.Seq import Seq, reverse_complement, translate
+from biopython.SeqUtils import GC
 
 
 class xbb_translations:

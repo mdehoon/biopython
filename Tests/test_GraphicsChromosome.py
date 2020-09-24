@@ -18,22 +18,22 @@ from io import StringIO
 import unittest
 
 import warnings
-from Bio import BiopythonWarning
+from biopython import BiopythonWarning
 
-from Bio import MissingPythonDependencyError
+from biopython import MissingPythonDependencyError
 
 try:
     # reportlab
     from reportlab.lib import colors
 except ImportError:
     raise MissingPythonDependencyError(
-        "Install reportlab if you want to use Bio.Graphics."
+        "Install reportlab if you want to use biopython.Graphics."
     ) from None
 
 # local stuff
-from Bio.SeqFeature import SeqFeature, FeatureLocation
-from Bio.Graphics import BasicChromosome
-from Bio.Graphics.DisplayRepresentation import ChromosomeCounts
+from biopython.SeqFeature import SeqFeature, FeatureLocation
+from biopython.Graphics import BasicChromosome
+from biopython.Graphics.DisplayRepresentation import ChromosomeCounts
 
 
 # hold the chromosome info for testing
@@ -316,7 +316,7 @@ class OrganismSubAnnotationsTest(unittest.TestCase):
 
                 if not os.path.isfile(filename):
                     continue
-                from Bio import SeqIO
+                from biopython import SeqIO
 
                 record = SeqIO.read(filename, "gb")
                 assert length == len(record)

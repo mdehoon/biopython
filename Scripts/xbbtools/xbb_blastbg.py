@@ -18,7 +18,7 @@ import threading
 
 from tkinter import Tk, messagebox
 
-from Bio.Blast.Applications import (
+from biopython.Blast.Applications import (
     NcbiblastnCommandline,
     NcbiblastpCommandline,
     NcbiblastxCommandline,

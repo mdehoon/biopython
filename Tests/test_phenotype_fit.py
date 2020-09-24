@@ -5,17 +5,17 @@
 # choice of the "Biopython License Agreement" or the "BSD 3-Clause License".
 # Please see the LICENSE file that should have been included as part of this
 # package.
-"""Tests for the Bio.phenotype module's fitting functionality."""
+"""Tests for the biopython.phenotype module's fitting functionality."""
 
 try:
     import numpy
 
     del numpy
 except ImportError:
-    from Bio import MissingExternalDependencyError
+    from biopython import MissingExternalDependencyError
 
     raise MissingExternalDependencyError(
-        "Install NumPy if you want to use Bio.phenotype."
+        "Install NumPy if you want to use biopython.phenotype."
     ) from None
 try:
     import scipy
@@ -23,22 +23,22 @@ try:
     del scipy
     from scipy.optimize import OptimizeWarning
 except ImportError:
-    from Bio import MissingExternalDependencyError
+    from biopython import MissingExternalDependencyError
 
     raise MissingExternalDependencyError(
-        "Install SciPy if you want to use Bio.phenotype fit functionality."
+        "Install SciPy if you want to use biopython.phenotype fit functionality."
     ) from None
 
 import json
 import unittest
 
-from Bio import BiopythonExperimentalWarning
+from biopython import BiopythonExperimentalWarning
 
 import warnings
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", BiopythonExperimentalWarning)
-    from Bio import phenotype
+    from biopython import phenotype
 
 # Example plate files
 JSON_PLATE = "phenotype/Plate.json"

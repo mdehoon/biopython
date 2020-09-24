@@ -10,11 +10,11 @@ import sys
 import subprocess
 import unittest
 
-from Bio.Application import _escape_filename
-from Bio import MissingExternalDependencyError
-from Bio.Align.Applications import MuscleCommandline
-from Bio import SeqIO
-from Bio import AlignIO
+from biopython.Application import _escape_filename
+from biopython import MissingExternalDependencyError
+from biopython.Align.Applications import MuscleCommandline
+from biopython import SeqIO
+from biopython import AlignIO
 
 #################################################################
 
@@ -60,7 +60,7 @@ else:
 
 if not muscle_exe:
     raise MissingExternalDependencyError(
-        "Install MUSCLE if you want to use the Bio.Align.Applications wrapper."
+        "Install MUSCLE if you want to use the biopython.Align.Applications wrapper."
     )
 
 #################################################################

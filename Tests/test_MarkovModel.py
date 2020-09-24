@@ -23,17 +23,17 @@ try:
     from numpy import around
     from numpy import log
 except ImportError:
-    from Bio import MissingPythonDependencyError
+    from biopython import MissingPythonDependencyError
 
     raise MissingPythonDependencyError(
-        "Install NumPy if you want to use Bio.MarkovModel."
+        "Install NumPy if you want to use biopython.MarkovModel."
     ) from None
 
 with warnings.catch_warnings():
     # Silence this warning:
     # For optimal speed, please update to Numpy version 1.3 or later
     warnings.simplefilter("ignore", UserWarning)
-    from Bio import MarkovModel
+    from biopython import MarkovModel
 
 
 class TestMarkovModel(unittest.TestCase):

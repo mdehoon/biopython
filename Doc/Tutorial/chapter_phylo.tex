@@ -1,11 +1,11 @@
-\chapter{Phylogenetics with Bio.Phylo}
+\chapter{Phylogenetics with biopython.Phylo}
 \label{chapter:phylo}
 
-The Bio.Phylo module was introduced in Biopython 1.54. Following the lead of SeqIO and AlignIO,
+The biopython.Phylo module was introduced in Biopython 1.54. Following the lead of SeqIO and AlignIO,
 it aims to provide a common way to work with phylogenetic trees independently of the source data
 format, as well as a consistent API for I/O operations.
 
-Bio.Phylo is described in an open-access journal article \cite[Talevich
+The \verb+biopython.Phylo+ module is described in an open-access journal article \cite[Talevich
 \textit{et al.}, 2012]{talevich2012}, which you might also find helpful.
 
 \section{Demo: What's in a Tree?}
@@ -39,7 +39,7 @@ Now, within Python, read the tree file, giving the file name and the name of the
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio import Phylo
+>>> from biopython import Phylo
 >>> tree = Phylo.read("simple.dnd", "newick")
 \end{minted}
 
@@ -73,7 +73,7 @@ available.
 
 %doctest examples
 \begin{minted}{pycon}
->>> from Bio import Phylo
+>>> from biopython import Phylo
 >>> tree = Phylo.read("simple.dnd", "newick")
 >>> Phylo.draw_ascii(tree)
                                                     ________________________ A
@@ -127,7 +127,7 @@ display.
 
 In earlier versions of Biopython, these were special features of PhyloXML trees, and
 using the attributes required first converting the tree to a subclass of the basic tree
-object called Phylogeny, from the Bio.Phylo.PhyloXML module.
+object called Phylogeny, from the \verb+biopython.Phylo.PhyloXML+ module.
 
 In Biopython 1.55 and later, this is a convenient tree method:
 
@@ -138,12 +138,12 @@ In Biopython 1.55 and later, this is a convenient tree method:
 In Biopython 1.54, you can accomplish the same thing with one extra import:
 
 \begin{minted}{pycon}
->>> from Bio.Phylo.PhyloXML import Phylogeny
+>>> from biopython.Phylo.PhyloXML import Phylogeny
 >>> tree = Phylogeny.from_tree(tree)
 \end{minted}
 
 Note that the file formats Newick and Nexus don't support branch colors or widths, so
-if you use these attributes in Bio.Phylo, you will only be able to save the values in
+if you use these attributes in biopython.Phylo, you will only be able to save the values in
 PhyloXML format. (You can still save a tree as Newick or Nexus, but the color and width
 values will be skipped in the output file.)
 
@@ -241,8 +241,8 @@ will show up there, too.
             ...
 \end{minted}
 
-The rest of this chapter covers the core functionality of Bio.Phylo in greater detail. For more
-examples of using Bio.Phylo, see the cookbook page on Biopython.org:
+The rest of this chapter covers the core functionality of biopython.Phylo in greater detail. For more
+examples of using biopython.Phylo, see the cookbook page on Biopython.org:
 
 \url{http://biopython.org/wiki/Phylo_cookbook}
 
@@ -257,7 +257,7 @@ The \verb|read| function parses a single tree in the given file and returns it. 
 will raise an error if the file contains more than one tree, or no trees.
 
 \begin{minted}{pycon}
->>> from Bio import Phylo
+>>> from biopython import Phylo
 >>> tree = Phylo.read("Tests/Nexus/int_node_labels.nwk", "newick")
 >>> print(tree)
 \end{minted}
@@ -304,7 +304,7 @@ with SeqIO and AlignIO:
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio import Phylo
+>>> from biopython import Phylo
 >>> from io import StringIO
 >>> handle = StringIO("(((A,B),(C,D)),(E,F,G));")
 >>> tree = Phylo.read(handle, "newick")
@@ -317,7 +317,7 @@ The simplest way to get an overview of a \verb|Tree| object is to \verb|print| i
 
 %doctest ../Tests
 \begin{minted}{pycon}
->>> from Bio import Phylo
+>>> from biopython import Phylo
 >>> tree = Phylo.read("PhyloXML/example.xml", "phyloxml")
 >>> print(tree)
 Phylogeny(description='phyloXML allows to use either a "branch_length" attribute...', name='example from Prof. Joe Felsenstein's book "Inferring Phyl...', rooted=True)
@@ -675,10 +675,10 @@ descriptions and examples of using the additional annotation features provided b
 \section{Running external applications}
 \label{sec:PhyloApps}
 
-While Bio.Phylo doesn't infer trees from alignments itself, there are third-party
+While \verb+biopython.Phylo+ doesn't infer trees from alignments itself, there are third-party
 programs available that do. These are supported through the module
-\texttt{Bio.Phylo.Applications}, using the same general framework as
-\texttt{Bio.Emboss.Applications}, \texttt{Bio.Align.Applications} and others.
+\texttt{biopython.Phylo.Applications}, using the same general framework as
+\texttt{biopython.Emboss.Applications}, \texttt{biopython.Align.Applications} and others.
 
 Biopython 1.58 introduced a wrapper for PhyML
 (\url{http://www.atgc-montpellier.fr/phyml/}). The program accepts an input alignment in
@@ -686,8 +686,8 @@ Biopython 1.58 introduced a wrapper for PhyML
 on taxon names) and a variety of options. A quick example:
 
 \begin{minted}{pycon}
->>> from Bio import Phylo
->>> from Bio.Phylo.Applications import PhymlCommandline
+>>> from biopython import Phylo
+>>> from biopython.Phylo.Applications import PhymlCommandline
 >>> cmd = PhymlCommandline(input="Tests/Phylip/random.phy")
 >>> out_log, err_log = cmd()
 \end{minted}
@@ -706,7 +706,7 @@ was added in Biopython 1.60, and FastTree
 (\url{http://www.microbesonline.org/fasttree/}) in Biopython 1.62.
 
 Note that some popular Phylip programs, including \texttt{dnaml} and \texttt{protml},
-are already available through the EMBOSS wrappers in \texttt{Bio.Emboss.Applications} if
+are already available through the EMBOSS wrappers in \texttt{biopython.Emboss.Applications} if
 you have the Phylip extensions to EMBOSS installed on your system.
 See Section~\ref{sec:alignment-tools} for some examples and clues on how to use
 programs like these.
@@ -730,7 +730,7 @@ to a results dictionary.
 
 Here is an example of typical usage of codeml:
 \begin{minted}{pycon}
->>> from Bio.Phylo.PAML import codeml
+>>> from biopython.Phylo.PAML import codeml
 >>> cml = codeml.Codeml()
 >>> cml.alignment = "Tests/PAML/alignment.phylip"
 >>> cml.tree = "Tests/PAML/species.tree"
@@ -765,26 +765,26 @@ Detailed documentation for this new module currently lives on the Biopython wiki
 \section{Future plans}
 \label{sec:PhyloFuture}
 
-Bio.Phylo is under active development. Here are some features we might add in future
+The \verb+biopython.Phylo+ is under active development. Here are some features we might add in future
 releases:
 
 \begin{description}
   \item[New methods]
     Generally useful functions for operating on Tree or Clade objects appear on the Biopython
     wiki first, so that casual users can test them and decide if they're useful before we add
-    them to Bio.Phylo:
+    them to \verb+biopython.Phylo+:
 
     \url{http://biopython.org/wiki/Phylo_cookbook}
 
-  \item[Bio.Nexus port]
+  \item[biopython.Nexus port]
     Much of this module was written during Google Summer of Code 2009, under the auspices of
     NESCent, as a project to implement Python support for the phyloXML data format (see
     \ref{sec:PhyloXML}). Support for Newick and Nexus formats was added by porting part of the
-    existing Bio.Nexus module to the new classes used by Bio.Phylo.
+    existing biopython.Nexus module to the new classes used by biopython.Phylo.
 
-    Currently, Bio.Nexus contains some useful features that have not yet been ported to
-    Bio.Phylo classes --- notably, calculating a consensus tree. If you find some functionality
-    lacking in Bio.Phylo, try poking through Bio.Nexus to see if it's there instead.
+    Currently, biopython.Nexus contains some useful features that have not yet been ported to
+    \verb+biopython.Phylo+ classes --- notably, calculating a consensus tree. If you find some functionality
+    lacking in \verb+biopython.Phylo+, try poking through \verb+biopython.Nexus+ to see if it's there instead.
 
 \end{description}
 

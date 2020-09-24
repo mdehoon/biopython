@@ -9,7 +9,7 @@
 
 import unittest
 
-from Bio.SCOP import Cla
+from biopython.SCOP import Cla
 
 
 class ClaTests(unittest.TestCase):

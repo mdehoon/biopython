@@ -18,14 +18,14 @@ from datetime import datetime
 
 from io import StringIO
 
-from Bio import BiopythonWarning
-from Bio import BiopythonParserWarning
+from biopython import BiopythonWarning
+from biopython import BiopythonParserWarning
 
-from Bio import SeqIO
-from Bio.Seq import Seq
+from biopython import SeqIO
+from biopython.Seq import Seq
 
 # GenBank stuff to test:
-from Bio import GenBank
+from biopython import GenBank
 
 
 class TestBasics(unittest.TestCase):
@@ -7461,7 +7461,7 @@ class GenBankTests(unittest.TestCase):
 
     def test_compound_complex_origin_wrap(self):
         """Test the attempts to fix compound complex origin wrapping."""
-        from Bio.SeqFeature import CompoundLocation
+        from biopython.SeqFeature import CompoundLocation
 
         path = "GenBank/bad_origin_wrap.gb"
         with warnings.catch_warnings():

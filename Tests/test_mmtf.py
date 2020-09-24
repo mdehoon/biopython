@@ -12,10 +12,10 @@ import unittest
 import warnings
 import os
 import tempfile
-from Bio.PDB import PDBParser, Select
-from Bio.PDB.mmtf import MMTFParser, MMTFIO
-from Bio.PDB.MMCIFParser import MMCIFParser
-from Bio.PDB.PDBExceptions import PDBConstructionWarning
+from biopython.PDB import PDBParser, Select
+from biopython.PDB.mmtf import MMTFParser, MMTFIO
+from biopython.PDB.MMCIFParser import MMCIFParser
+from biopython.PDB.PDBExceptions import PDBConstructionWarning
 import mmtf
 
 

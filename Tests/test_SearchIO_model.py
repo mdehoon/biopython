@@ -18,9 +18,9 @@ from copy import deepcopy
 
 from search_tests_common import compare_search_obj
 
-from Bio.Align import MultipleSeqAlignment
-from Bio.SearchIO._model import QueryResult, Hit, HSP, HSPFragment
-from Bio.Seq import Seq
+from biopython.Align import MultipleSeqAlignment
+from biopython.SearchIO._model import QueryResult, Hit, HSP, HSPFragment
+from biopython.Seq import Seq
 
 
 # mock HSPFragments

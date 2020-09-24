@@ -16,8 +16,8 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import colorchooser
 
-from Bio.Data.IUPACData import ambiguous_dna_values
-from Bio.Seq import reverse_complement
+from biopython.Data.IUPACData import ambiguous_dna_values
+from biopython.Seq import reverse_complement
 
 import xbb_widget
 

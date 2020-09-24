@@ -9,13 +9,13 @@
 import os
 import tempfile
 import unittest
-from Bio import MissingExternalDependencyError
+from biopython import MissingExternalDependencyError
 
-import Bio.Phylo as bp
-from Bio.Phylo import CDAO
+import biopython.Phylo as bp
+from biopython.Phylo import CDAO
 
 try:
-    from Bio.Phylo import CDAOIO
+    from biopython.Phylo import CDAOIO
 except ImportError:
     raise MissingExternalDependencyError(
         "Install RDFlib if you want to use the CDAO tree format."

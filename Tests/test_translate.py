@@ -8,7 +8,7 @@
 
 import unittest
 
-from Bio import Seq
+from biopython import Seq
 
 
 class TestTranscriptionTranslation(unittest.TestCase):

@@ -11,7 +11,7 @@
 import unittest
 from io import StringIO
 
-from Bio.SCOP import Scop, cmp_sccs, parse_domain
+from biopython.SCOP import Scop, cmp_sccs, parse_domain
 
 
 class ScopTests(unittest.TestCase):

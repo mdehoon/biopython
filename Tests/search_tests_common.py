@@ -16,8 +16,8 @@ try:
 except ImportError:
     sqlite3 = None
 
-from Bio import SearchIO
-from Bio.Seq import Seq
+from biopython import SearchIO
+from biopython.Seq import Seq
 
 
 class CheckRaw(unittest.TestCase):

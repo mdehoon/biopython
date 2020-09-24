@@ -9,20 +9,20 @@ import unittest
 try:
     import numpy
 except ImportError:
-    from Bio import MissingPythonDependencyError
+    from biopython import MissingPythonDependencyError
 
     raise MissingPythonDependencyError(
-        "Install NumPy if you want to use Bio.Cluster."
+        "Install NumPy if you want to use biopython.Cluster."
     ) from None
 
 
 class TestCluster(unittest.TestCase):
 
-    module = "Bio.Cluster"
+    module = "biopython.Cluster"
 
     def test_matrix_parse(self):
-        if TestCluster.module == "Bio.Cluster":
-            from Bio.Cluster import treecluster
+        if TestCluster.module == "biopython.Cluster":
+            from biopython.Cluster import treecluster
         elif TestCluster.module == "Pycluster":
             from Pycluster import treecluster
 
@@ -169,8 +169,8 @@ class TestCluster(unittest.TestCase):
         self.assertRaises(ValueError, treecluster, data16)
 
     def test_mask_parse(self):
-        if TestCluster.module == "Bio.Cluster":
-            from Bio.Cluster import treecluster
+        if TestCluster.module == "biopython.Cluster":
+            from biopython.Cluster import treecluster
         elif TestCluster.module == "Pycluster":
             from Pycluster import treecluster
 
@@ -368,8 +368,8 @@ class TestCluster(unittest.TestCase):
 
     def test_kcluster_arguments(self):
         # Test if incorrect arguments are caught by the C code
-        if TestCluster.module == "Bio.Cluster":
-            from Bio.Cluster._cluster import kcluster, clustercentroids
+        if TestCluster.module == "biopython.Cluster":
+            from biopython.Cluster._cluster import kcluster, clustercentroids
         elif TestCluster.module == "Pycluster":
             from Pycluster._cluster import kcluster, clustercentroids
 
@@ -541,8 +541,8 @@ class TestCluster(unittest.TestCase):
             )
 
     def test_kcluster(self):
-        if TestCluster.module == "Bio.Cluster":
-            from Bio.Cluster import kcluster, clustercentroids
+        if TestCluster.module == "biopython.Cluster":
+            from biopython.Cluster import kcluster, clustercentroids
         elif TestCluster.module == "Pycluster":
             from Pycluster import kcluster, clustercentroids
 
@@ -720,8 +720,8 @@ class TestCluster(unittest.TestCase):
 
     def test_clusterdistance_arguments(self):
         # Test if incorrect arguments are caught by the C code
-        if TestCluster.module == "Bio.Cluster":
-            from Bio.Cluster._cluster import clusterdistance
+        if TestCluster.module == "biopython.Cluster":
+            from biopython.Cluster._cluster import clusterdistance
         elif TestCluster.module == "Pycluster":
             from Pycluster._cluster import clusterdistance
 
@@ -982,8 +982,8 @@ class TestCluster(unittest.TestCase):
             )
 
     def test_clusterdistance(self):
-        if TestCluster.module == "Bio.Cluster":
-            from Bio.Cluster import clusterdistance
+        if TestCluster.module == "biopython.Cluster":
+            from biopython.Cluster import clusterdistance
         elif TestCluster.module == "Pycluster":
             from Pycluster import clusterdistance
 
@@ -1169,8 +1169,8 @@ class TestCluster(unittest.TestCase):
 
     def test_treecluster_arguments(self):
         # Test if incorrect arguments are caught by the C code
-        if TestCluster.module == "Bio.Cluster":
-            from Bio.Cluster._cluster import treecluster, Tree
+        if TestCluster.module == "biopython.Cluster":
+            from biopython.Cluster._cluster import treecluster, Tree
         elif TestCluster.module == "Pycluster":
             from Pycluster._cluster import treecluster, Tree
         weight = numpy.array([1.0, 1.0, 1.0, 1.0, 1.0])
@@ -1258,8 +1258,8 @@ class TestCluster(unittest.TestCase):
 
     def test_tree_arguments(self):
         # Test if incorrect arguments are caught by the C code
-        if TestCluster.module == "Bio.Cluster":
-            from Bio.Cluster._cluster import Node, Tree
+        if TestCluster.module == "biopython.Cluster":
+            from biopython.Cluster._cluster import Node, Tree
         elif TestCluster.module == "Pycluster":
             from Pycluster._cluster import Node, Tree
 
@@ -1286,8 +1286,8 @@ class TestCluster(unittest.TestCase):
             tree.sort(indices, numpy.zeros(6))
 
     def test_tree(self):
-        if TestCluster.module == "Bio.Cluster":
-            from Bio.Cluster import Node, Tree
+        if TestCluster.module == "biopython.Cluster":
+            from biopython.Cluster import Node, Tree
         elif TestCluster.module == "Pycluster":
             from Pycluster import Node, Tree
 
@@ -1332,8 +1332,8 @@ class TestCluster(unittest.TestCase):
         self.assertAlmostEqual(tree[2].distance, 0.9)
 
     def test_treecluster(self):
-        if TestCluster.module == "Bio.Cluster":
-            from Bio.Cluster import treecluster
+        if TestCluster.module == "biopython.Cluster":
+            from biopython.Cluster import treecluster
         elif TestCluster.module == "Pycluster":
             from Pycluster import treecluster
 
@@ -2210,8 +2210,8 @@ class TestCluster(unittest.TestCase):
 
     def test_somcluster_arguments(self):
         # Test if incorrect arguments are caught by the C code
-        if TestCluster.module == "Bio.Cluster":
-            from Bio.Cluster._cluster import somcluster
+        if TestCluster.module == "biopython.Cluster":
+            from biopython.Cluster._cluster import somcluster
         elif TestCluster.module == "Pycluster":
             from Pycluster._cluster import somcluster
 
@@ -2541,8 +2541,8 @@ class TestCluster(unittest.TestCase):
             )
 
     def test_somcluster(self):
-        if TestCluster.module == "Bio.Cluster":
-            from Bio.Cluster import somcluster
+        if TestCluster.module == "biopython.Cluster":
+            from biopython.Cluster import somcluster
         elif TestCluster.module == "Pycluster":
             from Pycluster import somcluster
 
@@ -2653,8 +2653,8 @@ class TestCluster(unittest.TestCase):
 
     def test_distancematrix_arguments(self):
         # Test if incorrect arguments are caught by the C code
-        if TestCluster.module == "Bio.Cluster":
-            from Bio.Cluster._cluster import distancematrix
+        if TestCluster.module == "biopython.Cluster":
+            from biopython.Cluster._cluster import distancematrix
         elif TestCluster.module == "Pycluster":
             from Pycluster._cluster import distancematrix
 
@@ -2718,8 +2718,8 @@ class TestCluster(unittest.TestCase):
 
     def test_kmedoids_arguments(self):
         # Test if incorrect arguments are caught by the C code
-        if TestCluster.module == "Bio.Cluster":
-            from Bio.Cluster._cluster import distancematrix, kmedoids
+        if TestCluster.module == "biopython.Cluster":
+            from biopython.Cluster._cluster import distancematrix, kmedoids
         elif TestCluster.module == "Pycluster":
             from Pycluster._cluster import distancematrix, kmedoids
 
@@ -2738,8 +2738,8 @@ class TestCluster(unittest.TestCase):
             kmedoids(numpy.zeros((2, 3, 4)), npass=1000)
 
     def test_distancematrix_kmedoids(self):
-        if TestCluster.module == "Bio.Cluster":
-            from Bio.Cluster import distancematrix, kmedoids
+        if TestCluster.module == "biopython.Cluster":
+            from biopython.Cluster import distancematrix, kmedoids
         elif TestCluster.module == "Pycluster":
             from Pycluster import distancematrix, kmedoids
 
@@ -2908,8 +2908,8 @@ class TestCluster(unittest.TestCase):
         self.assertAlmostEqual(matrix[2][1], 21.24428571, places=3)
 
     def test_pca_arguments(self):
-        if TestCluster.module == "Bio.Cluster":
-            from Bio.Cluster._cluster import pca
+        if TestCluster.module == "biopython.Cluster":
+            from biopython.Cluster._cluster import pca
         elif TestCluster.module == "Pycluster":
             from Pycluster._cluster import pca
 
@@ -2984,8 +2984,8 @@ class TestCluster(unittest.TestCase):
             pca(data, columnmean, coordinates, pc, numpy.ones(3, dtype=numpy.int16))
 
     def test_pca(self):
-        if TestCluster.module == "Bio.Cluster":
-            from Bio.Cluster import pca
+        if TestCluster.module == "biopython.Cluster":
+            from biopython.Cluster import pca
         elif TestCluster.module == "Pycluster":
             from Pycluster import pca
 
@@ -3097,6 +3097,6 @@ class TestCluster(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    TestCluster.module = "Bio.Cluster"
+    TestCluster.module = "biopython.Cluster"
     runner = unittest.TextTestRunner(verbosity=2)
     unittest.main(testRunner=runner)

@@ -12,8 +12,8 @@ import os
 import unittest
 import math
 
-from Bio import motifs
-from Bio.Seq import Seq
+from biopython import motifs
+from biopython.Seq import Seq
 
 
 class MotifTestsBasic(unittest.TestCase):
@@ -40,7 +40,7 @@ class MotifTestsBasic(unittest.TestCase):
             os.remove(self.FAout)
 
     def test_alignace_parsing(self):
-        """Test if Bio.motifs can parse AlignAce output files."""
+        """Test if biopython.motifs can parse AlignAce output files."""
         with open("motifs/alignace.out") as handle:
             record = motifs.parse(handle, "AlignAce")
         self.assertEqual(record.version, "AlignACE 4.0 05/13/04")
@@ -426,7 +426,7 @@ class MotifTestsBasic(unittest.TestCase):
         self.assertAlmostEqual(record[15].score, 1.0395)
 
     def test_clusterbuster_parsing_and_output(self):
-        """Test if Bio.motifs can parse and output Cluster Buster PFM files."""
+        """Test if biopython.motifs can parse and output Cluster Buster PFM files."""
         record = motifs.parse(self.CLUSTERBUSTERin, "clusterbuster")
         self.assertEqual(len(record), 3)
         self.assertEqual(record[0].name, "MA0004.1")
@@ -443,19 +443,19 @@ class MotifTestsBasic(unittest.TestCase):
         )
 
     def test_xms_parsing(self):
-        """Test if Bio.motifs can parse and output xms PFM files."""
+        """Test if biopython.motifs can parse and output xms PFM files."""
         record = motifs.parse(self.XMSin, "xms")
         self.assertEqual(len(record), 1)
         self.assertEqual(record[0].name, "Abd-B")
         self.assertEqual(record[0].length, 14)
 
     def test_pfm_parsing(self):
-        """Test if Bio.motifs can parse JASPAR-style pfm files."""
+        """Test if biopython.motifs can parse JASPAR-style pfm files."""
         m = motifs.read(self.PFMin, "pfm")
         self.assertEqual(m.length, 12)
 
     def test_sites_parsing(self):
-        """Test if Bio.motifs can parse JASPAR-style sites files."""
+        """Test if biopython.motifs can parse JASPAR-style sites files."""
         m = motifs.read(self.SITESin, "sites")
         self.assertEqual(m.length, 6)
 
@@ -1514,7 +1514,7 @@ class TestMEME(unittest.TestCase):
         self.assertIsNone(motif.instances)
 
     def test_meme_parser_rna(self):
-        """Test if Bio.motifs can parse MEME output files using RNA."""
+        """Test if biopython.motifs can parse MEME output files using RNA."""
         pass
 
 
@@ -2215,14 +2215,14 @@ class MotifTestPWM(unittest.TestCase):
         self.s = Seq("ACGTGTGCGTAGTGCGT")
 
     def test_simple(self):
-        """Test if Bio.motifs PWM scoring works."""
+        """Test if biopython.motifs PWM scoring works."""
         counts = self.m.counts
         pwm = counts.normalize(pseudocounts=0.25)
         pssm = pwm.log_odds()
         result = pssm.calculate(self.s)
         self.assertEqual(6, len(result))
-        # The fast C-code in Bio/motifs/_pwm.c stores all results as 32-bit
-        # floats; the slower Python code in Bio/motifs/__init__.py uses 64-bit
+        # The fast C-code in biopython/motifs/_pwm.c stores all results as 32-bit
+        # floats; the slower Python code in biopython/motifs/__init__.py uses 64-bit
         # doubles. The C-code and Python code results will therefore not be
         # exactly equal. Test the first 5 decimal places only to avoid either
         # the C-code or the Python code to inadvertently fail this test.
@@ -2234,7 +2234,7 @@ class MotifTestPWM(unittest.TestCase):
         self.assertAlmostEqual(result[5], -25.18009186, places=5)
 
     def test_with_mixed_case(self):
-        """Test if Bio.motifs PWM scoring works with mixed case."""
+        """Test if biopython.motifs PWM scoring works with mixed case."""
         counts = self.m.counts
         pwm = counts.normalize(pseudocounts=0.25)
         pssm = pwm.log_odds()
@@ -2248,7 +2248,7 @@ class MotifTestPWM(unittest.TestCase):
         self.assertAlmostEqual(result[5], -25.18009186, places=5)
 
     def test_with_bad_char(self):
-        """Test if Bio.motifs PWM scoring works with unexpected letters like N."""
+        """Test if biopython.motifs PWM scoring works with unexpected letters like N."""
         counts = self.m.counts
         pwm = counts.normalize(pseudocounts=0.25)
         pssm = pwm.log_odds()

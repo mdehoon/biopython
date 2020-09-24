@@ -4,7 +4,7 @@
 # license. Please see the LICENSE file that should have been included
 # as part of this package.
 
-"""Unit test for Bio.PDB.NACCESS which needs NACCESS tool.
+"""Unit test for biopython.PDB.NACCESS which needs NACCESS tool.
 
 See also test_PDB.py for dependency free NACCESS tests.
 """
@@ -13,9 +13,9 @@ import subprocess
 import unittest
 
 
-from Bio import MissingExternalDependencyError
-from Bio.PDB import PDBParser
-from Bio.PDB.NACCESS import NACCESS
+from biopython import MissingExternalDependencyError
+from biopython.PDB import PDBParser
+from biopython.PDB.NACCESS import NACCESS
 
 # Check if NACCESS is installed
 try:

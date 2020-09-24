@@ -3,15 +3,15 @@
 # This code is part of the Biopython distribution and governed by its
 # license.  Please see the LICENSE file that should have been included
 # as part of this package.
-"""Tests for Bio.SeqIO.FastaIO module."""
+"""Tests for biopython.SeqIO.FastaIO module."""
 
 
 import unittest
 from io import StringIO
 
-from Bio import SeqIO
-from Bio.SeqIO.FastaIO import FastaIterator
-from Bio.SeqIO.FastaIO import SimpleFastaParser, FastaTwoLineParser
+from biopython import SeqIO
+from biopython.SeqIO.FastaIO import FastaIterator
+from biopython.SeqIO.FastaIO import SimpleFastaParser, FastaTwoLineParser
 
 
 def title_to_ids(title):
@@ -87,7 +87,7 @@ class TitleFunctions(unittest.TestCase):
         msg = "Test failure parsing file %s" % filename
         title, seq = read_title_and_seq(filename)  # crude parser
         idn, name, descr = title_to_ids(title)
-        # First check using Bio.SeqIO.FastaIO directly with title function.
+        # First check using biopython.SeqIO.FastaIO directly with title function.
         records = FastaIterator(filename, title2ids=title_to_ids)
         record = next(records)
         with self.assertRaises(StopIteration):
@@ -96,7 +96,7 @@ class TitleFunctions(unittest.TestCase):
         self.assertEqual(record.name, name, msg=msg)
         self.assertEqual(record.description, descr, msg=msg)
         self.assertEqual(str(record), seq, msg=msg)
-        # Now check using Bio.SeqIO (default settings)
+        # Now check using biopython.SeqIO (default settings)
         record = SeqIO.read(filename, "fasta")
         self.assertEqual(record.id, title.split()[0], msg=msg)
         self.assertEqual(record.name, title.split()[0], msg=msg)

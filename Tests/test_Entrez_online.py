@@ -11,10 +11,10 @@ results are parseable. Detailed tests on each Entrez service are not within the
 scope of this file as they are already covered in test_Entrez.py.
 
 """
-from Bio import Entrez
-from Bio import Medline
-from Bio import SeqIO
-from Bio.Seq import Seq
+from biopython import Entrez
+from biopython import Medline
+from biopython import SeqIO
+from biopython.Seq import Seq
 
 import doctest
 import os
@@ -319,7 +319,7 @@ class EntrezOnlineCase(unittest.TestCase):
 
 if __name__ == "__main__":
     # When running test_Entrez.py directly, will also include the
-    # Bio.Entrez doctests.
+    # biopython.Entrez doctests.
     # TODO: Include the doctests via run_tests.py when online.
     unittest_suite = unittest.TestLoader().loadTestsFromName("test_Entrez_online")
     doctest_suite = doctest.DocTestSuite(Entrez)

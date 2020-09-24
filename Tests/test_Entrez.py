@@ -12,8 +12,8 @@
 import unittest
 import warnings
 
-from Bio import Entrez
-from Bio.Entrez import Parser
+from biopython import Entrez
+from biopython.Entrez import Parser
 
 
 # This lets us set the email address to be sent to NCBI Entrez:
@@ -190,11 +190,11 @@ class CustomDirectoryTest(unittest.TestCase):
         # Confirm that the two temp directories are named what we want.
         self.assertEqual(
             handler.local_dtd_dir,
-            os.path.join(handler.directory, "Bio", "Entrez", "DTDs"),
+            os.path.join(handler.directory, "biopython", "Entrez", "DTDs"),
         )
         self.assertEqual(
             handler.local_xsd_dir,
-            os.path.join(handler.directory, "Bio", "Entrez", "XSDs"),
+            os.path.join(handler.directory, "biopython", "Entrez", "XSDs"),
         )
 
         # And that they were created.

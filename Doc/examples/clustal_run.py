@@ -17,9 +17,9 @@ import sys
 import subprocess
 
 # biopython
-from Bio.Align.Applications import ClustalwCommandline
-from Bio import AlignIO
-from Bio.Align import AlignInfo
+from biopython.Align.Applications import ClustalwCommandline
+from biopython import AlignIO
+from biopython.Align import AlignInfo
 
 # create the command line to run clustalw
 # this assumes you've got clustalw somewhere on your path, otherwise

@@ -7,7 +7,7 @@
 
 import unittest
 
-from Bio.SCOP import Astral, Scop
+from biopython.SCOP import Astral, Scop
 
 
 class AstralTests(unittest.TestCase):

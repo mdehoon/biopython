@@ -6,7 +6,7 @@
 
 import unittest
 
-from Bio.Blast.Record import HSP
+from biopython.Blast.Record import HSP
 
 
 class TestHsp(unittest.TestCase):

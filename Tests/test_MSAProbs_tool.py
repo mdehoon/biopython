@@ -9,11 +9,11 @@
 import os
 import sys
 import unittest
-from Bio import AlignIO
-from Bio import MissingExternalDependencyError
-from Bio import SeqIO
-from Bio.Align.Applications import MSAProbsCommandline
-from Bio.Application import ApplicationError
+from biopython import AlignIO
+from biopython import MissingExternalDependencyError
+from biopython import SeqIO
+from biopython.Align.Applications import MSAProbsCommandline
+from biopython.Application import ApplicationError
 from subprocess import getoutput
 
 #################################################################

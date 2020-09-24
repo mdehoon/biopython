@@ -3,7 +3,7 @@
 # license.  Please see the LICENSE file that should have been included
 # as part of this package.
 
-"""Bio.Application related tests for command line application wrappers.
+"""biopython.Application related tests for command line application wrappers.
 
 This is intended to check generic things like argument parsing, and
 stdin/stdout/stderr handling.
@@ -12,7 +12,7 @@ stdin/stdout/stderr handling.
 import os
 import unittest
 
-from Bio.Application import AbstractCommandline, _Argument
+from biopython.Application import AbstractCommandline, _Argument
 
 
 class EchoApp(AbstractCommandline):

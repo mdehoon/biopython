@@ -7,8 +7,8 @@
 import os
 import unittest
 
-from Bio import SeqIO
-from BioSQL import BioSeqDatabase
+from biopython import SeqIO
+from biopython.BioSQL import BioSeqDatabase
 
 # Really do want "import *" to get all the test clases:
 from common_BioSQL import *  # noqa: F403

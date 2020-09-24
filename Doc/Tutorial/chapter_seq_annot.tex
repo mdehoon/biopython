@@ -1,16 +1,16 @@
 \chapter{Sequence annotation objects}
 \label{chapter:seq_annot}
 
-Chapter~\ref{chapter:seq_objects} introduced the sequence classes.  Immediately ``above'' the \verb|Seq| class is the Sequence Record or \verb|SeqRecord| class, defined in the \verb|Bio.SeqRecord| module. This class allows higher level features such as identifiers and features (as \verb|SeqFeature| objects) to be associated with the sequence, and is used throughout the sequence input/output interface \verb|Bio.SeqIO| described fully in Chapter~\ref{chapter:seqio}.
+Chapter~\ref{chapter:seq_objects} introduced the sequence classes.  Immediately ``above'' the \verb|Seq| class is the Sequence Record or \verb|SeqRecord| class, defined in the \verb|biopython.SeqRecord| module. This class allows higher level features such as identifiers and features (as \verb|SeqFeature| objects) to be associated with the sequence, and is used throughout the sequence input/output interface \verb|biopython.SeqIO| described fully in Chapter~\ref{chapter:seqio}.
 
 If you are only going to be working with simple data like FASTA files, you can probably skip this chapter
 for now. If on the other hand you are going to be using richly annotated sequence data, say from GenBank
 or EMBL files, this information is quite important.
 
-While this chapter should cover most things to do with the \verb|SeqRecord| and \verb|SeqFeature| objects in this chapter, you may also want to read the \verb|SeqRecord| wiki page (\url{http://biopython.org/wiki/SeqRecord}), and the built in documentation (also online -- \href{http://biopython.org/docs/\bpversion/api/Bio.SeqRecord.html}{SeqRecord} and \href{http://biopython.org/docs/\bpversion/api/Bio.SeqFeature.html}{SeqFeature}):
+While this chapter should cover most things to do with the \verb|SeqRecord| and \verb|SeqFeature| objects in this chapter, you may also want to read the \verb|SeqRecord| wiki page (\url{http://biopython.org/wiki/SeqRecord}), and the built in documentation (also online -- \href{http://biopython.org/docs/\bpversion/api/biopython.SeqRecord.html}{SeqRecord} and \href{http://biopython.org/docs/\bpversion/api/biopython.SeqFeature.html}{SeqFeature}):
 
 \begin{minted}{pycon}
->>> from Bio.SeqRecord import SeqRecord
+>>> from biopython.SeqRecord import SeqRecord
 >>> help(SeqRecord)
 ...
 \end{minted}
@@ -18,7 +18,7 @@ While this chapter should cover most things to do with the \verb|SeqRecord| and 
 \section{The SeqRecord object}
 \label{sec:SeqRecord}
 
-The \verb|SeqRecord| (Sequence Record) class is defined in the \verb|Bio.SeqRecord| module. This class allows higher level features such as identifiers and features to be associated with a sequence (see Chapter~\ref{chapter:seq_objects}), and is the basic data type for the \verb|Bio.SeqIO| sequence input/output interface (see Chapter~\ref{chapter:seqio}).
+The \verb|SeqRecord| (Sequence Record) class is defined in the \verb|biopython.SeqRecord| module. This class allows higher level features such as identifiers and features to be associated with a sequence (see Chapter~\ref{chapter:seq_objects}), and is the basic data type for the \verb|biopython.SeqIO| sequence input/output interface (see Chapter~\ref{chapter:seqio}).
 
 The \verb|SeqRecord| class itself is quite simple, and offers the following information as attributes:
 
@@ -44,7 +44,7 @@ The \verb|SeqRecord| class itself is quite simple, and offers the following info
 
 Using a \verb|SeqRecord| object is not very complicated, since all of the
 information is presented as attributes of the class. Usually you won't create
-a \verb|SeqRecord| ``by hand'', but instead use \verb|Bio.SeqIO| to read in a
+a \verb|SeqRecord| ``by hand'', but instead use \verb|biopython.SeqIO| to read in a
 sequence file for you (see Chapter~\ref{chapter:seqio} and the examples
 below).  However, creating \verb|SeqRecord| can be quite simple.
 
@@ -54,7 +54,7 @@ To create a \verb|SeqRecord| at a minimum you just need a \verb|Seq| object:
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio.Seq import Seq
+>>> from biopython.Seq import Seq
 >>> simple_seq = Seq("GATC")
 \end{minted}
 
@@ -76,7 +76,7 @@ Including an identifier is very important if you want to output your \verb|SeqRe
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio.Seq import Seq
+>>> from biopython.Seq import Seq
 >>> simple_seq = Seq("GATC", id="AC12345")
 \end{minted}
 
@@ -124,13 +124,13 @@ TGTAACGAACGGTGCAATAGTGATCCACACCCAACGCCTGAAATCAGATCCAGGGGGTAATCTGCTCTCC
 ...
 \end{minted}
 
-Back in Chapter~\ref{chapter:quick_start} you will have seen the function \verb|Bio.SeqIO.parse(...)|
-used to loop over all the records in a file as \verb|SeqRecord| objects. The \verb|Bio.SeqIO| module
+Back in Chapter~\ref{chapter:quick_start} you will have seen the function \verb|biopython.SeqIO.parse(...)|
+used to loop over all the records in a file as \verb|SeqRecord| objects. The \verb|biopython.SeqIO| module
 has a sister function for use on files which contain just one record which we'll use here (see Chapter~\ref{chapter:seqio} for details):
 
 %doctest ../Tests/GenBank
 \begin{minted}[breaklines=true,breaksymbolleft=]{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> record = SeqIO.read("NC_005816.fna", "fasta")
 >>> record
 Seq('TGTAACGAACGGTGCAATAGTGATCCACACCCAACGCCTGAAATCAGATCCAGG...CTG', id='gi|45478711|ref|NC_005816.1|', name='gi|45478711|ref|NC_005816.1|', description='gi|45478711|ref|NC_005816.1| Yersinia pestis biovar Microtus str. 91001 plasmid pPCP1, complete sequence')
@@ -198,11 +198,11 @@ PROJECT     GenomeProject:10638
 ...
 \end{minted}
 
-Again, we'll use \verb|Bio.SeqIO| to read this file in, and the code is almost identical to that for used above for the FASTA file (see Chapter~\ref{chapter:seqio} for details):
+Again, we'll use \verb|biopython.SeqIO| to read this file in, and the code is almost identical to that for used above for the FASTA file (see Chapter~\ref{chapter:seqio} for details):
 
 %doctest ../Tests/GenBank
 \begin{minted}[breaklines=true,breaksymbolleft=]{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> record = SeqIO.read("NC_005816.gb", "genbank")
 >>> record
 Seq('TGTAACGAACGGTGCAATAGTGATCCACACCCAACGCCTGAAATCAGATCCAGG...CTG', id='NC_005816.1', name='NC_005816', description='Yersinia pestis biovar Microtus str. 91001 plasmid pPCP1, complete sequence')
@@ -395,7 +395,7 @@ Here's an example where we create a location with fuzzy end points:
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio import SeqFeature
+>>> from biopython import SeqFeature
 >>> start_pos = SeqFeature.AfterPosition(5)
 >>> end_pos = SeqFeature.BetweenPosition(9, left=8, right=9)
 >>> my_location = SeqFeature.FeatureLocation(start_pos, end_pos)
@@ -486,7 +486,7 @@ check all the features one by one in a loop:
 
 %doctest ../Tests/GenBank
 \begin{minted}{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> my_snp = 4350
 >>> record = SeqIO.read("NC_005816.gb", "genbank")
 >>> for feature in record.features:
@@ -509,8 +509,8 @@ A \verb|SeqFeature| or location object doesn't directly contain a sequence, inst
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio.Seq import Seq
->>> from Bio.SeqFeature import SeqFeature, FeatureLocation
+>>> from biopython.Seq import Seq
+>>> from biopython.SeqFeature import SeqFeature, FeatureLocation
 >>> seq = Seq("ACCGAGACGGCAAAGGCTAGCATAGGTATGAGACTTCCTTCCTGCCAGTGCTGAGGAACTGGGAGCCTAC")
 >>> feature = SeqFeature(FeatureLocation(5, 18), type="gene", strand=-1)
 \end{minted}
@@ -558,7 +558,7 @@ The \verb|SeqRecord| objects can be very complex, but here's a simple example:
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio.Seq import Seq
+>>> from biopython.Seq import Seq
 >>> record1 = Seq("ACGT", id="test1")
 >>> record2 = Seq("ACGT", id="test2")
 \end{minted}
@@ -586,7 +586,7 @@ Section~\ref{sec:seq-comparison}).
 
 \section{References}
 
-Another common annotation related to a sequence is a reference to a journal or other published work dealing with the sequence. We have a fairly simple way of representing a Reference in Biopython -- we have a \verb|Bio.SeqFeature.Reference| class that stores the relevant information about a reference as attributes of an object.
+Another common annotation related to a sequence is a reference to a journal or other published work dealing with the sequence. We have a fairly simple way of representing a Reference in Biopython -- we have a \verb|biopython.SeqFeature.Reference| class that stores the relevant information about a reference as attributes of an object.
 
 The attributes include things that you would expect to see in a reference like \verb|journal|, \verb|title| and \verb|authors|. Additionally, it also can hold the \verb|medline_id| and \verb|pubmed_id| and a \verb|comment| about the reference. These are all accessed simply as attributes of the object.
 
@@ -600,11 +600,11 @@ That's all there is too it. References are meant to be easy to deal with, and ho
 
 The \verb|format()| method of the \verb|SeqRecord| class gives a string
 containing your record formatted using one of the output file formats
-supported by \verb|Bio.SeqIO|, such as FASTA:
+supported by \verb|biopython.SeqIO|, such as FASTA:
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio.Seq import Seq
+>>> from biopython.Seq import Seq
 >>> record = Seq(
 ...         "MMYQQGCFAGGTVLRLAKDLAENNRGARVLVVCSEITAVTFRGPSETHLDSMVGQALFGD"
 ...         "GAGAVIVGSDPDLSVERPLYELVWTGATLLPDSEGAIDGHLREVGLTFHLLKDVPGLISK"
@@ -627,10 +627,10 @@ SSAC
 \end{minted}
 
 This \verb|format| method takes a single mandatory argument, a lower case string which is
-supported by \verb|Bio.SeqIO| as an output format (see Chapter~\ref{chapter:seqio}).
-However, some of the file formats \verb|Bio.SeqIO| can write to \emph{require} more than
+supported by \verb|biopython.SeqIO| as an output format (see Chapter~\ref{chapter:seqio}).
+However, some of the file formats \verb|biopython.SeqIO| can write to \emph{require} more than
 one record (typically the case for multiple sequence alignment formats), and thus won't
-work via this \verb|format()| method.  See also Section~\ref{sec:Bio.SeqIO-and-StringIO}.
+work via this \verb|format()| method.  See also Section~\ref{sec:biopython.SeqIO-and-StringIO}.
 
 \section{Slicing a SeqRecord}
 \label{sec:SeqRecord-slicing}
@@ -644,7 +644,7 @@ For example, taking the same GenBank file used earlier:
 
 %doctest ../Tests/GenBank
 \begin{minted}[breaklines=true,breaksymbolleft=]{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> record = SeqIO.read("NC_005816.gb", "genbank")
 >>> record
 Seq('TGTAACGAACGGTGCAATAGTGATCCACACCCAACGCCTGAAATCAGATCCAGG...CTG', id='NC_005816.1', name='NC_005816', description='Yersinia pestis biovar Microtus str. 91001 plasmid pPCP1, complete sequence')
@@ -787,7 +787,7 @@ FASTQ file. Chapter~\ref{chapter:seqio} will explain the \verb|SeqIO| functions:
 
 %doctest ../Tests/Quality
 \begin{minted}[breaklines=true,breaksymbolleft=]{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> record = next(SeqIO.parse("example.fastq", "fastq"))
 >>> len(record)
 25
@@ -841,7 +841,7 @@ Suppose you have a circular genome:
 
 %doctest ../Tests/GenBank
 \begin{minted}[breaklines=true,breaksymbolleft=]{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> record = SeqIO.read("NC_005816.gb", "genbank")
 >>> record
 Seq('TGTAACGAACGGTGCAATAGTGATCCACACCCAACGCCTGAAATCAGATCCAGG...CTG', id='NC_005816.1', name='NC_005816', description='Yersinia pestis biovar Microtus str. 91001 plasmid pPCP1, complete sequence')
@@ -927,7 +927,7 @@ Consider this example record:
 
 %doctest ../Tests/GenBank
 \begin{minted}[breaklines=true,breaksymbolleft=]{pycon}
->>> from Bio import SeqIO
+>>> from biopython import SeqIO
 >>> record = SeqIO.read("NC_005816.gb", "genbank")
 >>> print("%s %i %i %i %i" % (record.id, len(record), len(record.features), len(record.dbxrefs), len(record.annotations)))
 NC_005816.1 9609 41 1 13

@@ -3,7 +3,7 @@
 # This code is part of the Biopython distribution and governed by its
 # license.  Please see the LICENSE file that should have been included
 # as part of this package.
-"""Unit tests for Bio.AlignIO.MafIO.MafIndex()."""
+"""Unit tests for biopython.AlignIO.MafIO.MafIndex()."""
 
 try:
     import sqlite3
@@ -16,9 +16,9 @@ import unittest
 import tempfile
 import shutil
 
-from Bio.AlignIO.MafIO import MafIndex
-from Bio import SeqIO
-from Bio.Seq import Seq
+from biopython.AlignIO.MafIO import MafIndex
+from biopython import SeqIO
+from biopython.Seq import Seq
 
 from seq_tests_common import compare_record
 

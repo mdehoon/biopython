@@ -6,7 +6,7 @@
 
 import unittest
 import os.path
-from Bio.SwissProt import KeyWList
+from biopython.SwissProt import KeyWList
 
 
 class KeyWListTest(unittest.TestCase):

@@ -11,7 +11,7 @@
 import sys
 import getopt
 
-from Bio import Entrez
+from biopython import Entrez
 
 
 def print_usage():

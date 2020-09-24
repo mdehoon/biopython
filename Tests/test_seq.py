@@ -9,16 +9,16 @@ import copy
 import unittest
 import warnings
 
-from Bio import BiopythonWarning
-from Bio import Seq
-from Bio.Data.IUPACData import (
+from biopython import BiopythonWarning
+from biopython import Seq
+from biopython.Data.IUPACData import (
     ambiguous_dna_complement,
     ambiguous_rna_complement,
     ambiguous_dna_values,
     ambiguous_rna_values,
 )
-from Bio.Data.CodonTable import TranslationError, standard_dna_table
-from Bio.Seq import MutableSeq
+from biopython.Data.CodonTable import TranslationError, standard_dna_table
+from biopython.Seq import MutableSeq
 
 test_seqs = [
     Seq.Seq("TCAAAAGGATGCATCATG"),

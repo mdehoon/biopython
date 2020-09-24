@@ -20,7 +20,7 @@ Usage:
 import sys
 
 # GenBank stuff to test
-from Bio import GenBank
+from biopython import GenBank
 
 
 if len(sys.argv) != 2:

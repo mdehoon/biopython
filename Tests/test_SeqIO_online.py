@@ -6,8 +6,8 @@
 
 """Testing online code for fetching sequences, and parsing them.
 
-Uses Bio.SeqIO to parse files downloaded with Bio.GenBank, Bio.WWW.NCBI,
-Bio.ExPASy etc.
+Uses biopython.SeqIO to parse files downloaded with biopython.GenBank, biopython.WWW.NCBI,
+biopython.ExPASy etc.
 
 Goals:
     - Make sure that all retrieval is working as expected.
@@ -17,13 +17,13 @@ Goals:
 import unittest
 
 # We want to test these:
-from Bio import Entrez
-from Bio import ExPASy
+from biopython import Entrez
+from biopython import ExPASy
 
 # In order to check any sequences returned
-from Bio import SeqIO
-from Bio.SeqUtils.CheckSum import seguid
-from Bio.SwissProt import SwissProtParserError
+from biopython import SeqIO
+from biopython.SeqUtils.CheckSum import seguid
+from biopython.SwissProt import SwissProtParserError
 
 import requires_internet
 
@@ -34,10 +34,10 @@ Entrez.email = "biopython@biopython.org"
 
 
 class ExPASyTests(unittest.TestCase):
-    """Tests for Bio.ExPASy module."""
+    """Tests for biopython.ExPASy module."""
 
     def test_get_sprot_raw(self):
-        """Bio.ExPASy.get_sprot_raw("O23729")."""
+        """biopython.ExPASy.get_sprot_raw("O23729")."""
         identifier = "O23729"
         handle = ExPASy.get_sprot_raw(identifier)
         try:
@@ -93,7 +93,7 @@ for database, formats, entry, length, checksum in [
 
     def funct(d, f, e, l, c):
         method = lambda x: x.simple(d, f, e, l, c)  # noqa: E731
-        method.__doc__ = "Bio.Entrez.efetch(%r, id=%r, ...)" % (d, e)
+        method.__doc__ = "biopython.Entrez.efetch(%r, id=%r, ...)" % (d, e)
         return method
 
     setattr(

@@ -14,7 +14,7 @@ import os
 import tempfile
 from random import shuffle
 
-from Bio import bgzf
+from biopython import bgzf
 
 
 class BgzfTests(unittest.TestCase):
@@ -349,7 +349,7 @@ class BgzfTests(unittest.TestCase):
             h.flush()
             offset1 = h.tell()
             # Note 'offset' and 'offset1' effectively the same, but not equal
-            # due to the flush - 'offet' is at the end of the first BGZF block,
+            # due to the flush - 'offset' is at the end of the first BGZF block,
             # while 'offset1' is at the start of the second BGZF block. In terms
             # of the decompressed data, they point to the same location!
             self.assertNotEqual(offset, offset1)  # New block started

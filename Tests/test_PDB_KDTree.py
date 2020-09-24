@@ -9,7 +9,7 @@
 # Please see the LICENSE file that should have been included as part of this
 # package.
 
-"""Unit tests for those parts of the Bio.PDB module using Bio.PDB.kdtrees."""
+"""Unit tests for those parts of the biopython.PDB module using biopython.PDB.kdtrees."""
 
 import unittest
 
@@ -17,29 +17,29 @@ try:
     from numpy import array, dot, sqrt, argsort
     from numpy.random import random
 except ImportError:
-    from Bio import MissingExternalDependencyError
+    from biopython import MissingExternalDependencyError
 
     raise MissingExternalDependencyError(
-        "Install NumPy if you want to use Bio.PDB."
+        "Install NumPy if you want to use biopython.PDB."
     ) from None
 
 try:
-    from Bio.PDB import kdtrees
+    from biopython.PDB import kdtrees
 except ImportError:
-    from Bio import MissingExternalDependencyError
+    from biopython import MissingExternalDependencyError
 
     raise MissingExternalDependencyError(
-        "C module Bio.PDB.kdtrees not compiled"
+        "C module biopython.PDB.kdtrees not compiled"
     ) from None
 
-from Bio.PDB.NeighborSearch import NeighborSearch
+from biopython.PDB.NeighborSearch import NeighborSearch
 
 
 class NeighborTest(unittest.TestCase):
     def test_neighbor_search(self):
         """NeighborSearch: Find nearby randomly generated coordinates.
 
-        Based on the self test in Bio.PDB.NeighborSearch.
+        Based on the self test in biopython.PDB.NeighborSearch.
         """
 
         class RandomAtom:

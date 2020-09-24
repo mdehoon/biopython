@@ -3,17 +3,17 @@
 # license.  Please see the LICENSE file that should have been included
 # as part of this package.
 
-"""SeqFeature related tests for Seq objects from Bio.SeqIO.
+"""SeqFeature related tests for Seq objects from biopython.SeqIO.
 
 Initially this takes matched tests of GenBank and FASTA files from the NCBI
 and confirms they are consistent using our different parsers.
 """
 import unittest
 
-from Bio import SeqIO
-from Bio.Seq import Seq, MutableSeq
-from Bio.SeqFeature import SeqFeature, FeatureLocation, ExactPosition
-from Bio.SeqFeature import WithinPosition, BeforePosition, AfterPosition, OneOfPosition
+from biopython import SeqIO
+from biopython.Seq import Seq, MutableSeq
+from biopython.SeqFeature import SeqFeature, FeatureLocation, ExactPosition
+from biopython.SeqFeature import WithinPosition, BeforePosition, AfterPosition, OneOfPosition
 
 
 class SeqRecordCreation(unittest.TestCase):

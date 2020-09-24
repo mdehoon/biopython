@@ -15,13 +15,13 @@ import unittest
 import math
 
 # biopython
-from Bio.Seq import Seq
+from biopython.Seq import Seq
 
 
 # stuff we are testing
-from Bio.HMM import MarkovModel
-from Bio.HMM import DynamicProgramming
-from Bio.HMM import Trainer
+from biopython.HMM import MarkovModel
+from biopython.HMM import DynamicProgramming
+from biopython.HMM import Trainer
 
 
 # create some simple alphabets

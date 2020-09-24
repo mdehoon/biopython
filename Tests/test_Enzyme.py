@@ -9,7 +9,7 @@
 import os
 import unittest
 
-from Bio.ExPASy import Enzyme
+from biopython.ExPASy import Enzyme
 from io import StringIO
 
 

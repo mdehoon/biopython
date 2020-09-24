@@ -7,9 +7,9 @@
 import os
 import unittest
 
-from Bio.Seq import Seq
-from Bio import SeqIO
-from Bio import SwissProt
+from biopython.Seq import Seq
+from biopython import SeqIO
+from biopython import SwissProt
 
 
 class TestSwissProt(unittest.TestCase):

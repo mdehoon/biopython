@@ -7,10 +7,10 @@
 
 import unittest
 
-from Bio import CAPS
-from Bio.Restriction import EcoRI, AluI
-from Bio.Seq import Seq, MutableSeq
-from Bio.Align import MultipleSeqAlignment
+from biopython import CAPS
+from biopython.Restriction import EcoRI, AluI
+from biopython.Seq import Seq, MutableSeq
+from biopython.Align import MultipleSeqAlignment
 
 
 def createAlignment(sequences):

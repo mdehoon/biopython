@@ -2,17 +2,17 @@
 # license.  Please see the LICENSE file that should have been included
 # as part of this package.
 
-"""Tests for Array in the Bio.Align.substitution_matrices module."""
+"""Tests for Array in the biopython.Align.substitution_matrices module."""
 
 try:
     import numpy
 
     del numpy
 except ImportError:
-    from Bio import MissingExternalDependencyError
+    from biopython import MissingExternalDependencyError
 
     raise MissingExternalDependencyError(
-        "Install NumPy if you want to use Bio.Align.substitution_matrices."
+        "Install NumPy if you want to use biopython.Align.substitution_matrices."
     ) from None
 
 
@@ -22,9 +22,9 @@ import unittest
 
 
 import numpy
-from Bio import SeqIO
+from biopython import SeqIO
 
-from Bio.Data import IUPACData
+from biopython.Data import IUPACData
 
 nucleotide_alphabet = IUPACData.unambiguous_dna_letters
 protein_alphabet = IUPACData.protein_letters
@@ -32,7 +32,7 @@ protein_alphabet = IUPACData.protein_letters
 
 class Test_basics(unittest.TestCase):
     def test_basics_vector(self):
-        from Bio.Align import substitution_matrices
+        from biopython.Align import substitution_matrices
 
         counts = substitution_matrices.Array("XYZ")
         self.assertEqual(
@@ -63,7 +63,7 @@ Z  5.5
             counts[8]
 
     def test_basics_matrix(self):
-        from Bio.Align import substitution_matrices
+        from biopython.Align import substitution_matrices
 
         counts = substitution_matrices.Array("XYZ", dims=2)
         self.assertEqual(
@@ -110,7 +110,7 @@ Z  0.0
         )
 
     def test_read_write(self):
-        from Bio.Align import substitution_matrices
+        from biopython.Align import substitution_matrices
 
         path = os.path.join("Align", "hg38.chrom.sizes")
         sizes = substitution_matrices.read(path, numpy.int64)
@@ -132,7 +132,7 @@ Z  0.0
         self.assertEqual(lines[4], "chr5 181538259")
 
     def test_nucleotide_freq(self):
-        from Bio.Align import substitution_matrices
+        from biopython.Align import substitution_matrices
 
         counts = Counter()
         path = os.path.join("Align", "ecoli.fa")
@@ -186,7 +186,7 @@ Z  0.0
         self.assertAlmostEqual(frequencies["T"], 0.2025723472668810)
 
     def test_protein_freq(self):
-        from Bio.Align import substitution_matrices
+        from biopython.Align import substitution_matrices
 
         counts = Counter()
         path = os.path.join("Align", "cow.fa")
@@ -276,9 +276,9 @@ class TestScoringMatrices(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
 
-        from Bio import SeqIO
-        from Bio.Align import PairwiseAligner
-        from Bio.Align import substitution_matrices
+        from biopython import SeqIO
+        from biopython.Align import PairwiseAligner
+        from biopython.Align import substitution_matrices
 
         observed = substitution_matrices.Array(alphabet=protein_alphabet, dims=2)
         aligner = PairwiseAligner()
@@ -2381,8 +2381,8 @@ class TestScoringMatrices(unittest.TestCase):
         # Amino acid substitution matrices from protein blocks.
         # Proceedings of the National Academy of Sciences USA 89(2):
         # 10915-10919 (1992).
-        from Bio.Data.IUPACData import protein_letters as alphabet
-        from Bio.Align import substitution_matrices
+        from biopython.Data.IUPACData import protein_letters as alphabet
+        from biopython.Align import substitution_matrices
 
         m = substitution_matrices.load("BLOSUM62")
         self.assertEqual(alphabet, "ACDEFGHIKLMNPQRSTVWY")

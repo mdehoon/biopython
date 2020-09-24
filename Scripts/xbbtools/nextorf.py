@@ -17,9 +17,9 @@ import re
 import sys
 import getopt
 
-from Bio import SeqIO
-from Bio.Seq import Seq
-from Bio.Data import IUPACData, CodonTable
+from biopython import SeqIO
+from biopython.Seq import Seq
+from biopython.Data import IUPACData, CodonTable
 
 
 class MissingTable:

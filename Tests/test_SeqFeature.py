@@ -4,18 +4,18 @@
 # This code is part of the Biopython distribution and governed by its
 # license.  Please see the LICENSE file that should have been included
 # as part of this package.
-"""Tests Bio.SeqFeature."""
+"""Tests biopython.SeqFeature."""
 
 import unittest
 
 from os import path
 
-from Bio import Seq, SeqIO
-from Bio.Data.CodonTable import TranslationError
-from Bio.SeqFeature import FeatureLocation, AfterPosition, BeforePosition
-from Bio.SeqFeature import CompoundLocation, UnknownPosition, SeqFeature
-from Bio.SeqFeature import ExactPosition, WithinPosition, BetweenPosition
-from Bio.SeqFeature import OneOfPosition
+from biopython import Seq, SeqIO
+from biopython.Data.CodonTable import TranslationError
+from biopython.SeqFeature import FeatureLocation, AfterPosition, BeforePosition
+from biopython.SeqFeature import CompoundLocation, UnknownPosition, SeqFeature
+from biopython.SeqFeature import ExactPosition, WithinPosition, BetweenPosition
+from biopython.SeqFeature import OneOfPosition
 
 
 class TestReference(unittest.TestCase):

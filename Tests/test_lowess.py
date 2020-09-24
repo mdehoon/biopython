@@ -7,13 +7,13 @@
 try:
     from numpy import array, median
 except ImportError:
-    from Bio import MissingExternalDependencyError
+    from biopython import MissingExternalDependencyError
 
     raise MissingExternalDependencyError(
-        "Install NumPy if you want to use Bio.Statistics.lowess."
+        "Install NumPy if you want to use biopython.Statistics.lowess."
     ) from None
 
-from Bio.Statistics.lowess import lowess
+from biopython.Statistics.lowess import lowess
 import unittest
 
 

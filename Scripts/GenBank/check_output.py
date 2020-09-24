@@ -20,7 +20,7 @@ import gzip
 from io import StringIO
 
 # biopython
-from Bio import GenBank
+from biopython import GenBank
 
 
 def do_comparison(good_record, test_record):

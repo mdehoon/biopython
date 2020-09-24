@@ -13,7 +13,7 @@ import tempfile
 import unittest
 
 # We want to test this module:
-from Bio.PDB.PDBList import PDBList
+from biopython.PDB.PDBList import PDBList
 
 import requires_internet
 
@@ -24,7 +24,7 @@ class TestPBDListGetList(unittest.TestCase):
     """Test methods responsible for getting lists of entries."""
 
     def test_get_recent_changes(self):
-        """Tests the Bio.PDB.PDBList.get_recent_changes method."""
+        """Tests the biopython.PDB.PDBList.get_recent_changes method."""
         # obsolete_pdb declared to prevent from creating the "obsolete" directory
         pdblist = PDBList(obsolete_pdb="unimportant")
         url = pdblist.pdb_server + "/pub/pdb/data/status/latest/added.pdb"
@@ -32,7 +32,7 @@ class TestPBDListGetList(unittest.TestCase):
         self.assertIsNotNone(entries)
 
     def test_get_all_entries(self):
-        """Tests the Bio.PDB.PDBList.get_all_entries method."""
+        """Tests the biopython.PDB.PDBList.get_all_entries method."""
         # obsolete_pdb declared to prevent from creating the "obsolete" directory
         pdblist = PDBList(obsolete_pdb="unimportant")
         entries = pdblist.get_all_entries()
@@ -41,7 +41,7 @@ class TestPBDListGetList(unittest.TestCase):
         self.assertGreater(len(entries), 100000)
 
     def test_get_all_obsolete(self):
-        """Tests the Bio.PDB.PDBList.get_all_obsolete method."""
+        """Tests the biopython.PDB.PDBList.get_all_obsolete method."""
         # obsolete_pdb declared to prevent from creating the "obsolete" directory
         pdblist = PDBList(obsolete_pdb="unimportant")
         entries = pdblist.get_all_obsolete()

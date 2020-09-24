@@ -5,17 +5,17 @@
 # choice of the "Biopython License Agreement" or the "BSD 3-Clause License".
 # Please see the LICENSE file that should have been included as part of this
 # package.
-"""Tests for the Bio.phenotype module."""
+"""Tests for the biopython.phenotype module."""
 
 try:
     import numpy
 
     del numpy
 except ImportError:
-    from Bio import MissingExternalDependencyError
+    from biopython import MissingExternalDependencyError
 
     raise MissingExternalDependencyError(
-        "Install NumPy if you want to use Bio.phenotype."
+        "Install NumPy if you want to use biopython.phenotype."
     ) from None
 
 import json
@@ -23,13 +23,13 @@ import unittest
 
 from io import StringIO
 
-from Bio import BiopythonExperimentalWarning
+from biopython import BiopythonExperimentalWarning
 
 import warnings
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", BiopythonExperimentalWarning)
-    from Bio import phenotype
+    from biopython import phenotype
 
 # Example plate files
 SMALL_JSON_PLATE = "phenotype/SmallPlate.json"

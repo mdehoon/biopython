@@ -7,7 +7,7 @@
 
 import unittest
 
-from Bio.SCOP import Des
+from biopython.SCOP import Des
 
 
 class DesTests(unittest.TestCase):

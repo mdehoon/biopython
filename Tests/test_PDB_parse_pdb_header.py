@@ -4,7 +4,7 @@
 # Please see the LICENSE file that should have been included as part of this
 # package.
 
-"""Unit tests for PARTS of the parse_pdb_header module of Bio.PDB."""
+"""Unit tests for PARTS of the parse_pdb_header module of biopython.PDB."""
 
 
 import unittest
@@ -12,13 +12,13 @@ import unittest
 try:
     import numpy  # noqa F401
 except ImportError:
-    from Bio import MissingPythonDependencyError
+    from biopython import MissingPythonDependencyError
 
     raise MissingPythonDependencyError(
-        "Install NumPy if you want to use Bio.PDB."
+        "Install NumPy if you want to use biopython.PDB."
     ) from None
 
-from Bio.PDB.parse_pdb_header import parse_pdb_header, _parse_remark_465
+from biopython.PDB.parse_pdb_header import parse_pdb_header, _parse_remark_465
 
 
 class ParseReal(unittest.TestCase):

@@ -15,16 +15,16 @@ from io import StringIO
 # Hide annoying warnings from things like bonds in GenBank features,
 # or PostgreSQL schema rules. TODO - test these warnings are raised!
 import warnings
-from Bio import BiopythonWarning
+from biopython import BiopythonWarning
 
 # local stuff
-from Bio import MissingExternalDependencyError
-from Bio.Seq import Seq, MutableSeq
-from Bio.SeqFeature import SeqFeature, UnknownPosition, ExactPosition
-from Bio import SeqIO
+from biopython import MissingExternalDependencyError
+from biopython.Seq import Seq, MutableSeq
+from biopython.SeqFeature import SeqFeature, UnknownPosition, ExactPosition
+from biopython import SeqIO
 
-from BioSQL import BioSeqDatabase
-from BioSQL import BioSeq
+from biopython.BioSQL import BioSeqDatabase
+from biopython.BioSQL import BioSeq
 
 from seq_tests_common import compare_record, compare_records
 

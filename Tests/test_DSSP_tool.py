@@ -4,7 +4,7 @@
 # license. Please see the LICENSE file that should have been included
 # as part of this package.
 
-"""Unit test for Bio.PDB.DSSP which need the binary tool.
+"""Unit test for biopython.PDB.DSSP which need the binary tool.
 
 See also test_PDB.py for dependency free DSSP tests.
 """
@@ -15,9 +15,9 @@ import subprocess
 import unittest
 
 
-from Bio import MissingExternalDependencyError
-from Bio.PDB import PDBParser, MMCIFParser
-from Bio.PDB import DSSP
+from biopython import MissingExternalDependencyError
+from biopython.PDB import PDBParser, MMCIFParser
+from biopython.PDB import DSSP
 
 # DSSP version, if known, as DSSP <2.2.0 does not support mmcif files
 dssp_version = "0.0.0"

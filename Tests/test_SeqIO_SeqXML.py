@@ -7,8 +7,8 @@
 import unittest
 import sys
 
-from Bio import SeqIO
-from Bio.Seq import Seq
+from biopython import SeqIO
+from biopython.Seq import Seq
 from io import BytesIO
 
 

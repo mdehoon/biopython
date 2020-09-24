@@ -3,7 +3,7 @@
 # choice of the "Biopython License Agreement" or the "BSD 3-Clause License".
 # Please see the LICENSE file that should have been included as part of this
 # package.
-"""Unit tests for the Bio.UniProt.GOA Module.
+"""Unit tests for the biopython.UniProt.GOA Module.
 
 GOA files can be found here ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/
 """
@@ -11,7 +11,7 @@ GOA files can be found here ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/
 import unittest
 import tempfile
 import os
-from Bio.UniProt import GOA
+from biopython.UniProt import GOA
 
 
 class GoaTests(unittest.TestCase):
@@ -110,7 +110,7 @@ class GoaTests(unittest.TestCase):
     def test_selection_writing(self):
         """Test record_has, and writerec.
 
-        Adapted from Bio.UniProt.GOA.py by Iddo Friedberg idoerg@gmail.com.
+        Adapted from biopython.UniProt.GOA.py by Iddo Friedberg idoerg@gmail.com.
         """
         recs = []
         filtered = []

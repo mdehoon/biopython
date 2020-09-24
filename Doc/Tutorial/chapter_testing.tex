@@ -108,23 +108,23 @@ executables are named accordingly: ``python3.7`` for Python 3.7, and so on.
 
 \section{Writing tests}
 
-Let's say you want to write some tests for a module called \verb|Biospam|.
+Let's say you want to write some tests for a module called \verb|biospam|.
 This can be a module you wrote, or an existing module that doesn't have
 any tests yet.  In the examples below, we assume that
-\verb|Biospam| is a module that does simple math.
+\verb|biospam| is a module that does simple math.
 
 Each Biopython test consists of a script containing the test itself, and
 optionally a directory with input files used by the test:
 
 \begin{enumerate}
-  \item \verb|test_Biospam.py| -- The actual test code for your module.
-  \item \verb|Biospam| [optional]-- A directory where any necessary input files
+  \item \verb|test_biospam.py| -- The actual test code for your module.
+  \item \verb|biospam| [optional]-- A directory where any necessary input files
     will be located. If you have any output files that should be manually
     reviewed, output them here (but this is discouraged) to prevent clogging
     up the main Tests directory. In general, use a temporary file/folder.
 \end{enumerate}
 
-Any script with a \verb|test_| prefix in the \verb|Tests| directory will be found and run by \verb|run_tests.py|. Below, we show an example test script \verb|test_Biospam.py|. If you put this script in the Biopython \verb|Tests| directory, then \verb|run_tests.py| will find it and execute the tests contained in it:
+Any script with a \verb|test_| prefix in the \verb|Tests| directory will be found and run by \verb|run_tests.py|. Below, we show an example test script \verb|test_biospam.py|. If you put this script in the Biopython \verb|Tests| directory, then \verb|run_tests.py| will find it and execute the tests contained in it:
 
 \begin{minted}{console}
 $ python run_tests.py
@@ -132,7 +132,7 @@ test_Ace ... ok
 test_AlignIO ... ok
 test_BioSQL ... ok
 test_BioSQL_SeqIO ... ok
-test_Biospam ... ok
+test_biospam ... ok
 test_CAPS ... ok
 test_Clustalw ... ok
 ...
@@ -151,31 +151,31 @@ If you are familiar with the \verb|unittest| system (or something similar
 like the nose test framework), you shouldn't have any trouble.  You may
 find looking at the existing examples within Biopython helpful too.
 
-Here's a minimal \verb|unittest|-style test script for \verb|Biospam|,
+Here's a minimal \verb|unittest|-style test script for \verb|biospam|,
 which you can copy and paste to get started:
 
 \begin{minted}{python}
 import unittest
-from Bio import Biospam
+from biopython import biospam
 
 
 class BiospamTestAddition(unittest.TestCase):
     def test_addition1(self):
-        result = Biospam.addition(2, 3)
+        result = biospam.addition(2, 3)
         self.assertEqual(result, 5)
 
     def test_addition2(self):
-        result = Biospam.addition(9, -1)
+        result = biospam.addition(9, -1)
         self.assertEqual(result, 8)
 
 
 class BiospamTestDivision(unittest.TestCase):
     def test_division1(self):
-        result = Biospam.division(3.0, 2.0)
+        result = biospam.division(3.0, 2.0)
         self.assertAlmostEqual(result, 1.5)
 
     def test_division2(self):
-        result = Biospam.division(10.0, -2.0)
+        result = biospam.division(10.0, -2.0)
         self.assertAlmostEqual(result, -5.0)
 
 
@@ -213,7 +213,7 @@ if __name__ == "__main__":
         If you run this script, then you'll see something like the following:
 
 \begin{minted}{console}
-$ python test_BiospamMyModule.py
+$ python test_biospamMyModule.py
 test_addition1 (__main__.TestAddition) ... ok
 test_addition2 (__main__.TestAddition) ... ok
 test_division1 (__main__.TestDivision) ... ok
@@ -231,30 +231,30 @@ OK
 
 \begin{minted}{python}
 import unittest
-from Bio import Biospam
+from biopython import biospam
 
 
 class BiospamTestAddition(unittest.TestCase):
     def test_addition1(self):
         """An addition test"""
-        result = Biospam.addition(2, 3)
+        result = biospam.addition(2, 3)
         self.assertEqual(result, 5)
 
     def test_addition2(self):
         """A second addition test"""
-        result = Biospam.addition(9, -1)
+        result = biospam.addition(9, -1)
         self.assertEqual(result, 8)
 
 
 class BiospamTestDivision(unittest.TestCase):
     def test_division1(self):
         """Now let's check division"""
-        result = Biospam.division(3.0, 2.0)
+        result = biospam.division(3.0, 2.0)
         self.assertAlmostEqual(result, 1.5)
 
     def test_division2(self):
         """A second division test"""
-        result = Biospam.division(10.0, -2.0)
+        result = biospam.division(10.0, -2.0)
         self.assertAlmostEqual(result, -5.0)
 
 
@@ -266,7 +266,7 @@ if __name__ == "__main__":
         Running the script will now show you:
 
 \begin{minted}{console}
-$ python test_BiospamMyModule.py
+$ python test_biospamMyModule.py
 An addition test ... ok
 A second addition test ... ok
 Now let's check division ... ok
@@ -286,15 +286,15 @@ to look like this:
 
 \begin{minted}{python}
 if __name__ == "__main__":
-    unittest_suite = unittest.TestLoader().loadTestsFromName("test_Biospam")
-    doctest_suite = doctest.DocTestSuite(Biospam)
+    unittest_suite = unittest.TestLoader().loadTestsFromName("test_biospam")
+    doctest_suite = doctest.DocTestSuite(biospam)
     suite = unittest.TestSuite((unittest_suite, doctest_suite))
     runner = unittest.TextTestRunner(sys.stdout, verbosity=2)
     runner.run(suite)
 \end{minted}
 
 This is only relevant if you want to run the docstring tests when you
-execute \verb|python test_Biospam.py| if it has some complex run-time
+execute \verb|python test_biospam.py| if it has some complex run-time
 dependency checking.
 
 In general instead include the docstring tests by adding them to the
@@ -322,24 +322,24 @@ of \verb|run_tests.py| looks as follows:
 # Following modules have historic failures. If you fix one of these
 # please remove here!
 EXCLUDE_DOCTEST_MODULES = [
-    "Bio.PDB",
-    "Bio.PDB.AbstractPropertyMap",
-    "Bio.Phylo.Applications._Fasttree",
-    "Bio.Phylo._io",
-    "Bio.Phylo.TreeConstruction",
-    "Bio.Phylo._utils",
+    "biopython.PDB",
+    "biopython.PDB.AbstractPropertyMap",
+    "biopython.Phylo.Applications._Fasttree",
+    "biopython.Phylo._io",
+    "biopython.Phylo.TreeConstruction",
+    "biopython.Phylo._utils",
 ]
 
 # Exclude modules with online activity
 # They are not excluded by default, use --offline to exclude them
-ONLINE_DOCTEST_MODULES = [ "Bio.Entrez", "Bio.ExPASy", "Bio.TogoWS"]
+ONLINE_DOCTEST_MODULES = [ "biopython.Entrez", "biopython.ExPASy", "biopython.TogoWS"]
 
 # Silently ignore any doctests for modules requiring numpy!
 if numpy is None:
     EXCLUDE_DOCTEST_MODULES.extend(
         [
-            "Bio.Affy.CelFile",
-            "Bio.Cluster",
+            "biopython.Affy.CelFile",
+            "biopython.Cluster",
             # ...
         ]
     )
@@ -352,7 +352,7 @@ conditions and the like would be best left to a dedicated unit test.
 Note that if you want to write doctests involving file parsing, defining
 the file location complicates matters.  Ideally use relative paths assuming
 the code will be run from the \verb|Tests| directory, see the
-\verb|Bio.SeqIO| doctests for an example of this.
+\verb|biopython.SeqIO| doctests for an example of this.
 
 To run the docstring tests only, use
 \begin{minted}{console}
@@ -377,7 +377,7 @@ e.g.
 
 %doctest
 \begin{minted}{pycon}
->>> from Bio.Seq import Seq
+>>> from biopython.Seq import Seq
 >>> s = Seq("ACGT")
 >>> len(s)
 4

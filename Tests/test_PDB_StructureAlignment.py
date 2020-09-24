@@ -7,13 +7,13 @@
 # choice of the "Biopython License Agreement" or the "BSD 3-Clause License".
 # Please see the LICENSE file that should have been included as part of this
 # package.
-"""Unit tests for the Bio.PDB.StructureAlignment module."""
+"""Unit tests for the biopython.PDB.StructureAlignment module."""
 
 import unittest
 
-from Bio.PDB import StructureAlignment
-from Bio.PDB import PDBParser
-from Bio import AlignIO
+from biopython.PDB import StructureAlignment
+from biopython.PDB import PDBParser
+from biopython import AlignIO
 
 
 class StructureAlignTests(unittest.TestCase):

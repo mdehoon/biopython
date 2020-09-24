@@ -11,10 +11,10 @@ import os
 import shutil
 import sys
 import unittest
-from Bio import MissingExternalDependencyError
-from Bio import SeqIO
-from Bio.Application import ApplicationError
-from Bio.motifs.applications import XXmotifCommandline
+from biopython import MissingExternalDependencyError
+from biopython import SeqIO
+from biopython.Application import ApplicationError
+from biopython.motifs.applications import XXmotifCommandline
 
 
 # Try to avoid problems when the OS is in another language

@@ -1,14 +1,14 @@
 # This code is part of the Biopython distribution and governed by its
 # license.  Please see the LICENSE file that should have been included
 # as part of this package.
-"""Unittests for Bio.Align.Applications interface for MAFFT."""
+"""Unittests for biopython.Align.Applications interface for MAFFT."""
 
 import sys
 import os
 import unittest
 import subprocess
-from Bio import MissingExternalDependencyError
-from Bio.Align.Applications import MafftCommandline
+from biopython import MissingExternalDependencyError
+from biopython.Align.Applications import MafftCommandline
 
 # Try to avoid problems when the OS is in another language
 os.environ["LANG"] = "C"
@@ -27,7 +27,7 @@ else:
             mafft_exe = "mafft"
 if not mafft_exe:
     raise MissingExternalDependencyError(
-        "Install MAFFT if you want to use the Bio.Align.Applications wrapper."
+        "Install MAFFT if you want to use the biopython.Align.Applications wrapper."
     )
 
 

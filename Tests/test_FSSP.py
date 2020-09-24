@@ -9,13 +9,13 @@ import os
 import unittest
 import warnings
 
-from Bio import BiopythonDeprecationWarning
+from biopython import BiopythonDeprecationWarning
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", BiopythonDeprecationWarning)
     # modules to be tested
-    from Bio import FSSP
-    from Bio.FSSP import FSSPTools
+    from biopython import FSSP
+    from biopython.FSSP import FSSPTools
 
 
 class TestGeo(unittest.TestCase):

@@ -13,11 +13,11 @@ from io import StringIO
 
 
 import warnings
-from Bio import BiopythonWarning
+from biopython import BiopythonWarning
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", BiopythonWarning)
-    from Bio.SearchIO._legacy import ParserSupport
+    from biopython.SearchIO._legacy import ParserSupport
 
 
 class UndoHandleTests(unittest.TestCase):
