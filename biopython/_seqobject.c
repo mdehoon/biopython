@@ -380,6 +380,120 @@ Seq_dealloc(SeqObject *op)
 }
 
 static PyObject*
+Seq_repr(SeqObject* self)
+{
+    PyObject* result = NULL;
+    PyObject* sequence;
+    PyObject* data = self->data;
+    Py_buffer view;
+    Py_ssize_t n;
+    Py_ssize_t i;
+    PyObject* list;
+    if (PyObject_IsInstance(data, (PyObject*)&UndefinedSeqDataType)) {
+        const UndefinedSeqDataObject* usd = (UndefinedSeqDataObject*)data;
+        const char character = usd->character;
+        n = usd->length;
+        sequence = PyUnicode_FromFormat("%d, character='%c'", n, character);
+    }
+    else if (PyObject_GetBuffer(data, &view, PyBUF_STRIDES | PyBUF_FORMAT) == 0) {
+        const char* s;
+        if (view.ndim != 1 || strcmp(view.format, "B") != 0 || view.strides[0] != 1) {
+            PyErr_SetString(PyExc_ValueError, "unexpected buffer data");
+            PyBuffer_Release(&view);
+            return NULL;
+        }
+        n = view.len;
+        s = view.buf;
+        if (n <= 60) {
+            char buffer[61];
+            PyOS_snprintf(buffer, n+1, "%s", s);
+            sequence = PyUnicode_FromFormat("'%s'", buffer);
+        }
+        else
+            sequence = PyUnicode_FromFormat("'%.54s...%.3s'", s, s + n - 3);
+        PyBuffer_Release(&view);
+    }
+    else if (PySequence_Check(data)) {
+        n = PySequence_Length(data);
+        if (n <= 60) {
+            char buffer[61];
+            PyObject* slice = PySequence_GetSlice(data, 0, n);
+            if (!slice || !PyBytes_Check(slice)) {
+                Py_XDECREF(slice);
+                PyErr_SetString(PyExc_ValueError, "data should return bytes");
+                return NULL;
+            }
+            PyOS_snprintf(buffer, n, "%s", PyBytes_AS_STRING(slice));
+            Py_DECREF(slice);
+            sequence = PyUnicode_FromFormat("'%s'", buffer);
+        }
+        else {
+            PyObject* slice1 = PySequence_GetSlice(data, 0, 54);
+            PyObject* slice2 = PySequence_GetSlice(data, n - 3, n);
+            if (!slice1 || !PyBytes_Check(slice1)
+             || !slice2 || !PyBytes_Check(slice2)) {
+                Py_XDECREF(slice1);
+                Py_XDECREF(slice2);
+                PyErr_SetString(PyExc_ValueError, "data should return bytes");
+                return NULL;
+            }
+            sequence = PyUnicode_FromFormat("'%s...%s'",
+                                            PyBytes_AS_STRING(slice1),
+                                            PyBytes_AS_STRING(slice2));
+            Py_DECREF(slice1);
+            Py_DECREF(slice2);
+        }
+    }
+    else {
+        PyErr_SetString(PyExc_ValueError,
+            "data should support the buffer protocol or the sequence protocol");
+        return NULL;
+    }
+    if (sequence) i = 1; else return NULL;
+    if (self->id) i++;
+    if (self->name) i++;
+    if (self->description) i++;
+    list = PyList_New(i);
+    if (!list) {
+        Py_DECREF(sequence);
+        return NULL;
+    }
+    i = 0;
+    PyList_SET_ITEM(list, i++, sequence);
+    if (self->id) {
+        PyObject* argument = PyUnicode_FromFormat("id='%U'", self->id);
+        if (!argument) goto exit;
+        PyList_SET_ITEM(list, i++, argument);
+    }
+    if (self->name) {
+        PyObject* argument = PyUnicode_FromFormat("name='%U'", self->name);
+        if (!argument) goto exit;
+        PyList_SET_ITEM(list, i++, argument);
+    }
+    if (self->description) {
+        PyObject* argument = PyUnicode_FromFormat("description='%U'", self->description);
+        if (!argument) goto exit;
+        PyList_SET_ITEM(list, i++, argument);
+    }
+    if (i == 1) {
+        result = PyUnicode_FromFormat("%s(%U)", Py_TYPE(self)->tp_name, sequence);
+    }
+    else {
+        PyObject* arguments;
+        PyObject* separator = PyUnicode_FromStringAndSize(", ", 2);
+        if (!separator) goto exit;
+        arguments = PyUnicode_Join(separator, list);
+        Py_DECREF(separator);
+        if (!arguments) goto exit;
+        result = PyUnicode_FromFormat("%s(%U)", Py_TYPE(self)->tp_name, arguments);
+        Py_DECREF(arguments);
+    }
+exit:
+    Py_DECREF(list);
+    return result;
+}
+
+static PyObject*
 Seq_str(SeqObject* self)
 {
     return PyUnicode_FromEncodedObject(self->data, NULL, NULL);
@@ -1626,7 +1740,7 @@ static PyTypeObject SeqType = {
     0,                                          /* tp_getattr */
     0,                                          /* tp_setattr */
     0,                                          /* tp_reserved */
-    0,                                          /* tp_repr */
+    (reprfunc)Seq_repr,                         /* tp_repr */
     0,                                          /* tp_as_number */
     0,                                          /* tp_as_sequence */
     &Seq_as_mapping,                            /* tp_as_mapping */

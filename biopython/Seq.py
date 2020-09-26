@@ -90,7 +90,7 @@ class Seq(_seqobject.Seq):
         You will typically use biopython.SeqIO to read in sequences from files as
         Seq objects.
 
-        However, will often want to create your own Seq objects directly:
+        However, you will often want to create your own Seq objects directly:
 
         >>> from biopython.Seq import Seq
         >>> my_seq = Seq("MKQHKAMIVALIVICITAVVAALVTRKDLCEVHIRTGQTEVAVF")
@@ -108,24 +108,6 @@ class Seq(_seqobject.Seq):
         if letter_annotations is not None:
             letter_annotations = TrackDict(len(data), letter_annotations)
         return super().__new__(cls, data, id=id, name=name, description=description, annotations=annotations, features=features, dbxrefs=dbxrefs, letter_annotations=letter_annotations)
-
-    def __repr__(self):
-        """Return (truncated) representation of the sequence."""
-        if len(self) > 60:
-            # Shows the last three letters as it is often useful to see if
-            # there is a stop codon at the end of a sequence.
-            # Note total length is 54+3+3=60
-            term = f"'{self[:54]!s}...{self[-3:]!s}'"
-        else:
-            term = f"'{self!s}'"
-        terms = [term]
-        if self.id:
-            terms.append(f"id={self.id!r}")
-        if self.name:
-            terms.append(f"name={self.name!r}")
-        if self.description:
-            terms.append(f"description={self.description!r}")
-        return f"{self.__class__.__name__}({', '.join(terms)})"
 
     def __format__(self, format_spec):
         r"""Return the sequence as a string in the specified file format.
@@ -1221,10 +1203,6 @@ class UnknownSeq(Seq):
         self._character = character
         return self
 
-    def __repr__(self):
-        """Return (truncated) representation of the sequence for debugging."""
-        return f"UnknownSeq({len(self)}, character={self._character!r})"
-
     def __getattr__(self, name):
         if name == "defined":
             return False
@@ -1655,16 +1633,6 @@ class MutableSeq(Seq):
         if letter_annotations is not None:
             self.letter_annotations = TrackDict(len(data), letter_annotations)
         return self
-
-    def __repr__(self):
-        """Return (truncated) representation of the sequence for debugging."""
-        if len(self) > 60:
-            # Shows the last three letters as it is often useful to see if
-            # there is a stop codon at the end of a sequence.
-            # Note total length is 54+3+3=60
-            return f"{self.__class__.__name__}('{str(self[:54])}...{str(self[-3:])}')"
-        else:
-            return f"{self.__class__.__name__}('{str(self)}')"
 
     def remove(self, item):
         """Remove a subsequence of a single letter from mutable sequence.
