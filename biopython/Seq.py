@@ -306,6 +306,17 @@ class Seq(_seqobject.Seq):
         # Assume it is a string or a Seq.
         # Note can't transfer any per-letter-annotations
         offset = len(other)
+        from biopython.BioSQL.BioSeq import DBSeq # FIXME
+        if type(self) == DBSeq:
+            return Seq(
+                other + bytes(self).decode(),
+                id=self.id,
+                name=self.name,
+                description=self.description,
+                features=[f._shift(offset) for f in self.features],
+                annotations=self.annotations.copy(),
+                dbxrefs=self.dbxrefs[:],
+            )
         return self.__class__(
             other + bytes(self).decode(),
             id=self.id,
@@ -325,6 +336,9 @@ class Seq(_seqobject.Seq):
         """
         if not isinstance(other, int):
             raise TypeError(f"can't multiply {self.__class__.__name__} by non-int type")
+        from biopython.BioSQL.BioSeq import DBSeq # FIXME
+        if type(self) == DBSeq:
+            return Seq(bytes(self) * other)
         return self.__class__(bytes(self) * other)
 
     def __rmul__(self, other):
@@ -336,6 +350,9 @@ class Seq(_seqobject.Seq):
         """
         if not isinstance(other, int):
             raise TypeError(f"can't multiply {self.__class__.__name__} by non-int type")
+        from biopython.BioSQL.BioSeq import DBSeq # FIXME
+        if type(self) == DBSeq:
+            return Seq(bytes(self) * other)
         return self.__class__(bytes(self) * other)
 
     def count_overlap(self, sub, start=0, end=sys.maxsize):

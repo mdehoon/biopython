@@ -173,14 +173,6 @@ class DBSeq(Seq):
             )
             return Seq(full[:: index.step])
 
-    def __str__(self):
-        """Return the full sequence as a python string."""
-        length = len(self)
-        sequence, self._defined = self._adaptor.get_subseq_as_string(
-            self._primary_id, self.start, self.start + length
-        )
-        return sequence
-
     @property
     def annotations(self):
         if not hasattr(self, "_annotations"):
@@ -223,55 +215,18 @@ class DBSeq(Seq):
     @property
     def defined(self):
         if self._defined is None:
-            seq = self._adaptor.execute_one("""select SUBSTR(seq, 1, 3)
-                  from biosequence where bioentry_id = %s""",
-                  (self._primary_id,))
-            if seq is None:
-                # UnknownSeq
-                self._defined = False
-            else:
-                self._defined = True
+            seqs = self._adaptor.execute_one("""select SUBSTR(seq, 1, 3)
+                   from biosequence where bioentry_id = %s""",
+                   (self._primary_id,))
+            if seqs:
+                assert len(seqs) == 1
+                seq = seqs[0]
+                if seq is None:
+                    # UnknownSeq
+                    self._defined = False
+                else:
+                    self._defined = True
         return self._defined
-
-    def __add__(self, other):
-        """Add another sequence or string to this sequence.
-
-        The sequence is first converted to a Seq object before the addition.
-        The returned object is a Seq object, not a DBSeq object.
-        """
-        return Seq(self) + other
-
-    def __radd__(self, other):
-        """Add another sequence or string to the left.
-
-        The sequence is first converted to a Seq object before the addition.
-        The returned object is a Seq object, not a DBSeq object.
-        """
-        return other + Seq(self)
-
-    def __mul__(self, other):
-        """Multiply sequence by an integer.
-
-        The sequence is first converted to a Seq object before multiplication.
-        The returned object is a Seq object, not a DBSeq object.
-        """
-        return Seq(self) * other
-
-    def __rmul__(self, other):
-        """Multiply integer by a sequence.
-
-        The sequence is first converted to a Seq object before multiplication.
-        The returned object is a Seq object, not a DBSeq object.
-        """
-        return other * Seq(self)
-
-    def __imul__(self, other):
-        """Multiply sequence by integer in-place.
-
-        The sequence is first converted to a Seq object before multiplication.
-        The returned object is a Seq object, not a DBSeq object.
-        """
-        return Seq(self) * other
 
     def _retrieve_alphabet(self):
         adaptor = self._adaptor

@@ -148,7 +148,7 @@ def compare_sequence(old, new):
     assert len(old) == len(new), "%i vs %i" % (len(old), len(new))
     assert str(old) == str(new), "%s vs %s" % (old, new)
 
-    assert old.defined == new.defined
+    assert old.defined == new.defined, "%s vs %s" % (old.defined,new.defined)
 
     ln = len(old)
     s = str(old)

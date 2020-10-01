@@ -42,8 +42,7 @@ static int _get_buffer(PyObject* data, Py_buffer* view) {
             Py_DECREF(data);
         }
     }
-    if (view->ndim != 1
-     || (view->strides && view->strides[0] > 1)
+    if (view->ndim != 1 || view->strides[0] > 1
      || strcmp(view->format, "B") != 0) {
         PyErr_SetString(PyExc_ValueError, "unexpected buffer data");
         PyBuffer_Release(view);
@@ -528,7 +527,20 @@ exit:
 static PyObject*
 Seq_str(SeqObject* self)
 {
-    return PyUnicode_FromEncodedObject(self->data, NULL, NULL);
+    Py_buffer view;
+    PyObject *string;
+    if (_get_buffer(self->data, &view) < 0) return NULL;
+    string = PyUnicode_New(view.len, 127);
+    if (string) {
+        char *s = PyUnicode_DATA(string);
+        const char* t = view.buf;
+        if (view.strides[0] == 0)
+            memset(s, t[0], view.len);
+        else
+            memcpy(s, t, view.len);
+    }
+    PyBuffer_Release(&view);
+    return string;
 }
 
 static PyObject *
@@ -587,6 +599,9 @@ Seq_number_add(PyObject* seq1, PyObject* seq2)
             memcpy(s + length1, view2.buf, length2);
     }
 
+    if (strcmp(type->tp_name, "DBSeq") == 0) { // FIXME
+        type = type->tp_base;
+    }
     object = (SeqObject*)PyType_GenericAlloc(type, 0);
     if (object) object->data = data;
     else Py_DECREF(data);
