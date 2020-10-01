@@ -3,6 +3,57 @@
 #include "Python.h"
 #include "structmember.h"
 
+
+static int _get_buffer(PyObject* data, Py_buffer* view) {
+    view->obj = NULL;
+    if (PyObject_GetBuffer(data, view, PyBUF_STRIDES | PyBUF_FORMAT) < 0) {
+        PyErr_Clear();
+        if (PyUnicode_Check(data)) {
+            if (PyUnicode_READY(data) == -1) return -1;
+            if (PyUnicode_KIND(data) != PyUnicode_1BYTE_KIND) {
+                PyErr_SetString(PyExc_TypeError, "string should be ASCII");
+                return -1;
+            }
+            if (PyBuffer_FillInfo(view, data, PyUnicode_DATA(data),
+                                  PyUnicode_GET_LENGTH(data), 1,
+                                  PyBUF_STRIDES | PyBUF_FORMAT) < 0) return -1;
+        }
+        else {
+            const char* type = Py_TYPE(data)->tp_name;
+            if (PySequence_Check(data)) {
+                data = PySequence_GetSlice(data, 0, PY_SSIZE_T_MAX);
+                if (!data) return -1;
+                if (!PyBytes_Check(data)) {
+                    PyErr_SetString(PyExc_ValueError, "data should return bytes");
+                    Py_DECREF(data);
+                    return -1;
+                }
+            }
+            else if ((data = PyObject_Bytes(data)) == NULL) {
+                PyErr_Format(PyExc_TypeError,
+                             "data of type %s do not provide the buffer "
+                             "protocol or the sequence protocol", type);
+                return -1;
+            }
+            if (PyObject_GetBuffer(data, view, PyBUF_STRIDES | PyBUF_FORMAT) < 0) {
+                Py_DECREF(data);
+                return -1;
+            }
+            Py_DECREF(data);
+        }
+    }
+    if (view->ndim != 1
+     || (view->strides && view->strides[0] > 1)
+     || strcmp(view->format, "B") != 0) {
+        PyErr_SetString(PyExc_ValueError, "unexpected buffer data");
+        PyBuffer_Release(view);
+        return -1;
+    }
+    return 0;
+}
+
+static PyTypeObject UndefinedSeqDataType;
+
 typedef struct {
     PyObject_HEAD
     char character;
@@ -297,46 +348,17 @@ Seq_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
             data = PyUnicode_AsASCIIString(data);
             if (!data) return NULL;
         }
-        else if (PyBytes_Check(data)) {
-            Py_INCREF(data);
-        }
-        else if (PyByteArray_Check(data)) {
-            Py_INCREF(data);
-        }
-        else if (PyObject_IsInstance(data, (PyObject*)&UndefinedSeqDataType)) {
-            Py_INCREF(data);
-        }
         else if (PyObject_IsInstance(data, (PyObject*)&SeqType)) {
             data = ((SeqObject*)data)->data;
-            if (PyBytes_Check(data)) {
-                Py_INCREF(data);
-            }
-            else if (PyByteArray_Check(data)) {
+            if (PyByteArray_Check(data)) {
+                /* make a copy for mutable data */
                 data = PyByteArray_FromObject(data);
                 if (!data) return NULL;
             }
-            else {
-                PyErr_Format(PyExc_TypeError,
-                    "found sequence data of type %s "
-                    "(expected None, bytes, or bytearray)",
-                    Py_TYPE(data)->tp_name);
-                return NULL;
-            }
-        }
-        else if (data == Py_None) {
-            Py_INCREF(data);
+            else Py_INCREF(data);
         }
         else {
-            PyObject* bytes = PyBytes_FromObject(data);
-            if (!bytes) {
-                PyErr_Format(PyExc_TypeError,
-                    "data should be a string, bytes, bytearray, Seq object, "
-                    "or any other object that provides characters via the "
-                    "buffer protocol, not %s",
-                    Py_TYPE(data)->tp_name);
-                return NULL;
-            }
-            data = bytes;
+            Py_INCREF(data);
         }
     }
 
@@ -405,9 +427,14 @@ Seq_repr(SeqObject* self)
         n = view.len;
         s = view.buf;
         if (n <= 60) {
-            char buffer[61];
-            PyOS_snprintf(buffer, n+1, "%s", s);
-            sequence = PyUnicode_FromFormat("'%s'", buffer);
+            sequence = PyUnicode_New(n+2, 127);
+            if (sequence) {
+                char* t = PyUnicode_DATA(sequence);
+                t[0] = '\'';
+                memcpy(t+1, s, n);
+                t[n+1] = '\'';
+                t[n+2] = '\0';
+            }
         }
         else
             sequence = PyUnicode_FromFormat("'%.54s...%.3s'", s, s + n - 3);
@@ -416,16 +443,21 @@ Seq_repr(SeqObject* self)
     else if (PySequence_Check(data)) {
         n = PySequence_Length(data);
         if (n <= 60) {
-            char buffer[61];
             PyObject* slice = PySequence_GetSlice(data, 0, n);
             if (!slice || !PyBytes_Check(slice)) {
                 Py_XDECREF(slice);
                 PyErr_SetString(PyExc_ValueError, "data should return bytes");
                 return NULL;
             }
-            PyOS_snprintf(buffer, n, "%s", PyBytes_AS_STRING(slice));
+            sequence = PyUnicode_New(n+2, 127);
+            if (sequence) {
+                char* t = PyUnicode_DATA(sequence);
+                t[0] = '\'';
+                memcpy(t+1, PyBytes_AS_STRING(slice), n);
+                t[n+1] = '\'';
+                t[n+2] = '\0';
+            }
             Py_DECREF(slice);
-            sequence = PyUnicode_FromFormat("'%s'", buffer);
         }
         else {
             PyObject* slice1 = PySequence_GetSlice(data, 0, 54);
@@ -498,6 +530,78 @@ Seq_str(SeqObject* self)
 {
     return PyUnicode_FromEncodedObject(self->data, NULL, NULL);
 }
+
+static PyObject *
+Seq_number_add(PyObject* seq1, PyObject* seq2)
+{
+    char* s1;
+    char* s2;
+    Py_ssize_t length1;
+    Py_ssize_t length2;
+    SeqObject* object = NULL;
+    PyObject* data;
+    PyTypeObject* type = NULL;
+    Py_buffer view1;
+    Py_buffer view2;
+
+    view1.obj = NULL;
+    view2.obj = NULL;
+
+    if (PyObject_IsInstance(seq1, (PyObject*)&SeqType)) {
+        if (_get_buffer(((SeqObject*)seq1)->data, &view1) < 0) goto exit;
+        type = Py_TYPE(seq1);
+    }
+    else
+        if (_get_buffer(seq1, &view1) < 0) goto exit;
+
+    if (PyObject_IsInstance(seq2, (PyObject*)&SeqType)) {
+        if (_get_buffer(((SeqObject*)seq2)->data, &view2) < 0) goto exit;
+        if (!type) type = Py_TYPE(seq2);
+    }
+    else
+        if (_get_buffer(seq2, &view2) < 0) goto exit;
+
+    length1 = view1.len;
+    length2 = view2.len;
+    s1 = view1.buf;
+    s2 = view2.buf;
+
+    if (view1.strides[0] == 0 && view2.strides[0] == 0 && s1[0] == s2[0]) {
+        data = PyType_GenericAlloc(&UndefinedSeqDataType, 0);
+        if (!data) goto exit;
+        ((UndefinedSeqDataObject*)data)->length = length1 + length2;
+        ((UndefinedSeqDataObject*)data)->character = s1[0];
+    }
+    else {
+        char* s;
+        data = PyBytes_FromStringAndSize(NULL, length1 + length2);
+        if (!data) goto exit;
+        s = PyBytes_AS_STRING(data);
+        if (view1.strides && view1.strides[0] == 0)
+            memset(s, ((char*)view1.buf)[0], length1);
+        else
+            memcpy(s, view1.buf, length1);
+        if (view2.strides && view2.strides[0] == 0)
+            memset(s + length1, ((char*)view2.buf)[0], length2);
+        else
+            memcpy(s + length1, view2.buf, length2);
+    }
+
+    object = (SeqObject*)PyType_GenericAlloc(type, 0);
+    if (object) object->data = data;
+    else Py_DECREF(data);
+
+exit:
+    PyBuffer_Release(&view1);
+    PyBuffer_Release(&view2);
+
+    return (PyObject*)object;
+}
+
+static PyNumberMethods Seq_as_number = {
+    (binaryfunc)Seq_number_add,
+    NULL,
+};
 
 static Py_ssize_t
 Seq_mapping_length(SeqObject* self)
@@ -612,30 +716,21 @@ static PyMappingMethods Seq_as_mapping = {
 static int
 Seq_bf_getbuffer(SeqObject *self, Py_buffer *view, int flags)
 {
-    if (self->data == Py_None) { /* FIXME */
-        PyObject* text = PyObject_Str((PyObject*)self);
-        if (!text) return -1;
-        if (PyUnicode_READY(text) == -1) {
-            Py_DECREF(text);
+    int result;
+    PyObject* data = self->data;
+    if (!PyObject_CheckBuffer(data)) {
+        data = PyObject_Bytes(data);
+        if (!data) {
+            PyErr_Format(PyExc_TypeError,
+                         "data of type %s do not provide the buffer "
+                         "protocol or the sequence protocol",
+                         Py_TYPE(self->data)->tp_name);
             return -1;
         }
-        if (PyUnicode_KIND(text) != PyUnicode_1BYTE_KIND) {
-            PyErr_SetString(PyExc_ValueError,
-                "only ASCII strings can be used in comparisons");
-            Py_DECREF(text);
-            return -1;
-        }
-        view->obj = text;
-        view->buf = PyUnicode_1BYTE_DATA(text);
-        view->ndim = 1;
-        view->format = "B";
-        view->len = PyUnicode_GET_LENGTH(text);
-        view->strides = NULL;
-        view->shape = NULL;
-        view->suboffsets = NULL;
-        return 0;
     }
-    return PyObject_GetBuffer(self->data, view, flags);
+    result = PyObject_GetBuffer(data, view, flags);
+    if (data != self->data) Py_DECREF(data);
+    return result;
 }
 
 static PyBufferProcs Seq_as_buffer = {
@@ -849,25 +944,9 @@ Seq_richcompare(SeqObject *self, PyObject *other, int op)
         }
     }
 
-    if (PyObject_GetBuffer((PyObject*)self, &view1, PyBUF_STRIDES | PyBUF_FORMAT) < 0)
+    if ( _get_buffer(self->data, &view1) < 0)
         return NULL;
-    if (PyUnicode_Check(other)) {
-        if (PyUnicode_KIND(other) != PyUnicode_1BYTE_KIND) {
-            PyErr_SetString(PyExc_ValueError,
-                "only ASCII strings can be used in comparisons");
-            PyBuffer_Release(&view1);
-            return NULL;
-        }
-        view2.obj = NULL;
-        view2.buf = PyUnicode_1BYTE_DATA(other);
-        view2.ndim = 1;
-        view2.format = "B";
-        view2.len = PyUnicode_GET_LENGTH(other);
-        view2.strides = NULL;
-        view2.suboffsets = NULL;
-        view2.internal = NULL;
-    }
-    else if (PyObject_GetBuffer(other, &view2, PyBUF_STRIDES | PyBUF_FORMAT) < 0) {
+    if ( _get_buffer(other, &view2) < 0) {
         PyBuffer_Release(&view1);
         return NULL;
     }
@@ -1741,7 +1820,7 @@ static PyTypeObject SeqType = {
     0,                                          /* tp_setattr */
     0,                                          /* tp_reserved */
     (reprfunc)Seq_repr,                         /* tp_repr */
-    0,                                          /* tp_as_number */
+    &Seq_as_number,                             /* tp_as_number */
     0,                                          /* tp_as_sequence */
     &Seq_as_mapping,                            /* tp_as_mapping */
     0,                                          /* tp_hash */

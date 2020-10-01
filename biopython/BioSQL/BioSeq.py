@@ -23,11 +23,46 @@ from biopython.Seq import Seq
 from biopython import SeqFeature
 
 
+class BioSQLData:
+
+    def __init__(self, adaptor, primary_id, start, length):
+        self.adaptor = adaptor
+        self.primary_id = primary_id
+        self.start = start
+        if length is not None:
+            self._length = length
+
+    def __bytes__(self):
+        length = len(self)
+        sequence, self._defined = self.adaptor.get_subseq_as_string(
+            self.primary_id, self.start, self.start + length
+        )
+        return sequence.encode()
+
+    def __len__(self):
+        """Return the length of the sequence."""
+        if not hasattr(self, "_length"):
+            adaptor = self.adaptor
+            primary_id = self.primary_id
+            # The database schema ensures there will be only one matching row
+            seqs = adaptor.execute_and_fetchall(
+                "SELECT length FROM biosequence WHERE bioentry_id = %s", (primary_id,)
+            )
+            if seqs:
+                assert len(seqs) == 1
+                (given_length,) = seqs[0]
+                self._length = int(given_length)
+            else:
+                self._length = None
+        return self._length
+
+
 class DBSeq(Seq):
     """BioSQL equivalent of the Biopython Seq object."""
 
     def __new__(cls, adaptor, primary_id, start=0, length=None):
-        return super().__new__(cls, None)
+        data = BioSQLData(adaptor, primary_id, start, length)
+        return super().__new__(cls, data)
 
     def __init__(self, adaptor, primary_id, start=0, length=None):
         """Create a new DBSeq object referring to a BioSQL entry.

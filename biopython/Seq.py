@@ -103,8 +103,6 @@ class Seq(_seqobject.Seq):
             raise TypeError
         if isinstance(data, str):
             data = bytes(data, "ASCII")
-        elif data is not None:
-            data = bytes(data)
         if letter_annotations is not None:
             letter_annotations = TrackDict(len(data), letter_annotations)
         return super().__new__(cls, data, id=id, name=name, description=description, annotations=annotations, features=features, dbxrefs=dbxrefs, letter_annotations=letter_annotations)
@@ -258,7 +256,7 @@ class Seq(_seqobject.Seq):
         Seq('MELKILV')
         """
         if isinstance(other, str):
-            sequence = self.__class__(bytes(self) + bytes(other, "ASCII"))
+            sequence = super().__add__(other)
             sequence.id = self.id
             sequence.name = self.name
             sequence.description = self.description
@@ -268,7 +266,7 @@ class Seq(_seqobject.Seq):
             return sequence
 
         if isinstance(other, (Seq, MutableSeq)):
-            sequence = self.__class__(bytes(self) + bytes(other))
+            sequence = super().__add__(other)
             sequence.features = self.features[:]
             sequence.dbxrefs = self.dbxrefs[:]
             # Will take all the features and all the db cross refs,
@@ -309,7 +307,7 @@ class Seq(_seqobject.Seq):
         # Note can't transfer any per-letter-annotations
         offset = len(other)
         return self.__class__(
-            other + str(self),
+            other + bytes(self).decode(),
             id=self.id,
             name=self.name,
             description=self.description,
