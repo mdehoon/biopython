@@ -455,6 +455,8 @@ class Seq(_seqobject.Seq):
         """
         if isinstance(sub, str):
             sub = sub.encode("ASCII")
+        else:
+            sub = bytes(sub)
         return bytes(self).find(sub, start, end)
 
     def rfind(self, sub, start=0, end=sys.maxsize):
@@ -481,6 +483,8 @@ class Seq(_seqobject.Seq):
         """
         if isinstance(sub, str):
             sub = sub.encode("ASCII")
+        else:
+            sub = bytes(sub)
         return bytes(self).rfind(sub, start, end)
 
     def index(self, sub, start=0, end=sys.maxsize):
@@ -493,23 +497,21 @@ class Seq(_seqobject.Seq):
         >>> my_rna.index("T")
         Traceback (most recent call last):
                    ...
-        ValueError: substring not found...
+        ValueError: subsection not found...
         """
         if isinstance(sub, str):
             sub = sub.encode("ASCII")
-        try:
-            return bytes(self).index(sub, start, end)
-        except ValueError:
-            raise ValueError("substring not found")
+        else:
+            sub = bytes(sub)
+        return bytes(self).index(sub, start, end)
 
     def rindex(self, sub, start=0, end=sys.maxsize):
         """Like rfind() but raise ValueError when the substring is not found."""
         if isinstance(sub, str):
             sub = sub.encode("ASCII")
-        try:
-            return bytes(self).rindex(sub, start, end)
-        except ValueError:
-            raise ValueError("Seq.rindex(item): item not in list")
+        else:
+            sub = bytes(sub)
+        return bytes(self).rindex(sub, start, end)
 
     def startswith(self, prefix, start=0, end=sys.maxsize):
         """Return True if the Seq starts with the given prefix, False otherwise.
@@ -1194,7 +1196,7 @@ class UnknownSeq(Seq):
     Seq('ACGT????')
     """
 
-    def __new__(cls, data=None, id="", name="", description="",
+    def __new__(cls, length, id="", name="", description="",
                 annotations=None, features=None, dbxrefs=None,
                 letter_annotations=None, character="?"):
         """Create a new UnknownSeq object.
@@ -1204,17 +1206,10 @@ class UnknownSeq(Seq):
          - character - single letter string, default "?". Typically "N"
            for nucleotides, "X" for proteins, and "?" otherwise.
         """
-        if isinstance(data, int):  # FIXME
-            length = data
-            data = _seqobject.UndefinedSeqData(length, character)
-        else:
-            length = len(data)
-            character = data.character
-
         if letter_annotations is not None:
             letter_annotations = TrackDict(length, letter_annotations)
 
-        self = super(Seq, cls).__new__(cls, data=data, id=id, name=name, description=description, annotations=annotations, features=features, dbxrefs=dbxrefs, letter_annotations=letter_annotations)
+        self = super(Seq, cls).__new__(cls, data=length, id=id, name=name, description=description, annotations=annotations, features=features, dbxrefs=dbxrefs, letter_annotations=letter_annotations, character=character)
         self._character = character
         return self
 

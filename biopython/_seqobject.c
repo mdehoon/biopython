@@ -51,152 +51,6 @@ static int _get_buffer(PyObject* data, Py_buffer* view) {
     return 0;
 }
 
-static PyTypeObject UndefinedSeqDataType;
-
-typedef struct {
-    PyObject_HEAD
-    char character;
-    Py_ssize_t length;
-} UndefinedSeqDataObject;
-
-static int
-UndefinedSeqData_bf_getbuffer(UndefinedSeqDataObject *self, Py_buffer *view, int flags)
-{
-   static Py_ssize_t stride = 0;
-   if ((flags & PyBUF_STRIDES) != PyBUF_STRIDES) {
-       /* Need to create a contiguous buffer */
-       int result;
-       PyObject* bytes = PyBytes_FromObject((PyObject*)self);
-       if (!bytes) return -1;
-       result = PyObject_GetBuffer(bytes, view, flags);
-       Py_DECREF(bytes);
-       return result;
-   }
-   view->obj = (PyObject*)self;
-   Py_INCREF(self);
-   view->buf = &self->character;
-   view->len = self->length;
-   view->readonly = 1;
-   view->itemsize = 1;
-   if (flags & PyBUF_FORMAT) view->format = "B";
-   else view->format = NULL;
-   view->ndim = 1;
-   view->shape = NULL;
-   if ((flags & PyBUF_ND) == PyBUF_ND)
-       view->shape = &(view->len);
-   view->strides = &stride;
-   view->suboffsets = NULL;
-   view->internal = NULL;
-   return 0;
-}
-
-static PyBufferProcs UndefinedSeqData_as_buffer = {
-    (getbufferproc)UndefinedSeqData_bf_getbuffer,
-    NULL,
-};
-
-static Py_ssize_t
-UndefinedSeqData_mapping_length(UndefinedSeqDataObject* self)
-{
-    return self->length;
-}
-
-static PyMappingMethods UndefinedSeqData_as_mapping = {
-    (lenfunc)UndefinedSeqData_mapping_length,
-    NULL,
-};
-
-static struct PyMemberDef UndefinedSeqData_members[] = {
-    {"character", T_CHAR, offsetof(UndefinedSeqDataObject, character),
-     READONLY, NULL},
-    {NULL},
-};
-
-static PyObject *
-UndefinedSeqData_reduce(UndefinedSeqDataObject *self, PyObject *Py_UNUSED(ignored))
-{
-    return Py_BuildValue("O(ns#)", Py_TYPE(self), self->length, &self->character, 1);
-}
-
-static PyMethodDef UndefinedSeqData_methods[] = {
-    {"__reduce__", (PyCFunction)UndefinedSeqData_reduce, METH_NOARGS, NULL},
-    {NULL}  /* Sentinel */
-};
-
-static UndefinedSeqDataObject *
-UndefinedSeqData_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
-{
-    UndefinedSeqDataObject *object;
-    char* character = NULL;
-    Py_ssize_t length;
-
-    static char *kwlist[] = {"length", "character", NULL};
-
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "n|z", kwlist,
-                                     &length, &character))
-        return NULL;
-
-    if (length < 0) {
-        PyErr_SetString(PyExc_ValueError, "length should be non-negative");
-        return NULL;
-    }
-
-    if (character && strlen(character) != 1) {
-        PyErr_SetString(PyExc_ValueError,
-            "character should be a string of length 1");
-        return NULL;
-    }
-
-    object = (UndefinedSeqDataObject *)type->tp_alloc(type, 0);
-    if (!object) return NULL;
-
-    object->length = length;
-    if (character) object->character = *character;
-    else object->character = '?';
-
-    return object;
-}
-
-static PyTypeObject UndefinedSeqDataType = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-    "UndefinedSeqDataType",                     /* tp_name */
-    sizeof(UndefinedSeqDataObject),             /* tp_basicsize */
-    0,                                          /* tp_itemsize */
-    0,                                          /* tp_dealloc */
-    0,                                          /* tp_print */
-    0,                                          /* tp_getattr */
-    0,                                          /* tp_setattr */
-    0,                                          /* tp_reserved */
-    0,                                          /* tp_repr */
-    0,                                          /* tp_as_number */
-    0,                                          /* tp_as_sequence */
-    &UndefinedSeqData_as_mapping,               /* tp_as_mapping */
-    0,                                          /* tp_hash */
-    0,                                          /* tp_call */
-    0,                                          /* tp_str */
-    0,                                          /* tp_getattro */
-    0,                                          /* tp_setattro */
-    &UndefinedSeqData_as_buffer,                /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT,                         /* tp_flags */
-    0,                                          /* tp_doc */
-    0,                                          /* tp_traverse */
-    0,                                          /* tp_clear */
-    0,                                          /* tp_richcompare */
-    0,                                          /* tp_weaklistoffset */
-    0,                                          /* tp_iter */
-    0,                                          /* tp_iternext */
-    UndefinedSeqData_methods,                   /* tp_methods */
-    UndefinedSeqData_members,                   /* tp_members */
-    0,                                          /* tp_getset */
-    0,                                          /* tp_base */
-    0,                                          /* tp_dict */
-    0,                                          /* tp_descr_get */
-    0,                                          /* tp_descr_set */
-    0,                                          /* tp_dictoffset */
-    0,                                          /* tp_init */
-    0,                                          /* tp_alloc */
-    (newfunc)UndefinedSeqData_new,              /* tp_new */
-};
 
 static PyTypeObject SeqType;
 
@@ -315,6 +169,8 @@ Seq_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
     }
 
     if (PyLong_Check(data)) {
+        Py_buffer *buffer;
+        PyObject* bytes;
         Py_ssize_t length = PyLong_AsSsize_t(data);
         if (length == -1 && PyErr_Occurred()) return NULL;
         if (length < 0) {
@@ -323,19 +179,24 @@ Seq_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
                          "(received %zd)", length);
             return NULL;
         }
-        if (character && strlen(character) != 1) {
-            PyErr_SetString(PyExc_ValueError,
-                "character should be a single letter");
-            return NULL;
-        }
-        data = type->tp_alloc(&UndefinedSeqDataType, 0);
-        if (!data) return NULL;
-        ((UndefinedSeqDataObject*)data)->length = length;
         if (character) {
-            ((UndefinedSeqDataObject*)data)->character = *character;
+            if (strlen(character) != 1) {
+                PyErr_SetString(PyExc_ValueError,
+                    "character should be a single letter");
+                return NULL;
+            }
+            bytes = PyBytes_FromStringAndSize(character, 1);
         }
         else
-            ((UndefinedSeqDataObject*)data)->character = '?';
+            bytes = PyBytes_FromStringAndSize("?", 1);
+        if (!bytes) return NULL;
+        data = PyMemoryView_FromObject(bytes);
+        Py_DECREF(bytes);
+        if (!data) return NULL;
+        buffer = PyMemoryView_GET_BUFFER(data);
+        buffer->len = length;
+        buffer->shape[0] = buffer->len;
+        buffer->strides[0] = 0;
     }
     else {
         if (character != NULL) {
@@ -580,10 +441,16 @@ Seq_number_add(PyObject* seq1, PyObject* seq2)
     s2 = view2.buf;
 
     if (view1.strides[0] == 0 && view2.strides[0] == 0 && s1[0] == s2[0]) {
-        data = PyType_GenericAlloc(&UndefinedSeqDataType, 0);
+        Py_buffer *buffer;
+        PyObject* object = PyBytes_FromStringAndSize(s1, 1);
+        if (!object) goto exit;
+        data = PyMemoryView_FromObject(object);
+        Py_DECREF(object);
         if (!data) goto exit;
-        ((UndefinedSeqDataObject*)data)->length = length1 + length2;
-        ((UndefinedSeqDataObject*)data)->character = s1[0];
+        buffer = PyMemoryView_GET_BUFFER(data);
+        buffer->len = length1 + length2;
+        buffer->shape[0] = buffer->len;
+        buffer->strides[0] = 0;
     }
     else {
         char* s;
@@ -1006,9 +873,31 @@ Seq_reduce(SeqObject *self, PyObject *Py_UNUSED(ignored))
     PyObject* dbxrefs = self->dbxrefs ? self->dbxrefs : Py_None;
     PyObject* letter_annotations = self->letter_annotations ? self->letter_annotations : Py_None;
 
-    object = Py_BuildValue("O(OOOOOOOO)",
-                           Py_TYPE(self), self->data, id, name, description,
-                           annotations, features, dbxrefs, letter_annotations);
+    if (PyMemoryView_Check(self->data)) {
+        const Py_buffer *buffer = PyMemoryView_GET_BUFFER(self->data);
+        const Py_ssize_t length = buffer->len;
+        const char* character;
+        if (buffer->buf == NULL
+           || buffer->obj == NULL || PyBytes_Check(buffer->obj) != 1
+           || buffer->itemsize != 1
+           || buffer->format == NULL || strcmp(buffer->format, "B") != 0
+           || buffer->ndim != 1 || buffer->shape[0] != length
+           || buffer->strides == NULL || buffer->strides[0] != 0
+           || buffer->suboffsets != NULL) {
+            PyErr_SetString(PyExc_ValueError, "data has unexpected buffer");
+            return NULL;
+        }
+        character = buffer->buf;
+        object = Py_BuildValue("O(nOOOOOOOs#)",
+                               Py_TYPE(self), length, id, name,
+                               description, annotations, features, dbxrefs,
+                               letter_annotations, character, 1);
+    }
+    else
+        object = Py_BuildValue("O(OOOOOOOO)",
+                               Py_TYPE(self), self->data, id, name,
+                               description, annotations, features, dbxrefs,
+                               letter_annotations);
 
     if (!self->id) Py_DECREF(id);
     if (!self->name) Py_DECREF(name);
@@ -1554,11 +1443,13 @@ Seq_count(SeqObject *self, PyObject *args)
                                 index_converter, &start,
                                 index_converter, &end)) return NULL;
 
-    if (PyUnicode_Check(sub)) {
-        sub = PyUnicode_AsASCIIString(sub);
+    if (PyBytes_Check(sub) || PyByteArray_Check(sub))
+        Py_INCREF(sub);
+    else {
+        if (PyUnicode_Check(sub)) sub = PyUnicode_AsASCIIString(sub);
+        else sub = PyObject_Bytes(sub);
         if (!sub) return NULL;
     }
-    else Py_INCREF(sub);
 
     if (PyObject_CheckBuffer(data)) {
         Py_buffer view;
@@ -1910,8 +1801,6 @@ PyInit__seqobject(void)
 
     if (PyType_Ready(&SeqType) < 0)
         return NULL;
-    if (PyType_Ready(&UndefinedSeqDataType) < 0)
-        return NULL;
 
     module = PyModule_Create(&moduledef);
     if (module == NULL) return NULL;
@@ -1920,13 +1809,6 @@ PyInit__seqobject(void)
     if (PyModule_AddObject(module, "Seq", (PyObject*) &SeqType) < 0) {
         Py_DECREF(module);
         Py_DECREF(&SeqType);
-        return NULL;
-    }
-
-    Py_INCREF(&UndefinedSeqDataType);
-    if (PyModule_AddObject(module, "UndefinedSeqData", (PyObject*) &UndefinedSeqDataType) < 0) {
-        Py_DECREF(module);
-        Py_DECREF(&UndefinedSeqDataType);
         return NULL;
     }
 
