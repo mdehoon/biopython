@@ -410,22 +410,23 @@ Seq_repr(SeqObject* self)
     Py_ssize_t n;
     Py_ssize_t i;
     PyObject* list;
-    if (PyObject_IsInstance(data, (PyObject*)&UndefinedSeqDataType)) {
-        const UndefinedSeqDataObject* usd = (UndefinedSeqDataObject*)data;
-        const char character = usd->character;
-        n = usd->length;
-        sequence = PyUnicode_FromFormat("%d, character='%c'", n, character);
-    }
-    else if (PyObject_GetBuffer(data, &view, PyBUF_STRIDES | PyBUF_FORMAT) == 0) {
+    if (PyObject_GetBuffer(data, &view, PyBUF_STRIDES | PyBUF_FORMAT) == 0) {
         const char* s;
-        if (view.ndim != 1 || strcmp(view.format, "B") != 0 || view.strides[0] != 1) {
+        if (view.ndim != 1 || strcmp(view.format, "B") != 0) {
             PyErr_SetString(PyExc_ValueError, "unexpected buffer data");
             PyBuffer_Release(&view);
             return NULL;
         }
         n = view.len;
         s = view.buf;
-        if (n <= 60) {
+        if (view.strides[0] == 0) {
+            sequence = PyUnicode_FromFormat("%d, character='%c'", n, s[0]);
+        }
+        else if (view.strides[0] != 1) {
+            PyErr_SetString(PyExc_ValueError, "unexpected buffer data");
+            sequence = NULL;
+        }
+        else if (n <= 60) {
             sequence = PyUnicode_New(n+2, 127);
             if (sequence) {
                 char* t = PyUnicode_DATA(sequence);
@@ -597,11 +598,14 @@ Seq_number_add(PyObject* seq1, PyObject* seq2)
             memset(s + length1, ((char*)view2.buf)[0], length2);
         else
             memcpy(s + length1, view2.buf, length2);
+        if (strcmp(type->tp_name, "UnknownSeq") == 0) { // FIXME
+            type = type->tp_base;
+        }
+        if (strcmp(type->tp_name, "DBSeq") == 0) { // FIXME
+            type = type->tp_base;
+        }
     }
 
-    if (strcmp(type->tp_name, "DBSeq") == 0) { // FIXME
-        type = type->tp_base;
-    }
     object = (SeqObject*)PyType_GenericAlloc(type, 0);
     if (object) object->data = data;
     else Py_DECREF(data);
@@ -1057,9 +1061,17 @@ Seq_complement(SeqObject *self, PyObject *Py_UNUSED(ignored))
     char* s;
     PyObject* data = self->data;
 
-    if (PyObject_IsInstance(data, (PyObject*)&UndefinedSeqDataType)) {
-        Py_INCREF(self);
-        return (PyObject*)self;
+    if (PyObject_CheckBuffer(data)) {
+        Py_buffer view;
+        if (PyObject_GetBuffer(data, &view, PyBUF_STRIDES | PyBUF_FORMAT) == 0) {
+            const Py_ssize_t stride = view.strides[0];
+            PyBuffer_Release(&view);
+            if (stride == 0) {
+                Py_INCREF(self);
+                return (PyObject*)self;
+            }
+        }
+        else PyErr_Clear();
     }
 
     if (PyBytes_Check(data)) {
@@ -1140,9 +1152,17 @@ Seq_rna_complement(SeqObject *self, PyObject *Py_UNUSED(ignored))
     char* s;
     PyObject* data = self->data;
 
-    if (PyObject_IsInstance(data, (PyObject*)&UndefinedSeqDataType)) {
-        Py_INCREF(self);
-        return (PyObject*)self;
+    if (PyObject_CheckBuffer(data)) {
+        Py_buffer view;
+        if (PyObject_GetBuffer(data, &view, PyBUF_STRIDES | PyBUF_FORMAT) == 0) {
+            const Py_ssize_t stride = view.strides[0];
+            PyBuffer_Release(&view);
+            if (stride == 0) {
+                Py_INCREF(self);
+                return (PyObject*)self;
+            }
+        }
+        else PyErr_Clear();
     }
 
     if (PyBytes_Check(data)) {
@@ -1540,51 +1560,57 @@ Seq_count(SeqObject *self, PyObject *args)
     }
     else Py_INCREF(sub);
 
-    if (PyObject_IsInstance(data, (PyObject*)&UndefinedSeqDataType)) {
-       Py_ssize_t length = ((UndefinedSeqDataObject*)data)->length;
-       if (end < 0) end += length;
-       else if (end > length) end = length;
-       if (start < 0) start += length;
-       if (start < 0) start = 0;
-       if (start < end) {
-           char* s;
-           Py_ssize_t i;
-           Py_ssize_t stride;
-           Py_buffer view;
-           char letter = ((UndefinedSeqDataObject*)data)->character;
-           if (PyObject_GetBuffer(sub, &view, PyBUF_STRIDES | PyBUF_FORMAT) < 0)
-               goto exit;
-           s = view.buf;
-           stride = view.strides[0];
-           for (i = 0; i < view.len; i++) {
-               if (s[i*stride] != letter)  {
-                   result = PyLong_FromLong(0);
-                   break;
-               }
-           }
-           if (!result)
-               result = PyLong_FromLong((end-start)/view.len);
-           PyBuffer_Release(&view);
-       }
-       else
-           result = PyLong_FromLong(0);
-    }
-    else {
-        if (!PyBytes_Check(data) && ! PyByteArray_Check(data)) {
-            if (!PySequence_Check(data)) {
-                PyErr_SetString(PyExc_RuntimeError,
-                                "data should support the sequence protocol");
+    if (PyObject_CheckBuffer(data)) {
+        Py_buffer view;
+        if (PyObject_GetBuffer(data, &view, PyBUF_STRIDES | PyBUF_FORMAT) == 0) {
+            Py_ssize_t stride = view.strides[0];
+            const char* s = view.buf;
+            const char letter = *s;
+            Py_ssize_t length = view.len;
+            PyBuffer_Release(&view);
+            if (stride == 0) {
+                if (end < 0) end += length;
+                else if (end > length) end = length;
+                if (start < 0) start += length;
+                if (start < 0) start = 0;
+                if (start < end) {
+                    Py_ssize_t i;
+                    if (PyObject_GetBuffer(sub, &view, PyBUF_STRIDES | PyBUF_FORMAT) < 0)
+                        goto exit;
+                    s = view.buf;
+                    stride = view.strides[0];
+                    for (i = 0; i < view.len; i++) {
+                        if (s[i*stride] != letter)  {
+                            result = PyLong_FromLong(0);
+                            break;
+                        }
+                    }
+                    if (!result)
+                        result = PyLong_FromLong((end-start)/view.len);
+                    PyBuffer_Release(&view);
+                }
+                else
+                    result = PyLong_FromLong(0);
                 goto exit;
             }
-            self->data = PySequence_GetSlice(data, 0, PY_SSIZE_T_MAX);
-            if (!self->data) {
-                self->data = data;
-                goto exit;
-            }
-            Py_DECREF(data);
         }
-        result = PyObject_CallMethod(data, "count", "Onn", sub, start, end);
+        else PyErr_Clear();
     }
+
+    if (!PyBytes_Check(data) && ! PyByteArray_Check(data)) {
+        if (!PySequence_Check(data)) {
+            PyErr_SetString(PyExc_RuntimeError,
+                            "data should support the sequence protocol");
+            goto exit;
+        }
+        self->data = PySequence_GetSlice(data, 0, PY_SSIZE_T_MAX);
+        if (!self->data) {
+            self->data = data;
+            goto exit;
+        }
+        Py_DECREF(data);
+    }
+    result = PyObject_CallMethod(data, "count", "Onn", sub, start, end);
 
 exit:
     Py_DECREF(sub);
