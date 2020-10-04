@@ -29,11 +29,15 @@ static int _get_buffer(PyObject* data, Py_buffer* view) {
                     return -1;
                 }
             }
-            else if ((data = PyObject_Bytes(data)) == NULL) {
-                PyErr_Format(PyExc_TypeError,
-                             "data of type %s do not provide the buffer "
-                             "protocol or the sequence protocol", type);
-                return -1;
+            else {
+                data = PyObject_Bytes(data);
+                if (data == NULL) {
+                    PyErr_Format(PyExc_TypeError,
+                                 "data of type %s do not provide the buffer "
+                                 "protocol or the sequence protocol, and "
+                                 "calling __bytes__ failed", type);
+                    return -1;
+                }
             }
             if (PyObject_GetBuffer(data, view, PyBUF_STRIDES | PyBUF_FORMAT) < 0) {
                 Py_DECREF(data);
@@ -1728,6 +1732,22 @@ Seq_dbxrefs_set(SeqObject *self, PyObject *value, void *closure)
     return 0;
 }
 
+static PyObject *
+Seq_defined_get(SeqObject *self, void *closure)
+{
+    if (PyMemoryView_Check(self->data)) {
+        const Py_buffer *buffer = PyMemoryView_GET_BUFFER(self->data);
+        if (buffer->buf
+           && buffer->obj && PyBytes_Check(buffer->obj) == 1
+           && buffer->itemsize == 1
+           && buffer->format && strcmp(buffer->format, "B") == 0
+           && buffer->ndim == 1
+           && buffer->strides && buffer->strides[0] == 0
+           && buffer->suboffsets == NULL) Py_RETURN_FALSE;
+    }
+    Py_RETURN_TRUE;
+}
+
 static PyGetSetDef Seq_getset[] = {
     {"id", (getter)Seq_id_get, (setter)Seq_id_set, "", NULL},
     {"name", (getter)Seq_name_get, (setter)Seq_name_set, "", NULL},
@@ -1736,6 +1756,7 @@ static PyGetSetDef Seq_getset[] = {
     {"features", (getter)Seq_features_get, (setter)Seq_features_set, "", NULL},
     {"dbxrefs", (getter)Seq_dbxrefs_get, (setter)Seq_dbxrefs_set, "", NULL},
     {"letter_annotations", (getter)Seq_letter_annotations_get, (setter)Seq_letter_annotations_set, "", NULL},
+    {"defined", (getter)Seq_defined_get, NULL, "", NULL},
     {NULL}  /* Sentinel */
 };
 

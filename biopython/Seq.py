@@ -184,8 +184,6 @@ class Seq(_seqobject.Seq):
         if name == "letter_annotations":
             self.letter_annotations = TrackDict(len(self))
             return self.letter_annotations
-        elif name == "defined":
-            return True
         raise AttributeError("'%s' object has no attribute '%s'" % (self.__class__.__name__, name))
 
     def __setattr__(self, name, value):
@@ -1212,11 +1210,6 @@ class UnknownSeq(Seq):
         self = super(Seq, cls).__new__(cls, data=length, id=id, name=name, description=description, annotations=annotations, features=features, dbxrefs=dbxrefs, letter_annotations=letter_annotations, character=character)
         self._character = character
         return self
-
-    def __getattr__(self, name):
-        if name == "defined":
-            return False
-        return super().__getattr__(name)
 
     def __mul__(self, other):
         """Multiply UnknownSeq by integer.
