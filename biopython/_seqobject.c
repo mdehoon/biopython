@@ -488,8 +488,90 @@ exit:
     return (PyObject*)object;
 }
 
+static PyObject *
+Seq_number_multiply(PyObject* arg1, PyObject* arg2)
+{
+    char* s;
+    Py_ssize_t length;
+    Py_ssize_t factor;
+    SeqObject* object = NULL;
+    PyObject* data;
+    PyTypeObject* type = NULL;
+    Py_buffer view;
+
+    view.obj = NULL;
+
+    if (PyObject_IsInstance(arg1, (PyObject*)&SeqType)) {
+        if (!PyLong_Check(arg2)) {
+            PyErr_Format(PyExc_TypeError,
+                         "Cannot multiply sequence by object of type %s",
+                         Py_TYPE(arg2)->tp_name);
+            return NULL;
+        }
+        factor = PyLong_AsLong(arg2);
+        if (_get_buffer(((SeqObject*)arg1)->data, &view) < 0) return NULL;
+        type = Py_TYPE(arg1);
+    }
+
+    else if (PyObject_IsInstance(arg2, (PyObject*)&SeqType)) {
+        if (!PyLong_Check(arg1)) {
+            PyErr_Format(PyExc_TypeError,
+                         "Cannot multiply sequence by object of type %s",
+                         Py_TYPE(arg1)->tp_name);
+            return NULL;
+        }
+        factor = PyLong_AsLong(arg1);
+        if (_get_buffer(((SeqObject*)arg2)->data, &view) < 0) return NULL;
+        type = Py_TYPE(arg2);
+    }
+    else {
+        PyErr_SetString(PyExc_RuntimeError,
+            "Expected at least one Seq object in Seq_number_multiply");
+        return NULL;
+    }
+
+    length = view.len;
+
+    if (view.strides && view.strides[0] == 0) {
+        s = view.buf;
+        Py_buffer *buffer;
+        PyObject* object = PyBytes_FromStringAndSize(s, 1);
+        if (!object) goto exit;
+        data = PyMemoryView_FromObject(object);
+        Py_DECREF(object);
+        if (!data) goto exit;
+        buffer = PyMemoryView_GET_BUFFER(data);
+        buffer->len = length * factor;
+        buffer->shape[0] = buffer->len;
+        buffer->strides[0] = 0;
+    }
+    else {
+        Py_ssize_t i;
+        data = PyBytes_FromStringAndSize(NULL, length * factor);
+        if (!data) goto exit;
+        s = PyBytes_AS_STRING(data);
+        for (i = 0; i < factor; i++, s += length) memcpy(s, view.buf, length);
+        if (strcmp(type->tp_name, "UnknownSeq") == 0) { // FIXME
+            type = type->tp_base;
+        }
+        if (strcmp(type->tp_name, "DBSeq") == 0) { // FIXME
+            type = type->tp_base;
+        }
+    }
+
+    object = (SeqObject*)PyType_GenericAlloc(type, 0);
+    if (object) object->data = data;
+    else Py_DECREF(data);
+
+exit:
+    PyBuffer_Release(&view);
+
+    return (PyObject*)object;
+}
 static PyNumberMethods Seq_as_number = {
     (binaryfunc)Seq_number_add,
+    NULL,
+    (binaryfunc)Seq_number_multiply,
     NULL,
 };
 

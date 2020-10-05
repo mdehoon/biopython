@@ -325,34 +325,6 @@ class Seq(_seqobject.Seq):
             dbxrefs=self.dbxrefs[:],
         )
 
-    def __mul__(self, other):
-        """Multiply Seq by integer.
-
-        >>> from biopython.Seq import Seq
-        >>> Seq('ATG') * 2
-        Seq('ATGATG')
-        """
-        if not isinstance(other, int):
-            raise TypeError(f"can't multiply {self.__class__.__name__} by non-int type")
-        from biopython.BioSQL.BioSeq import DBSeq # FIXME
-        if type(self) == DBSeq:
-            return Seq(bytes(self) * other)
-        return self.__class__(bytes(self) * other)
-
-    def __rmul__(self, other):
-        """Multiply integer by Seq.
-
-        >>> from biopython.Seq import Seq
-        >>> 2 * Seq('ATG')
-        Seq('ATGATG')
-        """
-        if not isinstance(other, int):
-            raise TypeError(f"can't multiply {self.__class__.__name__} by non-int type")
-        from biopython.BioSQL.BioSeq import DBSeq # FIXME
-        if type(self) == DBSeq:
-            return Seq(bytes(self) * other)
-        return self.__class__(bytes(self) * other)
-
     def count_overlap(self, sub, start=0, end=sys.maxsize):
         """Return an overlapping count.
 
@@ -1210,45 +1182,6 @@ class UnknownSeq(Seq):
         self = super(Seq, cls).__new__(cls, data=length, id=id, name=name, description=description, annotations=annotations, features=features, dbxrefs=dbxrefs, letter_annotations=letter_annotations, character=character)
         self._character = character
         return self
-
-    def __mul__(self, other):
-        """Multiply UnknownSeq by integer.
-
-        >>> from biopython.Seq import UnknownSeq
-        >>> UnknownSeq(3) * 2
-        UnknownSeq(6, character='?')
-        >>> UnknownSeq(3, character="N") * 2
-        UnknownSeq(6, character='N')
-        """
-        if not isinstance(other, int):
-            raise TypeError(f"can't multiply {self.__class__.__name__} by non-int type")
-        return self.__class__(len(self) * other, character=self._character)
-
-    def __rmul__(self, other):
-        """Multiply integer by UnknownSeq.
-
-        >>> from biopython.Seq import UnknownSeq
-        >>> 2 * UnknownSeq(3)
-        UnknownSeq(6, character='?')
-        >>> 2 * UnknownSeq(3, character="N")
-        UnknownSeq(6, character='N')
-        """
-        if not isinstance(other, int):
-            raise TypeError(f"can't multiply {self.__class__.__name__} by non-int type")
-        return self.__class__(len(self) * other, character=self._character)
-
-    def __imul__(self, other):
-        """Multiply UnknownSeq in-place.
-
-        >>> from biopython.Seq import UnknownSeq
-        >>> seq = UnknownSeq(3, character="N")
-        >>> seq *= 2
-        >>> seq
-        UnknownSeq(6, character='N')
-        """
-        if not isinstance(other, int):
-            raise TypeError(f"can't multiply {self.__class__.__name__} by non-int type")
-        return self.__class__(len(self) * other, character=self._character)
 
     def __getitem__(self, index):
         """Get a subsequence from the UnknownSeq object.
