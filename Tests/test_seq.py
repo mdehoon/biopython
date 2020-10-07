@@ -885,7 +885,7 @@ class TestTranscription(unittest.TestCase):
         for nucleotide_seq in test_seqs:
             expected = Seq.transcribe(nucleotide_seq)
             self.assertEqual(
-                str(nucleotide_seq).replace("t", "u").replace("T", "U"), str(expected),
+                str(nucleotide_seq).replace("t", "u").replace("T", "U"), str(expected), msg=repr(nucleotide_seq)
             )
 
     def test_transcription_dna_string_into_rna(self):

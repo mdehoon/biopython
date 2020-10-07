@@ -1206,6 +1206,135 @@ Seq_rna_complement(SeqObject *self, PyObject *Py_UNUSED(ignored))
     return data;
 }
 
+PyDoc_STRVAR(Seq_transcribe_doc,
+"Transcribe a DNA sequence into RNA.\n"
+"\n"
+"If inplace is False, return a new Seq object with the transcribed\n"
+"sequence.\n"
+"If inplace is True, modify the Seq object in place. A ValueError is\n"
+"raised if inplace is True and the sequence is not mutable.\n"
+"\n"
+">>> from biopython.Seq import Seq\n"
+">>> dna = Seq(\"ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAG\")\n"
+">>> dna.transcribe()\n"
+"Seq('AUGGCCAUUGUAAUGGGCCGCUGAAAGGGUGCCCGAUAG')\n"
+"\n"
+">>> from biopython.Seq import MutableSeq\n"
+">>> dna = MutableSeq(\"ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAG\")\n"
+">>> dna.transcribe()\n"
+"MutableSeq('AUGGCCAUUGUAAUGGGCCGCUGAAAGGGUGCCCGAUAG')\n"
+">>> dna\n"
+"MutableSeq('ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAG')\n"
+">>> sequence = MutableSeq(\"ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAG\")\n"
+">>> sequence.transcribe(inplace=True)  # returns None\n"
+">>> sequence\n"
+"MutableSeq('AUGGCCAUUGUAAUGGGCCGCUGAAAGGGUGCCCGAUAG')\n"
+"\n"
+"Any letters that do not correspond to a DNA nucleotide  will be\n"
+"used unchanged:\n"
+"\n"
+">>> from biopython.Seq import Seq\n"
+">>> sequence = Seq(\"ATGGNNNTTGTAATGGGCCGCUGAAAGGGUGCCCGAUAG\")\n"
+">>> sequence.transcribe()\n"
+"Seq('AUGGNNNUUGUAAUGGGCCGCUGAAAGGGUGCCCGAUAG')\n"
+"\n"
+"Lower-case letters will remain lower-case:\n"
+"\n"
+">>> from biopython.Seq import Seq\n"
+">>> dna = Seq(\"ACGTNacgtn\")\n"
+">>> dna.transcribe()\n"
+"Seq('ACGUNacgun')\n"
+"\n"
+"As the sequence is not verified to be DNA or RNA, be careful not to\n"
+"call `transcribe` on a protein sequence, as the result will be\n"
+"biologically meaningless:\n"
+"\n"
+">>> from biopython.Seq import Seq\n"
+">>> my_protein = Seq(\"MAIVMGRT\")\n"
+">>> my_protein.transcribe()\n"
+"Seq('MAIVMGRU')\n"
+"\n");
+
+static PyObject *
+Seq_transcribe(SeqObject *self, PyObject *args, PyObject *kwds)
+{
+    Py_ssize_t i, n;
+    char* s;
+    PyObject* data = self->data;
+
+    int inplace = 0;
+    static char *kwlist[] = {"inplace", NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "|p", kwlist, &inplace))
+        return NULL;
+
+    if (inplace) {
+        if (PyByteArray_Check(data)) {
+            n = PyByteArray_GET_SIZE(data);
+            s = PyByteArray_AS_STRING(data);
+        }
+        else {
+            PyErr_SetString(PyExc_ValueError, "sequence is immutable");
+            return NULL;
+        }
+    }
+    else {
+        if (PyObject_CheckBuffer(data)) {
+            Py_buffer view;
+            if (PyObject_GetBuffer(data, &view, PyBUF_STRIDES | PyBUF_FORMAT) == 0) {
+                const Py_ssize_t stride = view.strides[0];
+                PyBuffer_Release(&view);
+                if (stride == 0) {
+                    Py_INCREF(self);
+                    return (PyObject*)self;
+                }
+            }
+            else PyErr_Clear();
+        }
+        if (PyBytes_Check(data)) {
+            n = PyBytes_GET_SIZE(data);
+            s = PyBytes_AS_STRING(data);
+            data = PyBytes_FromStringAndSize(NULL, n);
+            if (!data) return NULL;
+            memcpy(PyBytes_AS_STRING(data), s, n);
+            s = PyBytes_AS_STRING(data);
+        }
+        else if (PyByteArray_Check(data)) {
+            /* inplace is False; create a new bytearray */
+            n = PyByteArray_GET_SIZE(data);
+            s = PyByteArray_AS_STRING(data);
+            data = PyByteArray_FromStringAndSize(NULL, n);
+            if (!data) return NULL;
+            memcpy(PyByteArray_AS_STRING(data), s, n);
+            s = PyByteArray_AS_STRING(data);
+        }
+        else {
+            data = PyBytes_FromObject(data);
+            if (!data) return NULL;
+            n = PyBytes_GET_SIZE(data);
+            s = PyBytes_AS_STRING(data);
+        }
+    }
+
+    for (i = 0; i < n; i++) {
+        switch (s[i]) {
+            case 'T': s[i] = 'U'; break;
+            case 't': s[i] = 'u'; break;
+            default: break;
+        }
+    }
+
+    if (inplace) Py_RETURN_NONE;
+
+    else {
+        PyTypeObject* type = Py_TYPE(self);
+        PyObject* object = type->tp_alloc(type, 0);
+        if (!object) Py_DECREF(data);
+        ((SeqObject*)object)->data = data;
+        return object;
+    }
+}
+
 PyDoc_STRVAR(Seq_append_doc,
 "Add a letter to the sequence object.\n"
 "\n"
@@ -1599,6 +1728,7 @@ static PyMethodDef Seq_methods[] = {
     {"reverse", (PyCFunction)Seq_reverse, METH_NOARGS, Seq_reverse_doc},
     {"complement", (PyCFunction)Seq_complement, METH_NOARGS, Seq_complement_doc},
     {"rna_complement", (PyCFunction)Seq_rna_complement, METH_NOARGS, Seq_rna_complement_doc},
+    {"transcribe", (PyCFunction)Seq_transcribe, METH_VARARGS | METH_KEYWORDS, Seq_transcribe_doc},
     {"append", (PyCFunction)Seq_append, METH_O, Seq_append_doc},
     {"extend", (PyCFunction)Seq_extend, METH_O, Seq_extend_doc},
     {"insert", (PyCFunction)Seq_insert, METH_VARARGS, Seq_insert_doc},

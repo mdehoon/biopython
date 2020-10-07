@@ -878,33 +878,6 @@ class Seq(_seqobject.Seq):
         # Use -1 stride/step to reverse the complement
         return self.rna_complement()[::-1]
 
-    def transcribe(self):
-        """Return the RNA sequence from a DNA sequence by creating a new Seq object.
-
-        >>> from biopython.Seq import Seq
-        >>> coding_dna = Seq("ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAG")
-        >>> coding_dna
-        Seq('ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAG')
-        >>> coding_dna.transcribe()
-        Seq('AUGGCCAUUGUAAUGGGCCGCUGAAAGGGUGCCCGAUAG')
-
-        Trying to transcribe an RNA sequence should have no effect.
-        If you have a nucleotide sequence which might be DNA or RNA
-        (or even a mixture), calling the transcribe method will ensure
-        any T becomes U.
-
-        Trying to transcribe a protein sequence will replace any
-        T for Threonine with U for Selenocysteine, which has no
-        biologically plausible rational. Older versions of Biopython
-        would throw an exception.
-
-        >>> from biopython.Seq import Seq
-        >>> my_protein = Seq("MAIVMGRT")
-        >>> my_protein.transcribe()
-        Seq('MAIVMGRU')
-        """
-        return Seq(str(self).replace("T", "U").replace("t", "u"))
-
     def back_transcribe(self):
         """Return the DNA sequence from an RNA sequence by creating a new Seq object.
 
@@ -1300,23 +1273,6 @@ class UnknownSeq(Seq):
     def rna_reverse_complement(self):
         """Return the reverse complement assuming it is RNA."""
         return self
-
-    def transcribe(self):
-        """Return an unknown RNA sequence from an unknown DNA sequence.
-
-        >>> my_dna = UnknownSeq(10, character="N")
-        >>> my_dna
-        UnknownSeq(10, character='N')
-        >>> print(my_dna)
-        NNNNNNNNNN
-        >>> my_rna = my_dna.transcribe()
-        >>> my_rna
-        UnknownSeq(10, character='N')
-        >>> print(my_rna)
-        NNNNNNNNNN
-        """
-        s = Seq(self._character).transcribe()
-        return UnknownSeq(len(self), character=str(s))
 
     def back_transcribe(self):
         """Return an unknown DNA sequence from an unknown RNA sequence.
