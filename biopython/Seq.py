@@ -878,31 +878,6 @@ class Seq(_seqobject.Seq):
         # Use -1 stride/step to reverse the complement
         return self.rna_complement()[::-1]
 
-    def back_transcribe(self):
-        """Return the DNA sequence from an RNA sequence by creating a new Seq object.
-
-        >>> from biopython.Seq import Seq
-        >>> messenger_rna = Seq("AUGGCCAUUGUAAUGGGCCGCUGAAAGGGUGCCCGAUAG")
-        >>> messenger_rna
-        Seq('AUGGCCAUUGUAAUGGGCCGCUGAAAGGGUGCCCGAUAG')
-        >>> messenger_rna.back_transcribe()
-        Seq('ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAG')
-
-        Trying to back-transcribe DNA has no effect, If you have a nucleotide
-        sequence which might be DNA or RNA (or even a mixture), calling the
-        back-transcribe method will ensure any T becomes U.
-
-        Trying to back-transcribe a protein sequence will replace any U for
-        Selenocysteine with T for Threonine, which is biologically meaningless.
-        Older versions of Biopython would raise an exception here:
-
-        >>> from biopython.Seq import Seq
-        >>> my_protein = Seq("MAIVMGRU")
-        >>> my_protein.back_transcribe()
-        Seq('MAIVMGRT')
-        """
-        return Seq(str(self).replace("U", "T").replace("u", "t"))
-
     def translate(
         self, table="Standard", stop_symbol="*", to_stop=False, cds=False, gap="-", id=None, name=None, description=None, dbxrefs=None, annotations=None, features=None, letter_annotations=None
     ):
@@ -1273,23 +1248,6 @@ class UnknownSeq(Seq):
     def rna_reverse_complement(self):
         """Return the reverse complement assuming it is RNA."""
         return self
-
-    def back_transcribe(self):
-        """Return an unknown DNA sequence from an unknown RNA sequence.
-
-        >>> my_rna = UnknownSeq(20, character="N")
-        >>> my_rna
-        UnknownSeq(20, character='N')
-        >>> print(my_rna)
-        NNNNNNNNNNNNNNNNNNNN
-        >>> my_dna = my_rna.back_transcribe()
-        >>> my_dna
-        UnknownSeq(20, character='N')
-        >>> print(my_dna)
-        NNNNNNNNNNNNNNNNNNNN
-        """
-        s = Seq(self._character).back_transcribe()
-        return UnknownSeq(len(self), character=str(s))
 
     def upper(self):
         """Return an upper case copy of the sequence.
