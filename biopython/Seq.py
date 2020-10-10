@@ -651,34 +651,6 @@ class Seq(_seqobject.Seq):
         """
         return Seq(str(self).rstrip(str(chars)))
 
-    def upper(self):
-        """Return an upper case copy of the sequence.
-
-        >>> from biopython.Seq import Seq
-        >>> my_seq = Seq("VHLTPeeK*")
-        >>> my_seq
-        Seq('VHLTPeeK*')
-        >>> my_seq.lower()
-        Seq('vhltpeek*')
-        >>> my_seq.upper()
-        Seq('VHLTPEEK*')
-        """
-        return Seq(str(self).upper())
-
-    def lower(self):
-        """Return a lower case copy of the sequence.
-
-        >>> from biopython.Seq import Seq
-        >>> my_seq = Seq("CGGTACGCTTATGTCACGTAGAAAAAA")
-        >>> my_seq
-        Seq('CGGTACGCTTATGTCACGTAGAAAAAA')
-        >>> my_seq.lower()
-        Seq('cggtacgcttatgtcacgtagaaaaaa')
-
-        See also the upper method.
-        """
-        return Seq(str(self).lower())
-
     def encode(self, encoding="utf-8", errors="strict"):
         """Return an encoded version of the sequence as a bytes object.
 
@@ -1248,42 +1220,6 @@ class UnknownSeq(Seq):
     def rna_reverse_complement(self):
         """Return the reverse complement assuming it is RNA."""
         return self
-
-    def upper(self):
-        """Return an upper case copy of the sequence.
-
-        >>> from biopython.Seq import UnknownSeq
-        >>> my_seq = UnknownSeq(20, character="n")
-        >>> my_seq
-        UnknownSeq(20, character='n')
-        >>> print(my_seq)
-        nnnnnnnnnnnnnnnnnnnn
-        >>> my_seq.upper()
-        UnknownSeq(20, character='N')
-        >>> print(my_seq.upper())
-        NNNNNNNNNNNNNNNNNNNN
-
-        See also the lower method.
-        """
-        return UnknownSeq(len(self), character=self._character.upper())
-
-    def lower(self):
-        """Return a lower case copy of the sequence.
-
-        >>> from biopython.Seq import UnknownSeq
-        >>> my_seq = UnknownSeq(20, character="X")
-        >>> my_seq
-        UnknownSeq(20, character='X')
-        >>> print(my_seq)
-        XXXXXXXXXXXXXXXXXXXX
-        >>> my_seq.lower()
-        UnknownSeq(20, character='x')
-        >>> print(my_seq.lower())
-        xxxxxxxxxxxxxxxxxxxx
-
-        See also the upper method.
-        """
-        return UnknownSeq(len(self), character=self._character.lower())
 
     def translate(
         self, table="Standard", stop_symbol="*", to_stop=False, cds=False, gap="-"

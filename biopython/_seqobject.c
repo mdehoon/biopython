@@ -176,7 +176,6 @@ Seq_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
         Py_buffer *buffer;
         PyObject* bytes;
         Py_ssize_t length = PyLong_AsSsize_t(data);
-        if (length == -1 && PyErr_Occurred()) return NULL;
         if (length < 0) {
             PyErr_Format(PyExc_ValueError,
                          "expected sequence data or a positive integer "
@@ -1023,6 +1022,172 @@ Seq_reverse(SeqObject *self, PyObject *Py_UNUSED(ignored))
     Py_RETURN_NONE;
 }
 
+PyDoc_STRVAR(Seq_upper_doc,
+"Convert the sequence to uppercase.\n"
+"\n"
+"If inplace is False, return a new Seq object with the sequence in upper\n"
+"case.\n"
+"If inplace is True, modify the Seq object in place. A ValueError is\n"
+"raised if inplace is True and the sequence is not mutable.\n"
+"\n"
+"    >>> from biopython.Seq import Seq\n"
+"    >>> my_seq = Seq(\"VHLTPeeK*\")\n"
+"    >>> my_seq\n"
+"    Seq('VHLTPeeK*')\n"
+"    >>> my_seq.lower()\n"
+"    Seq('vhltpeek*')\n"
+"    >>> my_seq.upper()\n"
+"    Seq('VHLTPEEK*')\n"
+"\n");
+
+static PyObject *
+Seq_upper(SeqObject *self, PyObject *args, PyObject *kwds)
+{
+    Py_ssize_t i, n;
+    char *s, *t;
+    PyObject* data = self->data;
+
+    int inplace = 0;
+    static char *kwlist[] = {"inplace", NULL};
+
+    Py_buffer view;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "|p", kwlist, &inplace))
+        return NULL;
+
+    if (PyObject_GetBuffer(data, &view, PyBUF_STRIDES | PyBUF_FORMAT) < 0)
+        return NULL;
+
+    if (inplace) {
+        if (view.readonly) {
+            PyErr_SetString(PyExc_ValueError, "sequence is immutable");
+            return NULL;
+        }
+        t = s = view.buf;
+        n = view.len;
+    }
+    else {
+        s = view.buf;
+        if (view.strides[0] == 0) {
+            PyObject *bytes;
+            Py_buffer *buffer;
+            n = 1;
+            bytes = PyBytes_FromStringAndSize(NULL, n);
+            data = PyMemoryView_FromObject(bytes);
+            Py_DECREF(bytes);
+            if (!data) return NULL;
+            buffer = PyMemoryView_GET_BUFFER(data);
+            buffer->strides[0] = 0;
+            buffer->len = buffer->shape[0] = view.len;
+            t = buffer->buf;
+        }
+        else {
+            n = view.len;
+            data = PyBytes_FromStringAndSize(NULL, n);
+            if (!data) return NULL;
+            t = PyBytes_AS_STRING(data);
+        }
+    }
+
+    for (i = 0; i < n; i++) t[i] = toupper(s[i]);
+
+    PyBuffer_Release(&view);
+
+    if (inplace) Py_RETURN_NONE;
+
+    else {
+        PyTypeObject* type = Py_TYPE(self);
+        PyObject* object = type->tp_alloc(type, 0);
+        if (!object) Py_DECREF(data);
+        ((SeqObject*)object)->data = data;
+        return object;
+    }
+}
+
+
+PyDoc_STRVAR(Seq_lower_doc,
+"Convert the sequence to lowercase.\n"
+"\n"
+"If inplace is False, return a new Seq object with the sequence in lower\n"
+"case.\n"
+"If inplace is True, modify the Seq object in place. A ValueError is\n"
+"raised if inplace is True and the sequence is not mutable.\n"
+"\n"
+"    >>> from biopython.Seq import Seq\n"
+"    >>> my_seq = Seq(\"VHLTPeeK*\")\n"
+"    >>> my_seq\n"
+"    Seq('VHLTPeeK*')\n"
+"    >>> my_seq.lower()\n"
+"    Seq('vhltpeek*')\n"
+"    >>> my_seq.upper()\n"
+"    Seq('VHLTPEEK*')\n"
+"\n");
+
+static PyObject *
+Seq_lower(SeqObject *self, PyObject *args, PyObject *kwds)
+{
+    Py_ssize_t i, n;
+    char *s, *t;
+    PyObject* data = self->data;
+
+    int inplace = 0;
+    static char *kwlist[] = {"inplace", NULL};
+
+    Py_buffer view;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "|p", kwlist, &inplace))
+        return NULL;
+
+    if (PyObject_GetBuffer(data, &view, PyBUF_STRIDES | PyBUF_FORMAT) < 0)
+        return NULL;
+
+    if (inplace) {
+        if (view.readonly) {
+            PyErr_SetString(PyExc_ValueError, "sequence is immutable");
+            return NULL;
+        }
+        t = s = view.buf;
+        n = view.len;
+    }
+    else {
+        s = view.buf;
+        if (view.strides[0] == 0) {
+            PyObject *bytes;
+            Py_buffer *buffer;
+            n = 1;
+            bytes = PyBytes_FromStringAndSize(NULL, n);
+            data = PyMemoryView_FromObject(bytes);
+            Py_DECREF(bytes);
+            if (!data) return NULL;
+            buffer = PyMemoryView_GET_BUFFER(data);
+            buffer->strides[0] = 0;
+            buffer->len = buffer->shape[0] = view.len;
+            t = buffer->buf;
+        }
+        else {
+            n = view.len;
+            data = PyBytes_FromStringAndSize(NULL, n);
+            if (!data) return NULL;
+            t = PyBytes_AS_STRING(data);
+        }
+    }
+
+    for (i = 0; i < n; i++) t[i] = tolower(s[i]);
+
+    PyBuffer_Release(&view);
+
+    if (inplace) Py_RETURN_NONE;
+
+    else {
+        PyTypeObject* type = Py_TYPE(self);
+        PyObject* object = type->tp_alloc(type, 0);
+        if (!object) Py_DECREF(data);
+        ((SeqObject*)object)->data = data;
+        return object;
+    }
+}
+
+
 PyDoc_STRVAR(Seq_complement_doc,
 "Modify the mutable sequence into its RNA complement.\n"
 "\n"
@@ -1854,6 +2019,8 @@ exit:
 
 static PyMethodDef Seq_methods[] = {
     {"__reduce__", (PyCFunction)Seq_reduce, METH_NOARGS, Seq_reduce_doc},
+    {"upper", (PyCFunction)Seq_upper, METH_VARARGS | METH_KEYWORDS, Seq_upper_doc},
+    {"lower", (PyCFunction)Seq_lower, METH_VARARGS | METH_KEYWORDS, Seq_lower_doc},
     {"reverse", (PyCFunction)Seq_reverse, METH_NOARGS, Seq_reverse_doc},
     {"complement", (PyCFunction)Seq_complement, METH_NOARGS, Seq_complement_doc},
     {"rna_complement", (PyCFunction)Seq_rna_complement, METH_NOARGS, Seq_rna_complement_doc},

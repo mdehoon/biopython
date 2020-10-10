@@ -762,7 +762,7 @@ class TestUnknownSeq(unittest.TestCase):
 
     def test_lower(self):
         seq = Seq.UnknownSeq(6, character="N")
-        self.assertEqual("nnnnnn", str(seq.lower()))
+        self.assertEqual("nnnnnn", seq.lower())
 
     def test_translation(self):
         self.assertEqual("XX", str(self.s.translate()))
