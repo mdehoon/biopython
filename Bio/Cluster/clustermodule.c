@@ -1309,7 +1309,7 @@ py_kcluster(PyObject* self, PyObject* args, PyObject* keywords)
     ndata = transpose ? nrows : ncols;
     nitems = transpose ? ncols : nrows;
     if (weight.shape[0] != ndata) {
-        PyErr_Format(PyExc_ValueError,
+        PyErr_Format(PyExc_RuntimeError,
                      "weight has incorrect size %zd (expected %d)",
                      weight.shape[0], ndata);
         goto exit;
@@ -2209,7 +2209,7 @@ py_distancematrix(PyObject* self, PyObject* args, PyObject* keywords)
     }
     ndata = (transpose == 0) ? ncols : nrows;
     if (weight.shape[0] != ndata) {
-        PyErr_Format(PyExc_ValueError,
+        PyErr_Format(PyExc_RuntimeError,
                      "weight has incorrect size %zd (expected %d)",
                      weight.shape[0], ndata);
         goto exit;

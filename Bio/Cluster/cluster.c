@@ -53,7 +53,7 @@ static int TEMP_SWAP_INT;
 
 /* For quicksort, we need to choose a random pivot. Any random function should work. Even bad ones. */
 static int
-cheap_random()
+cheap_random(void)
 {
     const int base = 2 * 100 * 1000 * 1000 + 33;
     static int seed = 0;

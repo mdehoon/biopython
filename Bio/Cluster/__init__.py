@@ -1232,6 +1232,10 @@ def __check_weight(weight, ndata):
         weight = np.require(weight, dtype="d", requirements="C")
     else:
         weight = np.array(weight, dtype="d")
+    if len(weight) != ndata:
+        raise ValueError(
+            "weight has incorrect size %d (expected %d)" % (len(weight), ndata)
+        )
     if np.isnan(weight).any():
         raise ValueError("weight contains NaN values")
     return weight
