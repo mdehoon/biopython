@@ -87,7 +87,7 @@ class Tree(_cluster.Tree):
         """Create clusters by cutting the hierarchical clustering tree.
 
         Divide the elements in a hierarchical clustering result mytree
-        into clusters, and return an array with the number of the cluster
+        into clusters, and return an array with the index of the cluster
         to which each element was assigned.
 
         Keyword arguments:
@@ -812,7 +812,7 @@ class Record:
            matrix). In that case, the k-means algorithm is fully deterministic.
 
         Return values:
-         - clusterid: array containing the number of the cluster to which each
+         - clusterid: array containing the index of the cluster to which each
            gene/sample was assigned in the best k-means clustering
            solution that was found in the npass runs;
          - error: the within-cluster sum of distances for the returned
