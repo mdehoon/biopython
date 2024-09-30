@@ -261,12 +261,12 @@ class FastaIterator(SequenceIterator):
             index = data.find("\n")
             if index >= 0:
                 title += data[:index]
-                data = data[index + 1 :]
                 break
             title += data
             data = self.stream.read(blocksize)
             if data == "":
                 raise ValueError("Unexpected end of data")
+        data = data[index + 1 :]
         blocks = []
         previous = None
         while True:
