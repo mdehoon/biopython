@@ -26,6 +26,8 @@ from .Interfaces import SequenceWriter
 
 import warnings
 
+import time
+
 
 def SimpleFastaParser(handle):
     """Iterate over Fasta records as string tuples.
@@ -145,6 +147,8 @@ class FastaIterator(SequenceIterator):
 
     modes = "t"
 
+    blocksize = 65536
+
     def __init__(
         self,
         source: _TextIOSource,
@@ -194,12 +198,13 @@ class FastaIterator(SequenceIterator):
         if alphabet is not None:
             raise ValueError("The alphabet argument is no longer supported")
         super().__init__(source, fmt="Fasta")
+        blocksize = self.blocksize
         try:
-            line = next(self.stream)
+            data = self.stream.read(blocksize)
         except StopIteration:
-            line = None
+            data = None
         else:
-            if not line.startswith(">"):
+            if not data.startswith(">"):
                 warnings.warn(
                     "Previously, the FASTA parser silently ignored comments at the "
                     "beginning of the FASTA file (before the first sequence).\n"
@@ -229,33 +234,61 @@ class FastaIterator(SequenceIterator):
                     "format, as it explicitly indicates which lines are comments. ",
                     BiopythonDeprecationWarning,
                 )
-                for line in self.stream:
-                    if line.startswith(">"):
+                previous = data[0]
+                while True:
+                    index = data.find(">")
+                    if index >= 0:
+                        if index > 0:
+                            previous = data[index - 1]
+                        if previous == "\n":
+                            data = data[index:]
+                            break
+                    previous = data[-1]
+                    data = self.stream.read(blocksize)
+                    if data == "":
+                        data = None
                         break
-                else:
-                    line = None
-        self._line = line
+        self._data = data
 
     def __next__(self):
-        line = self._line
-        if line is None:
+        data = self._data
+        if data is None:
             raise StopIteration
-        title = line[1:].rstrip()
-        # Main logic
-        # Note, remove trailing whitespace, and any internal spaces
-        # (and any embedded \r which are possible in mangled files
-        # when not opened in universal read lines mode)
-        lines = []
-        for line in self.stream:
-            if line[0] == ">":
+        assert data[0] == ">"
+        blocksize = self.blocksize
+        title = ""
+        while True:
+            index = data.find("\n")
+            if index >= 0:
+                title += data[:index]
+                data = data[index + 1 :]
                 break
-            lines.append(line)
-        else:
-            line = None
-        self._line = line
-        sequence = "".join(lines).encode().translate(None, b" \t\r\n")
+            title += data
+            data = self.stream.read(blocksize)
+            if data == "":
+                raise ValueError("Unexpected end of data")
+        blocks = []
+        previous = None
+        while True:
+            if data == "":
+                data = self.stream.read(blocksize)
+                if data == "":
+                    data = None
+                    break
+            if previous == "\n" and data[0] == ">":
+                break
+            index = data.find("\n>")
+            if index >= 0:
+                blocks.append(data[:index])
+                data = data[index + 1 :]
+                break
+            blocks.append(data)
+            previous = data[-1]
+            data = ""
+        self._data = data
+        sequence = "".join(blocks).encode().translate(None, b" \t\r\n")
         try:
-            first_word = title.split(None, 1)[0]
+            first_word = title[1:].split(None, 1)[0]
         except IndexError:
             assert not title, repr(title)
             # Should we use SeqRecord default for no ID?
