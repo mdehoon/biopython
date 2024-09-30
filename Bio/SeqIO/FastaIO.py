@@ -269,19 +269,20 @@ class FastaIterator(SequenceIterator):
         blocks = []
         previous = None
         while True:
-            data = data[index + 1 :]
-            if data == "":
+            if len(data) <= index + 1:
                 data = self.stream.read(blocksize)
                 if data == "":
                     data = None
                     break
-            if previous == "\n" and data[0] == ">":
+                index = -1
+            if previous == "\n" and data[index + 1] == ">":
                 break
-            index = data.find("\n>")
-            if index >= 0:
-                blocks.append(data[:index])
-                data = data[index + 1 :]
+            next_index = data.find("\n>", index + 1)
+            if next_index >= 0:
+                blocks.append(data[index + 1 : next_index])
+                data = data[next_index + 1 :]
                 break
+            data = data[index + 1 :]
             blocks.append(data)
             previous = data[-1]
             data = ""
