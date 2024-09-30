@@ -266,10 +266,10 @@ class FastaIterator(SequenceIterator):
             data = self.stream.read(blocksize)
             if data == "":
                 raise ValueError("Unexpected end of data")
-        data = data[index + 1 :]
         blocks = []
         previous = None
         while True:
+            data = data[index + 1 :]
             if data == "":
                 data = self.stream.read(blocksize)
                 if data == "":
@@ -285,6 +285,7 @@ class FastaIterator(SequenceIterator):
             blocks.append(data)
             previous = data[-1]
             data = ""
+            index = -1
         self._data = data
         sequence = "".join(blocks).encode().translate(None, b" \t\r\n")
         try:
