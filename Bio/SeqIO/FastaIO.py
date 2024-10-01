@@ -272,26 +272,27 @@ class FastaIterator(SequenceIterator):
             index = 0
         blocks = []
         previous = None
+        index += 1
         while True:
-            if len(data) <= index + 1:
+            if len(data) <= index:
                 data = self.stream.read(blocksize)
                 if data == "":
                     data = None
                     break
-                index = -1
-            if previous == "\n" and data[index + 1] == ">":
-                self._index = index + 1
+                index = 0
+            if previous == "\n" and data[index] == ">":
+                self._index = index
                 break
-            next_index = data.find("\n>", index + 1)
+            next_index = data.find("\n>", index)
             if next_index >= 0:
-                blocks.append(data[index + 1 : next_index])
+                blocks.append(data[index:next_index])
                 self._index = next_index + 1
                 break
-            data = data[index + 1 :]
+            data = data[index:]
             blocks.append(data)
             previous = data[-1]
             data = ""
-            index = -1
+            index = 0
         self._data = data
         sequence = "".join(blocks).encode().translate(None, b" \t\r\n")
         try:
