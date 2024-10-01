@@ -259,6 +259,7 @@ class FastaIterator(SequenceIterator):
         assert data[index] == ">"
         blocksize = self.blocksize
         title = ""
+        index += 1
         while True:
             next_index = data.find("\n", index)
             if next_index >= 0:
@@ -298,7 +299,7 @@ class FastaIterator(SequenceIterator):
         else:
             sequence = "".join(blocks).encode().translate(None, b" \t\r\n")
         try:
-            first_word = title[1:].split(None, 1)[0]
+            first_word = title.split(None, 1)[0]
         except IndexError:
             assert not title, repr(title)
             # Should we use SeqRecord default for no ID?
