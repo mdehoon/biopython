@@ -249,23 +249,27 @@ class FastaIterator(SequenceIterator):
                         data = None
                         break
         self._data = data
+        self._index = 0
 
     def __next__(self):
         data = self._data
         if data is None:
             raise StopIteration
-        assert data[0] == ">"
+        index = self._index
+        assert data[index] == ">"
         blocksize = self.blocksize
         title = ""
         while True:
-            index = data.find("\n")
-            if index >= 0:
-                title += data[:index]
+            next_index = data.find("\n", index)
+            if next_index >= 0:
+                title += data[index:next_index]
+                index = next_index
                 break
-            title += data
+            title += data[index:]
             data = self.stream.read(blocksize)
             if data == "":
                 raise ValueError("Unexpected end of data")
+            index = 0
         blocks = []
         previous = None
         while True:
@@ -276,11 +280,12 @@ class FastaIterator(SequenceIterator):
                     break
                 index = -1
             if previous == "\n" and data[index + 1] == ">":
+                self._index = index + 1
                 break
             next_index = data.find("\n>", index + 1)
             if next_index >= 0:
                 blocks.append(data[index + 1 : next_index])
-                data = data[next_index + 1 :]
+                self._index = next_index + 1
                 break
             data = data[index + 1 :]
             blocks.append(data)
