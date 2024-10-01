@@ -263,7 +263,7 @@ class FastaIterator(SequenceIterator):
             next_index = data.find("\n", index)
             if next_index >= 0:
                 title += data[index:next_index]
-                index = next_index
+                index = next_index + 1
                 break
             title += data[index:]
             data = self.stream.read(blocksize)
@@ -272,7 +272,6 @@ class FastaIterator(SequenceIterator):
             index = 0
         blocks = []
         previous = None
-        index += 1
         while True:
             if len(data) <= index:
                 data = self.stream.read(blocksize)
@@ -294,7 +293,10 @@ class FastaIterator(SequenceIterator):
             data = ""
             index = 0
         self._data = data
-        sequence = "".join(blocks).encode().translate(None, b" \t\r\n")
+        if len(blocks) == 1:
+            sequence = blocks[0].encode().translate(None, b" \t\r\n")
+        else:
+            sequence = "".join(blocks).encode().translate(None, b" \t\r\n")
         try:
             first_word = title[1:].split(None, 1)[0]
         except IndexError:
