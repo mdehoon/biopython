@@ -1282,7 +1282,7 @@ class Alignment:
             nbytes, sequence = parser.feed(line)
             sequences.append(sequence)
         shape = parser.shape
-        coordinates = np.empty(shape, np.int64)
+        coordinates = np.empty(shape, np.intp)
         parser.fill(coordinates)
         return sequences, coordinates
 
@@ -1307,10 +1307,10 @@ class Alignment:
                 pass
             else:
                 if len(lengths) == 0:
-                    coordinates = np.empty((0, 0), dtype=int)
+                    coordinates = np.empty((0, 0), np.intp)
                 elif len(lengths) == 1:
                     length = lengths.pop()
-                    coordinates = np.array([[0, length]] * len(sequences))
+                    coordinates = np.array([[0, length]] * len(sequences), np.intp)
                 else:
                     raise ValueError(
                         "sequences must have the same length if coordinates is None"
@@ -2410,7 +2410,7 @@ class Alignment:
         name_width = 10
         names = []
         seqs = []
-        indices = np.zeros(self.coordinates.shape, int)
+        indices = np.zeros(self.coordinates.shape, np.intp)
         for i, (seq, positions, row) in enumerate(
             zip(self.sequences, self.coordinates, indices)
         ):
@@ -3522,7 +3522,7 @@ class Alignment:
                 qStart2 += size
                 tStart2 += size
             tStart2, qStart2 = tEnd2, qEnd2
-        coordinates = np.array(path).transpose()
+        coordinates = np.array(path, dtype=np.intp).transpose()
         if strand1 != strand2:
             coordinates[1, :] = n2 - coordinates[1, :]
         sequences = [target, query]
@@ -3551,7 +3551,7 @@ class Alignment:
             elif factor != step:
                 raise ValueError("inconsistent step sizes in alignments")
         steps = abs(self.coordinates[:, 1:] - self.coordinates[:, :-1]).max(0).clip(0)
-        coordinates = np.empty((2, len(steps) + 1), int)
+        coordinates = np.empty((2, len(steps) + 1), np.intp)
         coordinates[0, 0] = 0
         coordinates[0, 1:] = factor * np.cumsum(steps)
         sequences = [Seq(None, length=coordinates[0, -1]), None]
@@ -3594,7 +3594,7 @@ class Alignment:
                     raise Exception
             previous = position
         sequences = [alignment.sequences[1] for alignment in alignments]
-        coordinates = np.array(coordinates)
+        coordinates = np.array(coordinates, np.intp)
         alignment = Alignment(sequences, coordinates)
         return alignment
 
@@ -3949,7 +3949,7 @@ class Alignment:
             [
                 len(sequence) - row[::-1]
                 for sequence, row in zip(sequences, self.coordinates)
-            ]
+            ], dtype=np.intp
         )
         alignment = Alignment(sequences, coordinates)
         try:
@@ -4075,7 +4075,7 @@ class PairwiseAlignments(AlignmentsAbstractBaseClass):
     def __next__(self):
         path = next(self._paths)
         self._index += 1
-        coordinates = np.array(path)
+        coordinates = np.array(path, dtype=np.intp)
         alignment = Alignment(self.sequences, coordinates)
         alignment.score = self.score
         self._alignment = alignment
@@ -4381,6 +4381,59 @@ AlignmentCounts object returned by the .counts method of an Alignment object."""
         if isinstance(seqB, (Seq, MutableSeq, SeqRecord)):
             seqB = bytes(seqB)
         return super().score(seqA, seqB, strand)
+
+    def calculate(self, alignment, ignore_sequences=False):
+        """Return the matches, mismatches, scores, and gap counts for the alignment.
+
+        Arguments:
+         - ignore_sequences    - If True, do not calculate the number of identities,
+                                 positives, and mismatches, but only calculate the
+                                 number of aligned sequences and number of gaps
+                                 to speed up the calculation.
+                                 Default value: False.
+
+        A ValueError is raised if ignore_sequences is True and substitution_matrix is not None.
+        """
+        n = len(alignment.sequences)
+        sequences = [None] * n
+        strands = np.zeros(n, bool)
+        coordinates = alignment.coordinates.copy()
+        steps = np.diff(coordinates, 1)
+        aligned_flags = sum(steps != 0, 0) > 1
+        # True for steps in which at least two sequences align, False if a gap
+        for i, sequence in enumerate(alignment.sequences):
+            start = min(coordinates[i, :])
+            end = max(coordinates[i, :])
+            if not ignore_sequences:
+                try:
+                    sequence = sequence[start:end]
+                except ValueError:
+                    # if sequence is a SeqRecord, and sequence.seq is None
+                    continue
+            aligned_steps = steps[i, aligned_flags]
+            if sum(aligned_steps > 0) > sum(aligned_steps < 0):
+                coordinates[i, :] = coordinates[i, :] - start
+            else:
+                if not ignore_sequences:
+                    sequence = reverse_complement(sequence)
+                coordinates[i, :] = end - coordinates[i, :]
+                strands[i] = True
+            if ignore_sequences:
+                sequences[i] = None
+            else:
+                try:
+                    sequence = sequence.seq  # stupid SeqRecord
+                except AttributeError:
+                    pass
+                try:
+                    data = sequence._data
+                except AttributeError:
+                    data = sequence
+                if isinstance(data, (bytes, bytearray)):
+                    sequences[i] = data
+                else:
+                    sequences[i] = sequence
+        return super().calculate(sequences, coordinates, strands)
 
     def __getstate__(self):
         state = {

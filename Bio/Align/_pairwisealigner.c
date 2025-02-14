@@ -10,6 +10,9 @@
 #define PY_SSIZE_T_CLEAN
 #include "Python.h"
 #include <float.h>
+#include <stdbool.h>
+
+static PyObject *bytes_func = NULL;  // Global reference to the "bytes" function
 
 
 #define HORIZONTAL 0x1
@@ -7489,6 +7492,44 @@ error:
     return 0;
 }
 
+static int
+coordinates_converter(PyObject* argument, void* pointer)
+{
+    Py_buffer* view = pointer;
+    if (argument == NULL) {
+        PyBuffer_Release(view);
+        return 1;
+    }
+
+    if (PyObject_GetBuffer(argument, view, PyBUF_CONTIG) != 0) return 0;
+    if (view->ndim != 2 || view->itemsize != sizeof(Py_ssize_t)) {
+        PyErr_SetString(PyExc_ValueError,
+            "coordinates must be a 2D array of Py_ssize_t integers");
+        PyBuffer_Release(view);
+        return 0;
+    }
+    return Py_CLEANUP_SUPPORTED;
+}
+
+static int
+strands_converter(PyObject* argument, void* pointer)
+{
+    Py_buffer* view = pointer;
+    if (argument == NULL) {
+        PyBuffer_Release(view);
+        return 1;
+    }
+
+    if (PyObject_GetBuffer(argument, view, PyBUF_CONTIG_RO) != 0) return 0;
+    if (view->ndim != 1 || view->itemsize != sizeof(bool)) {
+        PyErr_SetString(PyExc_ValueError,
+            "strands must be a 1D array of bool variables");
+        PyBuffer_Release(view);
+        return 0;
+    }
+    return Py_CLEANUP_SUPPORTED;
+}
+
 static const char Aligner_score__doc__[] = "calculates the alignment score";
 
 static PyObject*
@@ -7725,6 +7766,141 @@ Aligner_align(Aligner* self, PyObject* args, PyObject* keywords)
     return result;
 }
 
+static PyObject*
+_aligner_calculate_bytes(Aligner* aligner, PyObject* sequences, Py_buffer* coordinates, Py_buffer* strands)
+{
+    Py_ssize_t left_insertions = 0, left_deletions = 0;
+    Py_ssize_t right_insertions = 0, right_deletions = 0;
+    Py_ssize_t internal_insertions = 0,internal_deletions = 0;
+    Py_ssize_t aligned = 0;
+    Py_ssize_t identities = 0;
+    Py_ssize_t mismatches = 0;
+    Py_ssize_t positives = 0;
+
+    return Py_BuildValue("nnnnnnnnnn", left_insertions,
+                                       left_deletions,
+                                       right_insertions,
+                                       right_deletions,
+                                       internal_insertions,
+                                       internal_deletions,
+                                       aligned,
+                                       identities,
+                                       mismatches,
+                                       positives);
+}
+
+static PyObject*
+_aligner_calculate_unicode(Aligner* aligner, PyObject* sequences, Py_buffer* coordinates, Py_buffer* strands)
+{
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject*
+_aligner_calculate_seq(Aligner* aligner, PyObject* sequences, Py_buffer* coordinates, Py_buffer* strands)
+{
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static const char Aligner_calculate__doc__[] = "calculate the matches, mismatches, gaps, and score of the alignment";
+
+static PyObject*
+Aligner_calculate(Aligner* self, PyObject* args, PyObject* keywords)
+{
+    Py_ssize_t i, n;
+    PyObject* sequence;
+    PyObject* sequences;
+    PyObject* b;
+    PyObject* s;
+    Py_buffer coordinates = {0};
+    Py_buffer strands = {0};
+    PyObject* result = NULL;
+    PyObject* substitution_matrix = self->substitution_matrix.obj;
+
+    static char *kwlist[] = {"sequences", "coordinates", "strands", NULL};
+
+    if(!PyArg_ParseTupleAndKeywords(args, keywords, "OO&O&", kwlist,
+                                    &sequences,
+                                    coordinates_converter, &coordinates,
+                                    strands_converter , &strands))
+        return NULL;
+
+    if (!PyList_Check(sequences)) {
+        PyErr_SetString(PyExc_TypeError, "sequences must be a list");
+        goto exit;
+    }
+
+    n = PyList_GET_SIZE(sequences);
+    if (n != coordinates.shape[0]) {
+        PyErr_SetString(PyExc_ValueError,
+            "number of rows in coordinates must equal the number of sequences");
+        goto exit;
+    }
+    if (n != strands.shape[0]) {
+        PyErr_SetString(PyExc_ValueError,
+            "size of strands must equal the number of sequences");
+        goto exit;
+    }
+
+    // Simplest case: Check if all are bytes
+    for (i = 0; i < n; i++) {
+        sequence = PyList_GET_ITEM(sequences, i);
+        if (!PyBytes_Check(sequence)) break;
+    }
+    if (i == n) { // no break, so all are bytes
+        result = _aligner_calculate_bytes(self,
+                                          sequences,
+                                          &coordinates,
+                                          &strands);
+        goto exit;
+    }
+
+    // Check if all are strings
+    for (i = 0; i < n; i++) {
+        sequence = PyList_GET_ITEM(sequences, i);
+        if (!PyUnicode_Check(sequence)) break;
+    }
+    if (i == n) { // no break, so all are strings
+        result = _aligner_calculate_unicode(self,
+                                            sequences,
+                                            &coordinates,
+                                            &strands);
+        goto exit;
+    }
+
+    // Check if all are Seq objects
+    for (i = 0; i < n; i++) {
+        sequence = PyList_GET_ITEM(sequences, i);
+        if (!PyUnicode_Check(sequence)) break;  /* cannot mix with strings */
+        if (!PySequence_Check(sequence)) {
+            PyErr_Format(PyExc_TypeError,
+                "sequence %d does not provide the sequence protocol", i);
+            goto exit;
+        }
+/*
+        s = PySequence_GetSlice(sequence, 3, 7);
+        if (!s) return 0;
+        b = PyObject_CallOneArg(bytes_func, s);
+        Py_DECREF(s);
+        if (!b) return 0;
+        Py_DECREF(b);
+*/
+    }
+    if (i == n) {  // All sequences provide Python's sequence protocol
+        result = _aligner_calculate_seq(self,
+                                        sequences,
+                                        &coordinates,
+                                        &strands);
+        goto exit;
+    }
+
+exit:
+    coordinates_converter(NULL, &coordinates);
+    strands_converter(NULL, &strands);
+    return result;
+}
+
 static char Aligner_doc[] =
 "The PairwiseAligner class implements common algorithms to align two\n"
 "sequences to each other.\n";
@@ -7739,6 +7915,11 @@ static PyMethodDef Aligner_methods[] = {
      (PyCFunction)Aligner_align,
      METH_VARARGS | METH_KEYWORDS,
      Aligner_align__doc__
+    },
+    {"calculate",
+     (PyCFunction)Aligner_calculate,
+     METH_VARARGS | METH_KEYWORDS,
+     Aligner_calculate__doc__
     },
     {NULL, NULL, 0, NULL}  /* Sentinel */
 };
@@ -7804,6 +7985,7 @@ PyObject *
 PyInit__pairwisealigner(void)
 {
     PyObject* module;
+    PyObject *builtins;
     AlignerType.tp_new = PyType_GenericNew;
 
     if (PyType_Ready(&AlignerType) < 0 || PyType_Ready(&PathGenerator_Type) < 0)
@@ -7817,6 +7999,21 @@ PyInit__pairwisealigner(void)
      * only if it is successful. */
     if (PyModule_AddObject(module,
                            "PairwiseAligner", (PyObject*) &AlignerType) < 0) {
+        Py_DECREF(&AlignerType);
+        Py_DECREF(module);
+        return NULL;
+    }
+
+#if PY_VERSION_HEX >= 0x30D0000  // Python 3.13.0
+    builtins = PyEval_GetFrameBuiltins();
+    bytes_func = PyDict_GetItemString(builtins, "bytes");
+    Py_DECREF(builtins);
+#else
+    builtins = PyEval_GetBuiltins();
+    bytes_func = PyDict_GetItemString(builtins, "bytes");
+#endif
+    if (!bytes_func || !PyCallable_Check(bytes_func)) {
+        PyErr_SetString(PyExc_RuntimeError, "bytes function not initialized");
         Py_DECREF(&AlignerType);
         Py_DECREF(module);
         return NULL;
