@@ -135,10 +135,10 @@ class AlignmentCounts:
             % (
                 self._left_insertions,
                 self._left_deletions,
-                self._right_insertions,
-                self._right_deletions,
                 self._internal_insertions,
                 self._internal_deletions,
+                self._right_insertions,
+                self._right_deletions,
                 self._aligned,
                 self._identities,
                 self._mismatches,
@@ -4433,7 +4433,18 @@ AlignmentCounts object returned by the .counts method of an Alignment object."""
                     sequences[i] = data
                 else:
                     sequences[i] = sequence
-        return super().calculate(sequences, coordinates, strands)
+        left_insertions, left_deletions, right_insertions, right_deletions, internal_insertions, internal_deletions, aligned, identities, mismatches, positives = super().calculate(sequences, coordinates, strands)
+        return AlignmentCounts(
+            left_insertions,
+            left_deletions,
+            right_insertions,
+            right_deletions,
+            internal_insertions,
+            internal_deletions,
+            aligned,
+            identities,
+            mismatches,
+            positives)
 
     def __getstate__(self):
         state = {
