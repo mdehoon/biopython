@@ -49,6 +49,25 @@ typedef enum {NeedlemanWunschSmithWaterman,
 
 typedef enum {Global, Local, FOGSAA_Mode} Mode;
 
+typedef struct {
+    Py_ssize_t open_left_insertions;
+    Py_ssize_t extend_left_insertions;
+    Py_ssize_t open_left_deletions;
+    Py_ssize_t extend_left_deletions;
+    Py_ssize_t open_internal_insertions;
+    Py_ssize_t extend_internal_insertions;
+    Py_ssize_t open_internal_deletions;
+    Py_ssize_t extend_internal_deletions;
+    Py_ssize_t open_right_insertions;
+    Py_ssize_t extend_right_insertions;
+    Py_ssize_t open_right_deletions;
+    Py_ssize_t extend_right_deletions;
+    Py_ssize_t aligned;
+    Py_ssize_t identities;
+    Py_ssize_t mismatches;
+    Py_ssize_t positives;
+} AlignmentCounts;
+
 #define ERR_UNEXPECTED_MODE \
     PyErr_Format(PyExc_RuntimeError, "mode has unexpected value (in "__FILE__" on line %d)", __LINE__);
 
@@ -7766,8 +7785,8 @@ Aligner_align(Aligner* self, PyObject* args, PyObject* keywords)
     return result;
 }
 
-static PyObject*
-_aligner_calculate_bytes(Aligner* aligner, PyObject* sequences, Py_buffer* coordinates, Py_buffer* strands, PyObject* substitution_matrix)
+static void
+_aligner_calculate_bytes(Aligner* aligner, PyObject* sequences, Py_buffer* coordinates, Py_buffer* strands, PyObject* substitution_matrix, AlignmentCounts* counts)
 {
     Py_ssize_t i, j, k, l1, l2;
     char c1, c2;
@@ -7779,9 +7798,12 @@ _aligner_calculate_bytes(Aligner* aligner, PyObject* sequences, Py_buffer* coord
     char* s2;
     char wildcard = '\0';
 
-    Py_ssize_t left_insertions = 0, left_deletions = 0;
-    Py_ssize_t right_insertions = 0, right_deletions = 0;
-    Py_ssize_t internal_insertions = 0,internal_deletions = 0;
+    Py_ssize_t open_left_insertions = 0, extend_left_insertions = 0;
+    Py_ssize_t open_left_deletions = 0, extend_left_deletions = 0;
+    Py_ssize_t open_internal_insertions = 0, extend_internal_insertions = 0;
+    Py_ssize_t open_internal_deletions = 0, extend_internal_deletions = 0;
+    Py_ssize_t open_right_insertions = 0, extend_right_insertions = 0;
+    Py_ssize_t open_right_deletions = 0, extend_right_deletions = 0;
     Py_ssize_t aligned = 0;
     Py_ssize_t identities = 0;
     Py_ssize_t mismatches = 0;
@@ -7795,6 +7817,8 @@ _aligner_calculate_bytes(Aligner* aligner, PyObject* sequences, Py_buffer* coord
     Py_ssize_t start1, start2;
     Py_ssize_t end1, end2;
     Py_ssize_t* buffer = coordinates->buf;
+
+    int path = 0;
 
     for (i = 0; i < n; i++) {
         sequence1 = PyList_GET_ITEM(sequences, i);
@@ -7814,25 +7838,49 @@ _aligner_calculate_bytes(Aligner* aligner, PyObject* sequences, Py_buffer* coord
                 if (start1 == end1 && start2 == end2) {
                 }
                 else if (start1 == end1) {
-                    if (start1 == left1)
-                        left_insertions += end2 - start2;
-                    else if (end1 == right1)
-                        right_insertions += end2 - start2;
-                    else
-                        internal_insertions += end2 - start2;
+                    if (path == HORIZONTAL) {
+                        if (start1 == left1)
+                            extend_left_insertions += end2 - start2;
+                        else if (end1 == right1)
+                            extend_right_insertions += end2 - start2;
+                        else
+                            extend_internal_insertions += end2 - start2;
+                    }
+                    else {
+                        if (start1 == left1)
+                            open_left_insertions += end2 - start2;
+                        else if (end1 == right1)
+                            open_right_insertions += end2 - start2;
+                        else
+                            open_internal_insertions += end2 - start2;
+                        path = HORIZONTAL;
+                    }
                 }
                 else if (start2 == end2) {
-                    if (start2 == left2)
-                        left_deletions += end1 - start1;
-                    else if (end2 == right2)
-                        right_deletions += end1 - start1;
-                    else
-                        internal_deletions += end1 - start1;
+                    if (path == VERTICAL) {
+                        if (start2 == left2)
+                            extend_left_deletions += end1 - start1;
+                        else if (end2 == right2)
+                            extend_right_deletions += end1 - start1;
+                        else
+                            extend_internal_deletions += end1 - start1;
+                    }
+                    else {
+                        if (start2 == left2)
+                            open_left_deletions += end1 - start1;
+                        else if (end2 == right2)
+                            open_right_deletions += end1 - start1;
+                        else
+                            open_internal_deletions += end1 - start1;
+                        path = VERTICAL;
+                    }
                 }
                 else if (sequence1 == NULL && sequence2 == NULL) {
+                    path = DIAGONAL;
                     aligned += end1 - start1;
                 }
                 else if (substitution_matrix == NULL) {
+                    path = DIAGONAL;
                     aligned += end1 - start1;
                     for (l1 = start1, l2 = start2;
                          l1 < end1 && l2 < end2;
@@ -7845,6 +7893,7 @@ _aligner_calculate_bytes(Aligner* aligner, PyObject* sequences, Py_buffer* coord
                     }
                 }
                 else {
+                    path = DIAGONAL;
                     aligned += end1 - start1;
 /*
                     for c1, c2 in zip(
@@ -7866,17 +7915,22 @@ _aligner_calculate_bytes(Aligner* aligner, PyObject* sequences, Py_buffer* coord
         }
     }
 
-
-    return Py_BuildValue("nnnnnnnnnn", left_insertions,
-                                       left_deletions,
-                                       right_insertions,
-                                       right_deletions,
-                                       internal_insertions,
-                                       internal_deletions,
-                                       aligned,
-                                       identities,
-                                       mismatches,
-                                       positives);
+    counts->open_left_insertions = open_left_insertions;
+    counts->extend_left_insertions = extend_left_insertions;
+    counts->open_left_deletions = open_left_deletions;
+    counts->extend_left_deletions = extend_left_deletions;
+    counts->open_internal_insertions = open_internal_insertions;
+    counts->extend_internal_insertions = extend_internal_insertions;
+    counts->open_internal_deletions = open_internal_deletions;
+    counts->extend_internal_deletions = extend_internal_deletions;
+    counts->open_right_insertions = open_right_insertions;
+    counts->extend_right_insertions = extend_right_insertions;
+    counts->open_right_deletions = open_right_deletions;
+    counts->extend_right_deletions = extend_right_deletions;
+    counts->aligned = aligned;
+    counts->identities = identities;
+    counts->mismatches = mismatches;
+    counts->positives = positives;
 }
 
 static PyObject*
@@ -7905,6 +7959,7 @@ Aligner_calculate(Aligner* self, PyObject* args, PyObject* keywords)
     Py_buffer strands = {0};
     PyObject* result = NULL;
     PyObject* substitution_matrix = self->substitution_matrix.obj;
+    AlignmentCounts counts;
 
     static char *kwlist[] = {"sequences", "coordinates", "strands", NULL};
 
@@ -7937,11 +7992,28 @@ Aligner_calculate(Aligner* self, PyObject* args, PyObject* keywords)
         if (!PyBytes_Check(sequence)) break;
     }
     if (i == n) { // no break, so all are bytes
-        result = _aligner_calculate_bytes(self,
-                                          sequences,
-                                          &coordinates,
-                                          &strands,
-                                          substitution_matrix);
+        _aligner_calculate_bytes(self,
+                                 sequences,
+                                 &coordinates,
+                                 &strands,
+                                 substitution_matrix,
+                                 &counts);
+        result = Py_BuildValue("nnnnnnnnnn", counts.open_left_insertions +
+                                             counts.extend_left_insertions,
+                                             counts.open_left_deletions +
+                                             counts.extend_left_deletions,
+                                             counts.open_right_insertions +
+                                             counts.extend_right_insertions,
+                                             counts.open_right_deletions +
+                                             counts.extend_right_deletions,
+                                             counts.open_internal_insertions +
+                                             counts.extend_internal_insertions,
+                                             counts.open_internal_deletions +
+                                             counts.extend_internal_deletions,
+                                             counts.aligned,
+                                             counts.identities,
+                                             counts.mismatches,
+                                             counts.positives);
         goto exit;
     }
 
@@ -7987,6 +8059,7 @@ Aligner_calculate(Aligner* self, PyObject* args, PyObject* keywords)
 exit:
     coordinates_converter(NULL, &coordinates);
     strands_converter(NULL, &strands);
+
     return result;
 }
 
