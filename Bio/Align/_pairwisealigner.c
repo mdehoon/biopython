@@ -7432,11 +7432,48 @@ sequence_converter_buffer(const Aligner* aligner, Py_buffer* view)
 }
 
 static int
+sequence_converter_unicode(const PyObject* argument, int* mapping, Py_buffer* view)
+{
+    Py_ssize_t n;
+    int* indices;
+    if (!PyUnicode_Check(argument)) {
+        PyErr_Format(PyExc_TypeError, "sequence has unexpected type %s",
+                     Py_TYPE(argument)->tp_name);
+        return 0;
+    }
+    if (PyUnicode_READY(argument) == -1) return 0;
+    n = PyUnicode_GET_LENGTH(argument);
+    switch (PyUnicode_KIND(argument)) {
+        case PyUnicode_1BYTE_KIND: {
+            Py_UCS1* s = PyUnicode_1BYTE_DATA(argument);
+            indices = convert_1bytes_to_ints(mapping, n, (unsigned char*)s);
+            break;
+        }
+        case PyUnicode_2BYTE_KIND: {
+            Py_UCS2* s = PyUnicode_2BYTE_DATA(argument);
+            indices = convert_2bytes_to_ints(mapping, n, s);
+            break;
+        }
+        case PyUnicode_4BYTE_KIND: {
+            Py_UCS4* s = PyUnicode_4BYTE_DATA(argument);
+            indices = convert_4bytes_to_ints(mapping, n, s);
+            break;
+        }
+        default:
+            PyErr_SetString(PyExc_ValueError, "could not interpret unicode data");
+            return 0;
+    }
+    if (!indices) return 0;
+    view->buf = indices;
+    view->itemsize = 1;
+    view->len = n;
+    return Py_CLEANUP_SUPPORTED;
+}
+
+static int
 sequence_converter(PyObject* argument, void* pointer)
 {
     Py_buffer* view = pointer;
-    Py_ssize_t n;
-    int* indices;
     const int flag = PyBUF_FORMAT | PyBUF_C_CONTIGUOUS;
     Aligner* aligner;
     int* mapping;
@@ -7444,10 +7481,7 @@ sequence_converter(PyObject* argument, void* pointer)
 
     if (argument == NULL) {
         if (view->obj) PyBuffer_Release(view);
-        else {
-            indices = view->buf;
-            PyMem_Free(indices);
-        }
+        else PyMem_Free(view->buf);
         return 1;
     }
 
@@ -7461,38 +7495,7 @@ sequence_converter(PyObject* argument, void* pointer)
     mapping = aligner->mapping;
     alphabet = aligner->alphabet;
     if (mapping || !alphabet) {
-        if (!PyUnicode_Check(argument)) {
-            PyErr_Format(PyExc_TypeError, "sequence has unexpected type %s",
-                         Py_TYPE(argument)->tp_name);
-            return 0;
-        }
-        if (PyUnicode_READY(argument) == -1) return 0;
-        n = PyUnicode_GET_LENGTH(argument);
-        switch (PyUnicode_KIND(argument)) {
-            case PyUnicode_1BYTE_KIND: {
-                Py_UCS1* s = PyUnicode_1BYTE_DATA(argument);
-                indices = convert_1bytes_to_ints(mapping, n, (unsigned char*)s);
-                break;
-            }
-            case PyUnicode_2BYTE_KIND: {
-                Py_UCS2* s = PyUnicode_2BYTE_DATA(argument);
-                indices = convert_2bytes_to_ints(mapping, n, s);
-                break;
-            }
-            case PyUnicode_4BYTE_KIND: {
-                Py_UCS4* s = PyUnicode_4BYTE_DATA(argument);
-                indices = convert_4bytes_to_ints(mapping, n, s);
-                break;
-            }
-            default:
-                PyErr_SetString(PyExc_ValueError, "could not interpret unicode data");
-                return 0;
-        }
-        if (!indices) return 0;
-        view->buf = indices;
-        view->itemsize = 1;
-        view->len = n;
-        return Py_CLEANUP_SUPPORTED;
+        return sequence_converter_unicode(argument, mapping, view);
     }
     if (convert_objects_to_ints(view, alphabet, argument))
         return Py_CLEANUP_SUPPORTED;
