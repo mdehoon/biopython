@@ -7306,7 +7306,7 @@ convert_4bytes_to_ints(const int mapping[], Py_ssize_t n, const Py_UCS4 s[])
 }
 
 static int
-convert_objects_to_ints(Py_buffer* view, PyObject* alphabet, PyObject* sequence)
+sequence_converter_objects(Py_buffer* view, PyObject* alphabet, PyObject* sequence)
 {
     Py_ssize_t i, j;
     Py_ssize_t n;
@@ -7362,7 +7362,7 @@ convert_objects_to_ints(Py_buffer* view, PyObject* alphabet, PyObject* sequence)
 exit:
     Py_DECREF(sequence);
     Py_XDECREF(alphabet);
-    if (view->buf) return 1;
+    if (view->buf) return Py_CLEANUP_SUPPORTED;
     return 0;
 }
 
@@ -7432,7 +7432,7 @@ sequence_converter_buffer(const Aligner* aligner, Py_buffer* view)
 }
 
 static int
-sequence_converter_unicode(const PyObject* argument, int* mapping, Py_buffer* view)
+sequence_converter_unicode(Py_buffer* view, int* mapping, const PyObject* argument)
 {
     Py_ssize_t n;
     int* indices;
@@ -7495,11 +7495,9 @@ sequence_converter(PyObject* argument, void* pointer)
     mapping = aligner->mapping;
     alphabet = aligner->alphabet;
     if (mapping || !alphabet) {
-        return sequence_converter_unicode(argument, mapping, view);
+        return sequence_converter_unicode(view, mapping, argument);
     }
-    if (convert_objects_to_ints(view, alphabet, argument))
-        return Py_CLEANUP_SUPPORTED;
-    return 0;
+    return sequence_converter_objects(view, alphabet, argument);
 }
  
 static int
