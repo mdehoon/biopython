@@ -7794,18 +7794,21 @@ Aligner_align(Aligner* self, PyObject* args, PyObject* keywords)
     return result;
 }
 
-static void
+static int
 _aligner_calculate_bytes(Aligner* aligner, PyObject* sequences, Py_buffer* coordinates, Py_buffer* strands, AlignmentCounts* counts)
 {
     Py_ssize_t i, j, k, l1, l2;
-    char c1, c2;
+    char cA, cB;
+    int kA, kB;
     const Py_ssize_t m = PyList_GET_SIZE(sequences);
 
-    PyObject* sequence1;
-    PyObject* sequence2;
-    char* s1;
-    char* s2;
+    PyObject* sequenceA;
+    PyObject* sequenceB;
+    char* sA;
+    char* sB;
     char wildcard = '\0';
+    double* substitution_matrix = NULL;
+    Py_ssize_t n;
 
     Py_ssize_t open_left_insertions = 0, extend_left_insertions = 0;
     Py_ssize_t open_left_deletions = 0, extend_left_deletions = 0;
@@ -7828,16 +7831,19 @@ _aligner_calculate_bytes(Aligner* aligner, PyObject* sequences, Py_buffer* coord
     Py_ssize_t* buffer = coordinates->buf;
 
     int path = 0;
+    int* mapping = aligner->mapping;
 
-    const double* substitution_matrix = aligner->substitution_matrix.obj ? aligner->substitution_matrix.buf : NULL;
-    // const Py_ssize_t n = self->substitution_matrix.shape[0];
+    if (aligner->substitution_matrix.obj) {
+        substitution_matrix = aligner->substitution_matrix.buf;
+        n = aligner->substitution_matrix.shape[0];
+    }
 
     for (i = 0; i < m; i++) {
-        sequence1 = PyList_GET_ITEM(sequences, i);
-        s1 = (sequence1 == Py_None) ? NULL : PyBytes_AS_STRING(sequence1);
+        sequenceA = PyList_GET_ITEM(sequences, i);
+        sA = (sequenceA == Py_None) ? NULL : PyBytes_AS_STRING(sequenceA);
         for (j = i + 1; j < m; j++) {
-            sequence2 = PyList_GET_ITEM(sequences, j);
-            s2 = (sequence2 == Py_None) ? NULL : PyBytes_AS_STRING(sequence2);
+            sequenceB = PyList_GET_ITEM(sequences, j);
+            sB = (sequenceB == Py_None) ? NULL : PyBytes_AS_STRING(sequenceB);
             left1 = buffer[i * stride1 + 0];
             left2 = buffer[j * stride1 + 0];
             right1 = buffer[i * stride1 + (shape2 - 1) * stride2];
@@ -7887,7 +7893,7 @@ _aligner_calculate_bytes(Aligner* aligner, PyObject* sequences, Py_buffer* coord
                         path = VERTICAL;
                     }
                 }
-                else if (sequence1 == NULL && sequence2 == NULL) {
+                else if (sequenceA == NULL && sequenceB == NULL) {
                     path = DIAGONAL;
                     aligned += end1 - start1;
                 }
@@ -7897,29 +7903,45 @@ _aligner_calculate_bytes(Aligner* aligner, PyObject* sequences, Py_buffer* coord
                     for (l1 = start1, l2 = start2;
                          l1 < end1 && l2 < end2;
                          l1++, l2++) {
-                        c1 = s1[l1];
-                        c2 = s2[l2];
-                        if (c1 == wildcard || c2 == wildcard) ;
-                        else if (c1 == c2) identities++;
+                        cA = sA[l1];
+                        cB = sB[l2];
+                        if (cA == wildcard || cB == wildcard) ;
+                        else if (cA == cB) identities++;
                         else mismatches++;
+                    }
+                }
+                else if (mapping == NULL){
+                    path = DIAGONAL;
+                    aligned += end1 - start1;
+                    for (l1 = start1, l2 = start2;
+                         l1 < end1 && l2 < end2;
+                         l1++, l2++) {
+                        cA = sA[l1];
+                        cB = sB[l2];
+                        if (cA == cB) identities++;
+                        else mismatches++;
+                        if (substitution_matrix[cA*n+cB] > 0) positives++;
                     }
                 }
                 else {
                     path = DIAGONAL;
                     aligned += end1 - start1;
-/*
-                    for c1, c2 in zip(
-                        sequence1[start1:end1], sequence2[start2:end2]
-                    ):
-                        if c1 == wildcard or c2 == wildcard:
-                            pass
-                        elif c1 == c2:
-                            identities += 1
-                        else:
-                             mismatches += 1
-                       if substitution_matrix[chr(c1), chr(c2)] > 0:
-                             positives += 1
-*/
+                    for (l1 = start1, l2 = start2;
+                         l1 < end1 && l2 < end2;
+                         l1++, l2++) {
+                        cA = sA[l1];
+                        cB = sB[l2];
+                        kA = mapping[(int)cA];
+                        kB = mapping[(int)cB];
+                        if (kA == MISSING_LETTER || kB == MISSING_LETTER) {
+                            PyErr_SetString(PyExc_ValueError,
+                                "sequence contains letters not in the alphabet");
+                            return 0;
+                        }
+                        if (kA == kB) identities++;
+                        else mismatches++;
+                        if (substitution_matrix[kA*n+kB] > 0) positives++;
+                    }
                 }
                 start1 = end1;
                 start2 = end2;
@@ -7943,6 +7965,8 @@ _aligner_calculate_bytes(Aligner* aligner, PyObject* sequences, Py_buffer* coord
     counts->identities = identities;
     counts->mismatches = mismatches;
     counts->positives = positives;
+
+    return 1;
 }
 
 static PyObject*
@@ -8003,11 +8027,11 @@ Aligner_calculate(Aligner* self, PyObject* args, PyObject* keywords)
         if (!PyBytes_Check(sequence)) break;
     }
     if (i == n) { // no break, so all are bytes
-        _aligner_calculate_bytes(self,
-                                 sequences,
-                                 &coordinates,
-                                 &strands,
-                                 &counts);
+        if (_aligner_calculate_bytes(self,
+                                     sequences,
+                                     &coordinates,
+                                     &strands,
+                                     &counts) == 0) goto exit;
         result = Py_BuildValue("nnnnnnnnnn", counts.open_left_insertions +
                                              counts.extend_left_insertions,
                                              counts.open_left_deletions +
