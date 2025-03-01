@@ -6674,7 +6674,7 @@ exit:
 
 /* ----------------- alignment algorithms ----------------- */
 
-#define MATRIX_SCORE scores[kA*n+kB]
+#define MATRIX_SCORE substitution_matrix[kA*n+kB]
 #define COMPARE_SCORE (kA == wildcard || kB == wildcard) ? 0 : (kA == kB) ? match : mismatch
 
 
@@ -6697,7 +6697,7 @@ Aligner_needlemanwunsch_score_matrix(Aligner* self,
                                      unsigned char strand)
 {
     const Py_ssize_t n = self->substitution_matrix.shape[0];
-    const double* scores = self->substitution_matrix.buf;
+    const double* substitution_matrix = self->substitution_matrix.buf;
     NEEDLEMANWUNSCH_SCORE(MATRIX_SCORE);
 }
 
@@ -6718,7 +6718,7 @@ Aligner_smithwaterman_score_matrix(Aligner* self,
                                    const int* sB, int nB)
 {
     const Py_ssize_t n = self->substitution_matrix.shape[0];
-    const double* scores = self->substitution_matrix.buf;
+    const double* substitution_matrix = self->substitution_matrix.buf;
     SMITHWATERMAN_SCORE(MATRIX_SCORE);
 }
 
@@ -6741,7 +6741,7 @@ Aligner_needlemanwunsch_align_matrix(Aligner* self,
                                      unsigned char strand)
 {
     const Py_ssize_t n = self->substitution_matrix.shape[0];
-    const double* scores = self->substitution_matrix.buf;
+    const double* substitution_matrix = self->substitution_matrix.buf;
     NEEDLEMANWUNSCH_ALIGN(MATRIX_SCORE);
 }
 
@@ -6764,7 +6764,7 @@ Aligner_smithwaterman_align_matrix(Aligner* self,
                                    unsigned char strand)
 {
     const Py_ssize_t n = self->substitution_matrix.shape[0];
-    const double* scores = self->substitution_matrix.buf;
+    const double* substitution_matrix = self->substitution_matrix.buf;
     SMITHWATERMAN_ALIGN(MATRIX_SCORE);
 }
 
@@ -6787,7 +6787,7 @@ Aligner_gotoh_global_score_matrix(Aligner* self,
                                   unsigned char strand)
 {
     const Py_ssize_t n = self->substitution_matrix.shape[0];
-    const double* scores = self->substitution_matrix.buf;
+    const double* substitution_matrix = self->substitution_matrix.buf;
     GOTOH_GLOBAL_SCORE(MATRIX_SCORE);
 }
 
@@ -6808,7 +6808,7 @@ Aligner_gotoh_local_score_matrix(Aligner* self,
                                  const int* sB, int nB)
 {
     const Py_ssize_t n = self->substitution_matrix.shape[0];
-    const double* scores = self->substitution_matrix.buf;
+    const double* substitution_matrix = self->substitution_matrix.buf;
     GOTOH_LOCAL_SCORE(MATRIX_SCORE);
 }
 
@@ -6831,7 +6831,7 @@ Aligner_gotoh_global_align_matrix(Aligner* self,
                                   unsigned char strand)
 {
     const Py_ssize_t n = self->substitution_matrix.shape[0];
-    const double* scores = self->substitution_matrix.buf;
+    const double* substitution_matrix = self->substitution_matrix.buf;
     GOTOH_GLOBAL_ALIGN(MATRIX_SCORE);
 }
 
@@ -6854,7 +6854,7 @@ Aligner_gotoh_local_align_matrix(Aligner* self,
                                  unsigned char strand)
 {
     const Py_ssize_t n = self->substitution_matrix.shape[0];
-    const double* scores = self->substitution_matrix.buf;
+    const double* substitution_matrix = self->substitution_matrix.buf;
     GOTOH_LOCAL_ALIGN(MATRIX_SCORE);
 }
 
@@ -6928,7 +6928,7 @@ Aligner_watermansmithbeyer_global_score_matrix(Aligner* self,
                                                unsigned char strand)
 {
     const Py_ssize_t n = self->substitution_matrix.shape[0];
-    const double* scores = self->substitution_matrix.buf;
+    const double* substitution_matrix = self->substitution_matrix.buf;
     WATERMANSMITHBEYER_ENTER_SCORE;
     switch (strand) {
         case '+':
@@ -6972,7 +6972,7 @@ Aligner_watermansmithbeyer_local_score_matrix(Aligner* self,
                                               unsigned char strand)
 {
     const Py_ssize_t n = self->substitution_matrix.shape[0];
-    const double* scores = self->substitution_matrix.buf;
+    const double* substitution_matrix = self->substitution_matrix.buf;
     double maximum = 0.0;
     WATERMANSMITHBEYER_ENTER_SCORE;
     switch (strand) {
@@ -7018,7 +7018,7 @@ Aligner_watermansmithbeyer_global_align_matrix(Aligner* self,
                                                unsigned char strand)
 {
     const Py_ssize_t n = self->substitution_matrix.shape[0];
-    const double* scores = self->substitution_matrix.buf;
+    const double* substitution_matrix = self->substitution_matrix.buf;
     WATERMANSMITHBEYER_ENTER_ALIGN(Global);
     switch (strand) {
         case '+': {
@@ -7066,7 +7066,7 @@ Aligner_watermansmithbeyer_local_align_matrix(Aligner* self,
                                               unsigned char strand)
 {
     const Py_ssize_t n = self->substitution_matrix.shape[0];
-    const double* scores = self->substitution_matrix.buf;
+    const double* substitution_matrix = self->substitution_matrix.buf;
     int im = nA;
     int jm = nB;
     double maximum = 0;
@@ -7143,16 +7143,16 @@ Aligner_fogsaa_score_matrix(Aligner* self,
                                  unsigned char strand)
 {
     const Py_ssize_t n = self->substitution_matrix.shape[0];
-    const double* scores = self->substitution_matrix.buf;
-    double match = scores[0], mismatch = scores[0];
+    const double* substitution_matrix = self->substitution_matrix.buf;
+    double match = substitution_matrix[0], mismatch = substitution_matrix[0];
     FOGSAA_ENTER
 
     // for prediction purposes, maximum score is match and minimum score is mismatch
     for (i = 0; i < n*n; i++) {
-        if (scores[i] > match)
-            match = scores[i];
-        else if (scores[i] < mismatch)
-            mismatch = scores[i];
+        if (substitution_matrix[i] > match)
+            match = substitution_matrix[i];
+        else if (substitution_matrix[i] < mismatch)
+            mismatch = substitution_matrix[i];
     }
     FOGSAA_CHECK_SCORES
 
@@ -7187,18 +7187,18 @@ Aligner_fogsaa_align_matrix(Aligner* self,
                                  unsigned char strand)
 {
     const Py_ssize_t n = self->substitution_matrix.shape[0];
-    const double* scores = self->substitution_matrix.buf;
-    double match = scores[0], mismatch = scores[0];
+    const double* substitution_matrix = self->substitution_matrix.buf;
+    double match = substitution_matrix[0], mismatch = substitution_matrix[0];
     PathGenerator* paths;
     Trace** M;
     FOGSAA_ENTER
 
     // for prediction purposes, maximum score is match and minimum score is mismatch
     for (i = 0; i < n*n; i++) {
-        if (scores[i] > match)
-            match = scores[i];
-        else if (scores[i] < mismatch)
-            mismatch = scores[i];
+        if (substitution_matrix[i] > match)
+            match = substitution_matrix[i];
+        else if (substitution_matrix[i] < mismatch)
+            mismatch = substitution_matrix[i];
     }
     FOGSAA_CHECK_SCORES
 
@@ -7795,11 +7795,11 @@ Aligner_align(Aligner* self, PyObject* args, PyObject* keywords)
 }
 
 static void
-_aligner_calculate_bytes(Aligner* aligner, PyObject* sequences, Py_buffer* coordinates, Py_buffer* strands, PyObject* substitution_matrix, AlignmentCounts* counts)
+_aligner_calculate_bytes(Aligner* aligner, PyObject* sequences, Py_buffer* coordinates, Py_buffer* strands, AlignmentCounts* counts)
 {
     Py_ssize_t i, j, k, l1, l2;
     char c1, c2;
-    const Py_ssize_t n = PyList_GET_SIZE(sequences);
+    const Py_ssize_t m = PyList_GET_SIZE(sequences);
 
     PyObject* sequence1;
     PyObject* sequence2;
@@ -7829,10 +7829,13 @@ _aligner_calculate_bytes(Aligner* aligner, PyObject* sequences, Py_buffer* coord
 
     int path = 0;
 
-    for (i = 0; i < n; i++) {
+    const double* substitution_matrix = aligner->substitution_matrix.obj ? aligner->substitution_matrix.buf : NULL;
+    // const Py_ssize_t n = self->substitution_matrix.shape[0];
+
+    for (i = 0; i < m; i++) {
         sequence1 = PyList_GET_ITEM(sequences, i);
         s1 = (sequence1 == Py_None) ? NULL : PyBytes_AS_STRING(sequence1);
-        for (j = i + 1; j < n; j++) {
+        for (j = i + 1; j < m; j++) {
             sequence2 = PyList_GET_ITEM(sequences, j);
             s2 = (sequence2 == Py_None) ? NULL : PyBytes_AS_STRING(sequence2);
             left1 = buffer[i * stride1 + 0];
@@ -7967,7 +7970,6 @@ Aligner_calculate(Aligner* self, PyObject* args, PyObject* keywords)
     Py_buffer coordinates = {0};
     Py_buffer strands = {0};
     PyObject* result = NULL;
-    PyObject* substitution_matrix = self->substitution_matrix.obj;
     AlignmentCounts counts;
 
     static char *kwlist[] = {"sequences", "coordinates", "strands", NULL};
@@ -8005,7 +8007,6 @@ Aligner_calculate(Aligner* self, PyObject* args, PyObject* keywords)
                                  sequences,
                                  &coordinates,
                                  &strands,
-                                 substitution_matrix,
                                  &counts);
         result = Py_BuildValue("nnnnnnnnnn", counts.open_left_insertions +
                                              counts.extend_left_insertions,
