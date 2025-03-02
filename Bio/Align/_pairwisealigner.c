@@ -7893,7 +7893,7 @@ _aligner_calculate_bytes(Aligner* aligner, PyObject* sequences, Py_buffer* coord
                         path = VERTICAL;
                     }
                 }
-                else if (sequenceA == NULL && sequenceB == NULL) {
+                else if (sequenceA == NULL || sequenceB == NULL) {
                     path = DIAGONAL;
                     aligned += end1 - start1;
                 }
@@ -7969,11 +7969,193 @@ _aligner_calculate_bytes(Aligner* aligner, PyObject* sequences, Py_buffer* coord
     return 1;
 }
 
-static PyObject*
-_aligner_calculate_unicode(Aligner* aligner, PyObject* sequences, Py_buffer* coordinates, Py_buffer* strands)
+static int
+_aligner_calculate_unicode(Aligner* aligner, PyObject* sequences, Py_buffer* coordinates, Py_buffer* strands, AlignmentCounts* counts)
 {
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_ssize_t i, j, k, l1, l2;
+    char cA, cB;
+    int kA, kB;
+    const Py_ssize_t m = PyList_GET_SIZE(sequences);
+
+    PyObject* sequenceA;
+    PyObject* sequenceB;
+    char* sA;
+    char* sB;
+    int kindA;
+    int kindB;
+    char wildcard = '\0';
+    double* substitution_matrix = NULL;
+    Py_ssize_t n;
+
+    Py_ssize_t open_left_insertions = 0, extend_left_insertions = 0;
+    Py_ssize_t open_left_deletions = 0, extend_left_deletions = 0;
+    Py_ssize_t open_internal_insertions = 0, extend_internal_insertions = 0;
+    Py_ssize_t open_internal_deletions = 0, extend_internal_deletions = 0;
+    Py_ssize_t open_right_insertions = 0, extend_right_insertions = 0;
+    Py_ssize_t open_right_deletions = 0, extend_right_deletions = 0;
+    Py_ssize_t aligned = 0;
+    Py_ssize_t identities = 0;
+    Py_ssize_t mismatches = 0;
+    Py_ssize_t positives = 0;
+
+    const Py_ssize_t shape2 = coordinates->shape[1];
+    const Py_ssize_t stride1 = coordinates->strides[0] / sizeof(Py_ssize_t);
+    const Py_ssize_t stride2 = coordinates->strides[1] / sizeof(Py_ssize_t);
+    Py_ssize_t left1, left2;
+    Py_ssize_t right1, right2;
+    Py_ssize_t start1, start2;
+    Py_ssize_t end1, end2;
+    Py_ssize_t* buffer = coordinates->buf;
+
+    int path = 0;
+    int* mapping = aligner->mapping;
+
+    if (aligner->substitution_matrix.obj) {
+        substitution_matrix = aligner->substitution_matrix.buf;
+        n = aligner->substitution_matrix.shape[0];
+    }
+
+    for (i = 0; i < m; i++) {
+        sequenceA = PyList_GET_ITEM(sequences, i);
+        if (sequenceA == Py_None) {
+            sA = NULL;
+            kindA = 0;
+        } else {
+            sA = PyUnicode_DATA(sequenceA);
+            kindA = PyUnicode_KIND(sequenceA);
+        }
+        for (j = i + 1; j < m; j++) {
+            sequenceB = PyList_GET_ITEM(sequences, j);
+            if (sequenceB == Py_None) {
+                sB = NULL;
+                kindB = 0;
+            } else {
+                sB = PyUnicode_DATA(sequenceB);
+                kindB = PyUnicode_KIND(sequenceB);
+            }
+            left1 = buffer[i * stride1 + 0];
+            left2 = buffer[j * stride1 + 0];
+            right1 = buffer[i * stride1 + (shape2 - 1) * stride2];
+            right2 = buffer[j * stride1 + (shape2 - 1) * stride2];
+            start1 = left1;
+            start2 = left2;
+            for (k = 1; k < shape2; k++) {
+                end1 = buffer[i * stride1 + k * stride2];
+                end2 = buffer[j * stride1 + k * stride2];
+                if (start1 == end1 && start2 == end2) {
+                }
+                else if (start1 == end1) {
+                    if (path == HORIZONTAL) {
+                        if (start1 == left1)
+                            extend_left_insertions += end2 - start2;
+                        else if (end1 == right1)
+                            extend_right_insertions += end2 - start2;
+                        else
+                            extend_internal_insertions += end2 - start2;
+                    }
+                    else {
+                        if (start1 == left1)
+                            open_left_insertions += end2 - start2;
+                        else if (end1 == right1)
+                            open_right_insertions += end2 - start2;
+                        else
+                            open_internal_insertions += end2 - start2;
+                        path = HORIZONTAL;
+                    }
+                }
+                else if (start2 == end2) {
+                    if (path == VERTICAL) {
+                        if (start2 == left2)
+                            extend_left_deletions += end1 - start1;
+                        else if (end2 == right2)
+                            extend_right_deletions += end1 - start1;
+                        else
+                            extend_internal_deletions += end1 - start1;
+                    }
+                    else {
+                        if (start2 == left2)
+                            open_left_deletions += end1 - start1;
+                        else if (end2 == right2)
+                            open_right_deletions += end1 - start1;
+                        else
+                            open_internal_deletions += end1 - start1;
+                        path = VERTICAL;
+                    }
+                }
+                else if (sequenceA == NULL || sequenceB == NULL) {
+                    path = DIAGONAL;
+                    aligned += end1 - start1;
+                }
+                else if (substitution_matrix == NULL) {
+                    path = DIAGONAL;
+                    aligned += end1 - start1;
+                    for (l1 = start1, l2 = start2;
+                         l1 < end1 && l2 < end2;
+                         l1++, l2++) {
+                        cA = PyUnicode_READ(kindA, sA, l1);
+                        cB = PyUnicode_READ(kindB, sB, l2);
+                        if (cA == wildcard || cB == wildcard) ;
+                        else if (cA == cB) identities++;
+                        else mismatches++;
+                    }
+                }
+                else if (mapping == NULL){
+                    path = DIAGONAL;
+                    aligned += end1 - start1;
+                    for (l1 = start1, l2 = start2;
+                         l1 < end1 && l2 < end2;
+                         l1++, l2++) {
+                        cA = PyUnicode_READ(kindA, sA, l1);
+                        cB = PyUnicode_READ(kindB, sB, l2);
+                        if (cA == cB) identities++;
+                        else mismatches++;
+                        if (substitution_matrix[cA*n+cB] > 0) positives++;
+                    }
+                }
+                else {
+                    path = DIAGONAL;
+                    aligned += end1 - start1;
+                    for (l1 = start1, l2 = start2;
+                         l1 < end1 && l2 < end2;
+                         l1++, l2++) {
+                        cA = PyUnicode_READ(kindA, sA, l1);
+                        cB = PyUnicode_READ(kindB, sB, l2);
+                        kA = mapping[(int)cA];
+                        kB = mapping[(int)cB];
+                        if (kA == MISSING_LETTER || kB == MISSING_LETTER) {
+                            PyErr_SetString(PyExc_ValueError,
+                                "sequence contains letters not in the alphabet");
+                            return 0;
+                        }
+                        if (kA == kB) identities++;
+                        else mismatches++;
+                        if (substitution_matrix[kA*n+kB] > 0) positives++;
+                    }
+                }
+                start1 = end1;
+                start2 = end2;
+            }
+        }
+    }
+
+    counts->open_left_insertions = open_left_insertions;
+    counts->extend_left_insertions = extend_left_insertions;
+    counts->open_left_deletions = open_left_deletions;
+    counts->extend_left_deletions = extend_left_deletions;
+    counts->open_internal_insertions = open_internal_insertions;
+    counts->extend_internal_insertions = extend_internal_insertions;
+    counts->open_internal_deletions = open_internal_deletions;
+    counts->extend_internal_deletions = extend_internal_deletions;
+    counts->open_right_insertions = open_right_insertions;
+    counts->extend_right_insertions = extend_right_insertions;
+    counts->open_right_deletions = open_right_deletions;
+    counts->extend_right_deletions = extend_right_deletions;
+    counts->aligned = aligned;
+    counts->identities = identities;
+    counts->mismatches = mismatches;
+    counts->positives = positives;
+
+    return 1;
 }
 
 static PyObject*
@@ -8024,7 +8206,7 @@ Aligner_calculate(Aligner* self, PyObject* args, PyObject* keywords)
     // Simplest case: Check if all are bytes
     for (i = 0; i < n; i++) {
         sequence = PyList_GET_ITEM(sequences, i);
-        if (!PyBytes_Check(sequence)) break;
+        if (sequence != Py_None && !PyBytes_Check(sequence)) break;
     }
     if (i == n) { // no break, so all are bytes
         if (_aligner_calculate_bytes(self,
@@ -8054,13 +8236,30 @@ Aligner_calculate(Aligner* self, PyObject* args, PyObject* keywords)
     // Check if all are strings
     for (i = 0; i < n; i++) {
         sequence = PyList_GET_ITEM(sequences, i);
-        if (!PyUnicode_Check(sequence)) break;
+        if (sequence != Py_None && !PyUnicode_Check(sequence)) break;
     }
     if (i == n) { // no break, so all are strings
-        result = _aligner_calculate_unicode(self,
-                                            sequences,
-                                            &coordinates,
-                                            &strands);
+        if (_aligner_calculate_unicode(self,
+                                       sequences,
+                                       &coordinates,
+                                       &strands,
+                                       &counts) == 0) goto exit;
+        result = Py_BuildValue("nnnnnnnnnn", counts.open_left_insertions +
+                                             counts.extend_left_insertions,
+                                             counts.open_left_deletions +
+                                             counts.extend_left_deletions,
+                                             counts.open_right_insertions +
+                                             counts.extend_right_insertions,
+                                             counts.open_right_deletions +
+                                             counts.extend_right_deletions,
+                                             counts.open_internal_insertions +
+                                             counts.extend_internal_insertions,
+                                             counts.open_internal_deletions +
+                                             counts.extend_internal_deletions,
+                                             counts.aligned,
+                                             counts.identities,
+                                             counts.mismatches,
+                                             counts.positives);
         goto exit;
     }
 
