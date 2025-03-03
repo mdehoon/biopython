@@ -7840,10 +7840,14 @@ _aligner_calculate_bytes(Aligner* aligner, PyObject* sequences, Py_buffer* coord
 
     for (i = 0; i < m; i++) {
         sequenceA = PyList_GET_ITEM(sequences, i);
-        sA = (sequenceA == Py_None) ? NULL : PyBytes_AS_STRING(sequenceA);
+        if (PyBytes_Check(sequenceA)) sA = PyBytes_AS_STRING(sequenceA);
+        else if (PyUnicode_Check(sequenceA)) sA = (char*)PyUnicode_1BYTE_DATA(sequenceA);
+        else /* sequenceA == Py_None */ sA = NULL;
         for (j = i + 1; j < m; j++) {
             sequenceB = PyList_GET_ITEM(sequences, j);
-            sB = (sequenceB == Py_None) ? NULL : PyBytes_AS_STRING(sequenceB);
+            if (PyBytes_Check(sequenceB)) sB = PyBytes_AS_STRING(sequenceB);
+            else if (PyUnicode_Check(sequenceB)) sB = (char*)PyUnicode_1BYTE_DATA(sequenceB);
+            else /* sequenceB == Py_None */ sB = NULL;
             left1 = buffer[i * stride1 + 0];
             left2 = buffer[j * stride1 + 0];
             right1 = buffer[i * stride1 + (shape2 - 1) * stride2];
@@ -8206,7 +8210,10 @@ Aligner_calculate(Aligner* self, PyObject* args, PyObject* keywords)
     // Simplest case: Check if all are bytes
     for (i = 0; i < n; i++) {
         sequence = PyList_GET_ITEM(sequences, i);
-        if (sequence != Py_None && !PyBytes_Check(sequence)) break;
+        if (PyBytes_Check(sequence)) continue;
+        if (PyUnicode_Check(sequence) &&
+            PyUnicode_KIND(sequence) == PyUnicode_1BYTE_KIND) continue;
+        if (sequence == Py_None) continue;
     }
     if (i == n) { // no break, so all are bytes
         if (_aligner_calculate_bytes(self,

@@ -6426,6 +6426,122 @@ class TestAlgorithmRestrictions(unittest.TestCase):
             aligner.score("AAAAAAAAAAAA", "AAAAATAAAAAA")
 
 
+class TestCounts(unittest.TestCase):
+
+    def check_counts(self, counts):
+        self.assertEqual(counts.left_insertions, 2)
+        self.assertEqual(counts.left_deletions, 0)
+        self.assertEqual(counts.internal_insertions, 0)
+        self.assertEqual(counts.internal_deletions, 1)
+        self.assertEqual(counts.right_insertions, 0)
+        self.assertEqual(counts.right_deletions, 7)
+        self.assertEqual(counts.aligned, 5)
+        self.assertEqual(counts.identities, 4)
+        self.assertEqual(counts.mismatches, 1)
+
+    def check_counts_and_score(self, counts):
+        self.check_counts(counts)
+
+    def test_string_bytes(self):
+        aligner = Align.PairwiseAligner()
+        aligner.mismatch_score = -1
+        aligner.gap_score = -1
+        alignments = aligner.align("TTACGTCCCCCCC", "ACTTTGT")
+        alignment = alignments[0]
+        self.assertEqual(str(alignment), """\
+target            0 --TTACGTCCCCCCC 13
+                  0 --||.-||------- 15
+query             0 ACTTT-GT-------  7
+""")
+        counts = alignment.counts()
+        self.check_counts(counts)
+        counts = aligner.calculate(alignment)
+        self.check_counts_and_score(counts)
+        alignments = aligner.align("TTACGTCCCCCCC", b"ACTTTGT")
+        alignment = alignments[0]
+        self.assertEqual(str(alignment), """\
+-- -- T  T  A  C G  T  C C C C C C C
+-- -- .  .  .  - .  .  - - - - - - -
+65 67 84 84 84 - 71 84 - - - - - - -
+""")
+        counts = alignment.counts()
+        self.check_counts(counts)
+        counts = aligner.calculate(alignment)
+        self.check_counts_and_score(counts)
+        alignments = aligner.align(b"TTACGTCCCCCCC", "ACTTTGT")
+        alignment = alignments[0]
+        self.assertEqual(str(alignment), """\
+- - 84 84 65 67 71 84 67 67 67 67 67 67 67
+- - .  .  .  -- .  .  -- -- -- -- -- -- --
+A C T  T  T  -- G  T  -- -- -- -- -- -- --
+""")
+        counts = alignment.counts()
+        self.check_counts(counts)
+        counts = aligner.calculate(alignment)
+        alignments = aligner.align(b"TTACGTCCCCCCC", b"ACTTTGT")
+        alignment = alignments[0]
+        self.assertEqual(str(alignment), """\
+-- -- 84 84 65 67 71 84 67 67 67 67 67 67 67
+-- -- || || .. -- || || -- -- -- -- -- -- --
+65 67 84 84 84 -- 71 84 -- -- -- -- -- -- --
+""")
+        counts = alignment.counts()
+        self.check_counts(counts)
+        counts = aligner.calculate(alignment)
+        alignments = aligner.align(Seq("TTACGTCCCCCCC"), Seq("ACTTTGT"))
+        alignment = alignments[0]
+        self.assertEqual(str(alignment), """\
+target            0 --TTACGTCCCCCCC 13
+                  0 --||.-||------- 15
+query             0 ACTTT-GT-------  7
+""")
+        counts = alignment.counts()
+        self.check_counts(counts)
+        counts = aligner.calculate(alignment)
+        alignments = aligner.align(Seq("TTACGTCCCCCCC"), "ACTTTGT")
+        alignment = alignments[0]
+        self.assertEqual(str(alignment), """\
+target            0 --TTACGTCCCCCCC 13
+                  0 --||.-||------- 15
+query             0 ACTTT-GT-------  7
+""")
+        counts = alignment.counts()
+        self.check_counts(counts)
+        counts = aligner.calculate(alignment)
+        counts = aligner.calculate(alignment)
+        alignments = aligner.align("TTACGTCCCCCCC", Seq("ACTTTGT"))
+        alignment = alignments[0]
+        self.assertEqual(str(alignment), """\
+target            0 --TTACGTCCCCCCC 13
+                  0 --||.-||------- 15
+query             0 ACTTT-GT-------  7
+""")
+        counts = alignment.counts()
+        self.check_counts(counts)
+        counts = aligner.calculate(alignment)
+        alignments = aligner.align(Seq("TTACGTCCCCCCC"), b"ACTTTGT")
+        alignment = alignments[0]
+        self.assertEqual(str(alignment), """\
+-- -- T  T  A  C G  T  C C C C C C C
+-- -- .  .  .  - .  .  - - - - - - -
+65 67 84 84 84 - 71 84 - - - - - - -
+""")
+        counts = alignment.counts()
+        self.check_counts(counts)
+        counts = aligner.calculate(alignment)
+        counts = aligner.calculate(alignment)
+        alignments = aligner.align(b"TTACGTCCCCCCC", Seq("ACTTTGT"))
+        alignment = alignments[0]
+        self.assertEqual(str(alignment), """\
+- - 84 84 65 67 71 84 67 67 67 67 67 67 67
+- - .  .  .  -- .  .  -- -- -- -- -- -- --
+A C T  T  T  -- G  T  -- -- -- -- -- -- --
+""")
+        counts = alignment.counts()
+        self.check_counts(counts)
+        counts = aligner.calculate(alignment)
+
+
 if __name__ == "__main__":
     runner = unittest.TextTestRunner(verbosity=2)
     unittest.main(testRunner=runner)
