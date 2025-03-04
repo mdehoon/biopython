@@ -8214,6 +8214,7 @@ Aligner_calculate(Aligner* self, PyObject* args, PyObject* keywords)
         if (PyUnicode_Check(sequence) &&
             PyUnicode_KIND(sequence) == PyUnicode_1BYTE_KIND) continue;
         if (sequence == Py_None) continue;
+        break;
     }
     if (i == n) { // no break, so all are bytes
         if (_aligner_calculate_bytes(self,
@@ -8273,7 +8274,7 @@ Aligner_calculate(Aligner* self, PyObject* args, PyObject* keywords)
     // Check if all are Seq objects
     for (i = 0; i < n; i++) {
         sequence = PyList_GET_ITEM(sequences, i);
-        if (!PyUnicode_Check(sequence)) break;  /* cannot mix with strings */
+        if (PyUnicode_Check(sequence)) break;  /* cannot mix with strings */
         if (!PySequence_Check(sequence)) {
             PyErr_Format(PyExc_TypeError,
                 "sequence %d does not provide the sequence protocol", i);
