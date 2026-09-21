@@ -48,7 +48,6 @@ from Bio.Seq import SequenceDataAbstractBaseClass
 from Bio.SeqRecord import _RestrictedDict
 from Bio.SeqRecord import SeqRecord
 
-
 # Import errors may occur here if a compiled _pairwisealigner.c file or
 # compiled _codonaligner.c file (_pairwisealigner.pyd or _pairwisealigner.so,
 # or _codonaligner.pyd or _codonaligner.so) is missing or if the user is
@@ -4314,7 +4313,7 @@ class PairwiseAligner(_pairwisealigner.PairwiseAligner):
         """Initialize a PairwiseAligner as specified by the keyword arguments.
 
         If scoring is None, use the default scoring scheme match = 1.0,
-        mismatch = 0.0, gap score = 0.0
+        mismatch = 0.0, gap score = -1.0.
         If scoring is "blastn", "megablast", or "blastp", use the default
         substitution matrix and gap scores for BLASTN, MEGABLAST, or BLASTP,
         respectively.
@@ -4344,6 +4343,60 @@ class PairwiseAligner(_pairwisealigner.PairwiseAligner):
         else:
             raise ValueError("Unknown scoring scheme '%s'" % scoring)
         for name, value in kwargs.items():
+            if name == "m":
+                match_score, mismatch_score = value
+                self.match_score = match_score
+                self.mismatch_score = mismatch_score
+                continue
+            elif name == "g":
+                name = "gap_score"
+            elif name == "i":
+                try:
+                    open_insertion_score, extend_insertion_score = value
+                except TypeError:
+                    name = "insertion_score"
+                else:
+                    self.open_insertion_score = open_insertion_score
+                    self.extend_insertion_score = extend_insertion_score
+                    continue
+            elif name == "d":
+                try:
+                    open_deletion_score, extend_deletion_score = value
+                except TypeError:
+                    name = "deletion_score"
+                else:
+                    self.open_deletion_score = open_deletion_score
+                    self.extend_deletion_score = extend_deletion_score
+                    continue
+            elif name == "o":
+                try:
+                    open_insertion_score, open_deletion_score = value
+                except TypeError:
+                    name = "open_gap_score"
+                else:
+                    self.open_insertion_score = open_insertion_score
+                    self.open_deletion_score = open_deletion_score
+                    continue
+            elif name == "x":
+                try:
+                    extend_insertion_score, extend_deletion_score = value
+                except TypeError:
+                    name = "extend_gap_score"
+                else:
+                    self.extend_insertion_score = extend_insertion_score
+                    self.extend_deletion_score = extend_deletion_score
+                    continue
+            elif name == "e":
+                try:
+                    end_insertion_score, end_deletion_score = value
+                except TypeError:
+                    name = "end_gap_score"
+                else:
+                    self.end_insertion_score = end_insertion_score
+                    self.end_deletion_score = end_deletion_score
+                    continue
+            elif name == "s":
+                name = "substitution_matrix"
             setattr(self, name, value)
 
     _new_keys = {
@@ -4446,7 +4499,6 @@ AlignmentCounts object returned by the .counts method of an Alignment object."""
 
     def align(self, seqA, seqB, strand="+"):
         """Return the alignments of two sequences using PairwiseAligner."""
-        # self.warn_defaults_changed()  # FIXME remove this after 1.87 is out
         if isinstance(seqA, (bytes, Seq, MutableSeq, SeqRecord)):
             sA = bytes(seqA)
             sA = np.frombuffer(sA, dtype=np.uint8).astype(np.int32)
@@ -4504,7 +4556,6 @@ AlignmentCounts object returned by the .counts method of an Alignment object."""
 
     def score(self, seqA, seqB, strand="+"):
         """Return the alignment score of two sequences using PairwiseAligner."""
-        # self.warn_defaults_changed()  # FIXME remove this after 1.87 is out
         if isinstance(seqA, (bytes, Seq, MutableSeq, SeqRecord)):
             seqA = bytes(seqA)
             seqA = np.frombuffer(seqA, dtype=np.uint8).astype(np.int32)
@@ -4599,6 +4650,327 @@ AlignmentCounts object returned by the .counts method of an Alignment object."""
             self.mismatch_score = state["mismatch_score"]
         else:
             self.substitution_matrix = substitution_matrix
+
+
+def _create_aligner(args, kwargs, mode):
+    kwargs = dict(kwargs)
+    if "mode" in kwargs:
+        raise TypeError("received an unexpected keyword argument 'mode'")
+    kwargs["mode"] = mode
+    strand = None
+    scoring = None
+    if "scoring" in kwargs:
+        scoring = kwargs["scoring"]
+        del kwargs["scoring"]
+    if "strand" in kwargs:
+        strand = kwargs["strand"]
+        del kwargs["strand"]
+    clean_args = list(args)
+    for arg in args:
+        if isinstance(arg, str):
+            if arg in ("+", "-"):
+                if strand is not None:
+                    raise ValueError("strand specified more than once")
+                strand = arg
+            else:
+                if scoring is not None:
+                    raise ValueError("scoring specified more than once")
+                scoring = arg
+            clean_args.remove(arg)
+    aligner = PairwiseAligner(scoring=scoring, **kwargs)
+    if strand is None:
+        strand = "+"
+    return strand, aligner
+
+
+def global_align(seqA, seqB, *args, **kwargs):
+    """Return the optimal global pairwise alignments for the two sequences.
+
+    This function creates a PairwiseAligner object and uses it to perform a
+    global pairwise sequence alignment of seqA and seqB.
+
+    Arguments:
+     - seqA   - the target sequence.
+     - seqB   - the query sequence.
+     - strand - if '+' (default), align seqB against seqA. If '-', align the
+       reverse complement of seqB against seqA.
+
+    Other keyword arguments are passed to the PairwiseAligner initializer (see
+    the PairwiseAligner documentation for details). This includes the following
+    mnemonics:
+
+    * m: (match_score, mismatch_score).
+    * g: gap_score.
+    * i: insertion_score (if one value);
+      (open_insertion_score, extend_insertion_score) if two values.
+    * d: deletion_score (if one value);
+      (open_deletion_score, extend_deletion_score) if two values.
+    * o: open_gap_score (if one value);
+      (open_insertion_score, open_deletion_score) if two values.
+    * x: extend_gap_score (if one value);
+      (extend_insertion_score, extend_deletion_score) if two values.
+    * e: end_gap_score (if one value);
+      (end_insertion_score, end_deletion_score) if two values.
+    * s: substitution_matrix.
+
+    Non-keyword arguments '+' or '-' are interpreted as the strand (see above).
+    Other non-keyword string arguments are interpreted as the scoring scheme
+    (e.g. "blastn" for the BLASTN gap scores and default substitution matrix;
+    see the PairwiseAligner documentation for details).
+
+        >>> from Bio.Align import global_align
+        >>> alignments = global_align("ACCGT", "ACG")
+        >>> print(alignments)
+        <PairwiseAlignments object (2 alignments; score=1) at 0x...>
+        >>> alignments.score
+        1.0
+
+    The ``alignments`` object is an iterater that also supports indexing:
+
+        >>> alignment = alignments[0]
+        >>> alignment.score
+        1.0
+
+    Print out the alignment to visualize it:
+
+        >>> print(alignment)
+        target            0 ACCGT 5
+                          0 ||-|- 5
+        query             0 AC-G- 3
+        <BLANKLINE>
+
+    This alignment uses the default score parameters of the PairwiseAligner:
+    +1.0 for matches, 0.0 for mismatches, and -1.0 for gaps. To use different
+    parameter values, provide them explicitly as keyword arguments, or use the
+    mnemonic codes:
+
+        >>> alignments = global_align("ACCGT", "ACG",
+        ...                           match_score=2,
+        ...                           mismatch_score=-1)
+        >>> alignments
+        <PairwiseAlignments object (2 alignments; score=4) at 0x...>
+        >>> alignments = global_align("ACCGT", "ACG", m=(2,-1))
+        >>> alignments
+        <PairwiseAlignments object (2 alignments; score=4) at 0x...>
+        >>> for alignment in alignments:
+        ...     print(alignment)
+        ...
+        target            0 ACCGT 5
+                          0 ||-|- 5
+        query             0 AC-G- 3
+        <BLANKLINE>
+        target            0 ACCGT 5
+                          0 |-||- 5
+        query             0 A-CG- 3
+        <BLANKLINE>
+
+    Same as above, except now 0.5 points are deducted when opening a gap,
+    and 0.1 points are deducted when extending it.
+
+        >>> for a in global_align("ACCGT", "ACG", m=(2,-1), o=-0.5, x=-0.1):
+        ...     print(a, f"score = {a.score}")
+        ...
+        target            0 ACCGT 5
+                          0 |-||- 5
+        query             0 A-CG- 3
+         score = 5.0
+        target            0 ACCGT 5
+                          0 ||-|- 5
+        query             0 AC-G- 3
+         score = 5.0
+
+    Usually you would use the mnenonic `g` to specify the gap penalty. However,
+    you can also use it to specify your own gap functions:
+
+        >>> from math import log
+        >>> def gap_function(x, y):  # x is gap position in seq, y is gap length
+        ...     if y == 0:  # No gap
+        ...         return 0
+        ...     elif y == 1:  # Gap open penalty
+        ...         return -2
+        ...     return - (2 + y/4.0 + log(y)/2.0)
+        ...
+        >>> for a in global_align("ACCCCCGT", "ACG", m=(5,-4), g=gap_function):
+        ...     print(a)
+        target            0 ACCCCCGT 8
+                          0 |----||- 8
+        query             0 A----CG- 3
+        <BLANKLINE>
+        target            0 ACCCCCGT 8
+                          0 ||----|- 8
+        query             0 AC----G- 3
+        <BLANKLINE>
+
+    Use `i` and `d` (or `insertion_score`, `deletion_score` to specify different
+    gap scores or gap functions for insertions and deletions (i.e., gaps in the
+    target or in the query sequence).
+
+    The alignment function can use known substitution matrices included in
+    Biopython (in ``Bio.Align.substitution_matrices``):
+
+        >>> from Bio.Align import substitution_matrices
+        >>> matrix = substitution_matrices.load("BLOSUM62")
+        >>> for a in global_align("KEVLA", "EVL", s=matrix):
+        ...     print(a, f"score = {a.score}")
+        target            0 KEVLA 5
+                          0 -|||- 5
+        query             0 -EVL- 3
+         score = 11.0
+
+    You can also use one of the predefined scoring schemes:
+
+        >>> alignments = global_align("ACCGT", "ACG", "blastn")
+        >>> alignments
+        <PairwiseAlignments object (4 alignments; score=-8) at 0x...>
+    """
+    strand, aligner = _create_aligner(args, kwargs, "global")
+    alignments = aligner.align(seqA, seqB, strand)
+    return alignments
+
+
+def local_align(seqA, seqB, *args, **kwargs):
+    """Return the optimal local pairwise alignments for the two sequences.
+
+    This function creates a PairwiseAligner object and uses it to perform a
+    local pairwise sequence alignment of seqA and seqB.
+
+    Arguments:
+     - seqA   - the target sequence.
+     - seqB   - the query sequence.
+     - strand - if '+' (default), align seqB against seqA. If '-', align the
+       reverse complement of seqB against seqA.
+
+    Other keyword arguments are passed to the PairwiseAligner initializer (see
+    the PairwiseAligner documentation for details). This includes the following
+    mnemonics:
+
+    * m: (match_score, mismatch_score).
+    * g: gap_score.
+    * i: insertion_score (if one value);
+      (open_insertion_score, extend_insertion_score) if two values.
+    * d: deletion_score (if one value);
+      (open_deletion_score, extend_deletion_score) if two values.
+    * o: open_gap_score (if one value);
+      (open_insertion_score, open_deletion_score) if two values.
+    * x: extend_gap_score (if one value);
+      (extend_insertion_score, extend_deletion_score) if two values.
+    * e: end_gap_score (if one value);
+      (end_insertion_score, end_deletion_score) if two values.
+    * s: substitution_matrix.
+
+    Non-keyword arguments '+' or '-' are interpreted as the strand (see above).
+    Other non-keyword string arguments are interpreted as the scoring scheme
+    (e.g. "blastn" for the BLASTN gap scores and default substitution matrix;
+    see the PairwiseAligner documentation for details).
+
+        >>> from Bio.Align import local_align
+        >>> alignments = local_align("ACCGT", "ACG")
+        >>> print(alignments)
+        <PairwiseAlignments object (2 alignments; score=2) at 0x...>
+        >>> alignments.score
+        2.0
+
+    The ``alignments`` object is an iterater that also supports indexing:
+
+        >>> alignment = alignments[0]
+        >>> alignment.score
+        2.0
+
+    Print out the alignment to visualize it:
+
+        >>> print(alignment)
+        target            0 AC 2
+                          0 || 2
+        query             0 AC 2
+        <BLANKLINE>
+
+    This alignment uses the default score parameters of the PairwiseAligner:
+    +1.0 for matches, 0.0 for mismatches, and -1.0 for gaps. To use different
+    parameter values, provide them explicitly as keyword arguments, or use the
+    mnemonic codes:
+
+        >>> alignments = local_align("ACCGT", "ACG",
+        ...                          match_score=2,
+        ...                          mismatch_score=-1)
+        >>> alignments
+        <PairwiseAlignments object (2 alignments; score=5) at 0x...>
+        >>> alignments = local_align("ACCGT", "ACG", m=(2,-1))
+        >>> alignments
+        <PairwiseAlignments object (2 alignments; score=5) at 0x...>
+        >>> for alignment in alignments:
+        ...     print(alignment)
+        ...
+        target            0 ACCG 4
+                          0 ||-| 4
+        query             0 AC-G 3
+        <BLANKLINE>
+        target            0 ACCG 4
+                          0 |-|| 4
+        query             0 A-CG 3
+        <BLANKLINE>
+
+    Same as above, except now 0.5 points are deducted when opening a gap,
+    and 0.1 points are deducted when extending it.
+
+        >>> for a in local_align("ACCGT", "ACG", m=(2,-1), o=-0.5, x=-0.1):
+        ...     print(a, f"score = {a.score}")
+        ...
+        target            0 ACCG 4
+                          0 |-|| 4
+        query             0 A-CG 3
+         score = 5.5
+        target            0 ACCG 4
+                          0 ||-| 4
+        query             0 AC-G 3
+         score = 5.5
+
+    Usually you would use the mnenonic `g` to specify the gap penalty. However,
+    you can also use it to specify your own gap functions:
+
+        >>> from math import log
+        >>> def gap_function(x, y):  # x is gap position in seq, y is gap length
+        ...     if y == 0:  # No gap
+        ...         return 0
+        ...     elif y == 1:  # Gap open penalty
+        ...         return -2
+        ...     return - (2 + y/4.0 + log(y)/2.0)
+        ...
+        >>> for a in local_align("ACCCCCGT", "ACG", m=(5,-4), g=gap_function):
+        ...     print(a)
+        target            0 ACCCCCG 7
+                          0 |----|| 7
+        query             0 A----CG 3
+        <BLANKLINE>
+        target            0 ACCCCCG 7
+                          0 ||----| 7
+        query             0 AC----G 3
+        <BLANKLINE>
+
+    Use `i` and `d` (or `insertion_score`, `deletion_score` to specify different
+    gap scores or gap functions for insertions and deletions (i.e., gaps in the
+    target or in the query sequence).
+
+    The alignment function can use known substitution matrices included in
+    Biopython (in ``Bio.Align.substitution_matrices``):
+
+        >>> from Bio.Align import substitution_matrices
+        >>> matrix = substitution_matrices.load("BLOSUM62")
+        >>> for a in local_align("KEVLA", "EVL", s=matrix):
+        ...     print(a, f"score = {a.score}")
+        target            1 EVL 4
+                          0 ||| 3
+        query             0 EVL 3
+         score = 13.0
+
+    You can also use one of the predefined scoring schemes:
+
+        >>> alignments = local_align("ACCGT", "ACG", "blastn")
+        >>> alignments
+        <PairwiseAlignments object (2 alignments; score=4) at 0x...>
+    """
+    strand, aligner = _create_aligner(args, kwargs, "local")
+    alignments = aligner.align(seqA, seqB, strand)
+    return alignments
 
 
 class CodonAligner(_codonaligner.CodonAligner):
