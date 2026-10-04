@@ -5259,8 +5259,19 @@ def codon_align(seqA, seqB, codon_table=None, **kwargs):
 
     """
     aligner = CodonAligner(codon_table=codon_table, **kwargs)
-    alignments = aligner.align(seqA, seqB)
-    return alignments
+    if isinstance(seqA, Alignment):
+        protein_alignment = seqA
+        protein_sequences = protein_alignment.sequences
+        nucleotide_sequences = seqB
+        alignments = []
+        for pro_seq, nuc_seq in zip(protein_sequences, nucleotide_sequences):
+            alignment = codon_align(pro_seq, nuc_seq)[0]
+            alignments.append(alignment)
+        codon_alignment = protein_alignment.mapall(alignments)
+        return codon_alignment
+    else:
+        alignments = aligner.align(seqA, seqB)
+        return alignments
 
 
 # fmt: off
